@@ -1,6 +1,6 @@
 {
     "Parameters": {
-        "Cname": "oe.seapln-osr.pt-aws.wni.com",
+        "Cname": "vp.seapln-osr.pt-aws.wni.com",
         "AcmCertificateArn": "arn:aws:acm:us-east-1:716990209761:certificate/a023e741-f306-4e67-8bf8-3dce03cb37f3",
         "MapBucket": "sea-dev-mapwidget"
     },

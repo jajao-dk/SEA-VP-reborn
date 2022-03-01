@@ -36,7 +36,6 @@ Parameters:
 
   CustomerDataBucket:
     Type: String
-    Default: dev-wni-sea-business-oe-ane1
 
 Globals:
   Function:
