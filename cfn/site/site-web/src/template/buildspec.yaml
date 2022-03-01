@@ -26,9 +26,9 @@ phases:
   build:
     commands:
       - echo Build `date`
-      - npm run build -- --base=/$TARGET/
+      - npm run build -- --base=/$TARGET/cim/
   post_build:
     commands:
       - echo PostBuild `date`
-      - aws s3 sync dist/ s3://$S3_BUCKET/$TARGET/ --delete
-      - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/$TARGET/*"
+      - aws s3 sync dist/ s3://$S3_BUCKET/$TARGET/cim/ --delete
+      - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/$TARGET/cim/*"
