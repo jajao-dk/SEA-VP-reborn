@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+    Default: ""
+
+  AppName:
+    Type: String
+    Default: ""
+
+Resources:
+  DynamoDbTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: !Sub ${EnvironmentName}-${AppName}
+      PrimaryKey:
+        Name: ""
+        Type: String

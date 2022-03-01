@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: use1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+    Default: hosting
+
+  AppName:
+    Type: String
+    Default: hosting-cloudfront-metrics
+
+Resources:
+  CloudFront4xxErrorRateAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      Namespace: AWS/CloudFront
+      MetricName: 4xxErrorRate
+      Dimensions:
+        - Name: Region
+          Value: Global
+        - Name: DistributionId
+          Value: !Sub '{{resolve:ssm:/${EnvironmentName}/${CategoryName}-cloudfront/cloudfront/distribution-id}}'
+      Statistic: Average
+      Period: 300
+      Threshold: 10
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      DatapointsToAlarm: 1
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - {"Fn::ImportValue": !Sub "${EnvironmentName}-alert-topic-Topic"}
+
+  CloudFront5xxErrorRateAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      Namespace: AWS/CloudFront
+      MetricName: 5xxErrorRate
+      Dimensions:
+        - Name: Region
+          Value: Global
+        - Name: DistributionId
+          Value: !Sub '{{resolve:ssm:/${EnvironmentName}/${CategoryName}-cloudfront/cloudfront/distribution-id}}'
+      Statistic: Average
+      Period: 300
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      DatapointsToAlarm: 1
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - {"Fn::ImportValue": !Sub "${EnvironmentName}-alert-topic-Topic"}

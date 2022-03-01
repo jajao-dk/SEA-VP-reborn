@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+    Default: data
+
+  AppName:
+    Type: String
+    Default: data-schedule
+
+  LogLevel:
+    Type: String
+
+  Timeout:
+    Type: Number
+    Default: 900
+
+Globals:
+  Function:
+    Runtime: python3.8
+    Handler: app.lambda_function.lambda_handler
+    Timeout: !Ref Timeout
+    AutoPublishAlias: live
+    Layers:
+      - arn:aws:lambda:ap-northeast-1:475582256308:layer:env-infra-lib-layer-aws-wrangler:3
+      - arn:aws:lambda:ap-northeast-1:475582256308:layer:env-infra-lib-layer-common:4
+    VpcConfig:
+      SecurityGroupIds:
+        - {"Fn::ImportValue": !Sub "${EnvironmentName}-infra-security-SecurityGroup"}
+      SubnetIds:
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private0
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private1
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private2
+    Environment:
+      Variables:
+        LOG_LEVEL: !Ref LogLevel
+        POWERTOOLS_SERVICE_NAME: !Sub ${EnvironmentName}-${AppName}
+        POWERTOOLS_LOGGER_LOG_EVENT: true
+
+Resources:
+  Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: {"Fn::ImportValue": !Sub "${EnvironmentName}-infra-security-LambdaRole"}
+      MemorySize: 1024
+      CodeUri: src/schedule
+      Environment:
+        Variables:
+          DATA_BUCKET_NAME: !Sub wni-${EnvironmentName}-store-data-${Region}
+      Events:
+        Sqs:
+          Type: SQS
+          Properties:
+            Enabled: true
+            Queue: !GetAtt Queue.Arn
+            FunctionResponseTypes:
+              - ReportBatchItemFailures
+            BatchSize: 1
+
+  FunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${Function}
+      RetentionInDays: 90
+
+  FunctionLogGroupSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: {"Fn::ImportValue": !Sub "${EnvironmentName}-alert-slack-Function"}
+      FilterPattern: '?"\"level\":\"CRITICAL\"" ?"\"level\":\"ERROR\"" ?"\"level\":\"WARNING\""'
+      LogGroupName: !Ref FunctionLogGroup
+
+  Events:
+    Type: AWS::Events::Rule
+    Properties:
+      State: ENABLED
+      ScheduleExpression: cron(00 * * * ? *)
+      Targets:
+        - Id: !Sub ${EnvironmentName}-${AppName}
+          Arn: !GetAtt Queue.Arn
+
+  Queue:
+    Type: AWS::SQS::Queue
+    Properties:
+      ReceiveMessageWaitTimeSeconds: 20
+      VisibilityTimeout: !Ref Timeout
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeadLetterQueue.Arn
+        maxReceiveCount: 3
+
+  DeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      ReceiveMessageWaitTimeSeconds: 20
+      MessageRetentionPeriod: 1209600
+
+  QueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: sqs:SendMessage
+            Resource: !GetAtt Queue.Arn
+            Condition:
+              ArnLike:
+                aws:SourceArn: !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/*
+      Queues:
+        - !Ref Queue
+
+  SQSApproximateNumberOfMessagesVisibleAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt DeadLetterQueue.QueueName
+      Statistic: Maximum
+      Period: 60
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      DatapointsToAlarm: 1
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - {"Fn::ImportValue": !Sub "${EnvironmentName}-alert-topic-Topic"}

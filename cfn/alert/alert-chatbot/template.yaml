@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+    Default: alert
+
+  AppName:
+    Type: String
+    Default: alert-chatbot
+
+Resources:
+  SlackChannel:
+    Type: AWS::Chatbot::SlackChannelConfiguration
+    Properties:
+      ConfigurationName: !Sub ${EnvironmentName}-${AppName}
+      SlackWorkspaceId: !Sub '{{resolve:ssm:/${EnvironmentName}/infra-resource/slack/workspace-id}}'
+      SlackChannelId: !Sub '{{resolve:ssm:/${EnvironmentName}/infra-resource/slack/channel-id/alarm}}'
+      IamRoleArn: !GetAtt ChatbotRole.Arn
+      LoggingLevel: NONE
+      SnsTopicArns:
+        - !Sub arn:aws:sns:ap-northeast-1:${AWS::AccountId}:${EnvironmentName}-${CategoryName}-topic
+        - !Sub arn:aws:sns:us-east-1:${AWS::AccountId}:${EnvironmentName}-${CategoryName}-topic
+
+  ChatbotRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchReadOnlyAccess
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: chatbot.amazonaws.com

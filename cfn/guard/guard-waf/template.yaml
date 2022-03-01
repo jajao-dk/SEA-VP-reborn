@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+    Default: guard
+
+  AppName:
+    Type: String
+    Default: guard-waf
+
+Resources:
+  Waf:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: !Sub ${EnvironmentName}-${AppName}
+      Scope: REGIONAL
+      DefaultAction:
+        Allow: {}
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: Requests
+      Rules:
+        - Name: AWS-AWSManagedRulesAdminProtectionRuleSet
+          Priority: 0
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWS-AWSManagedRulesAdminProtectionRuleSet
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesAdminProtectionRuleSet
+              ExcludedRules: []
+        - Name: AWS-AWSManagedRulesAmazonIpReputationList
+          Priority: 1
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWS-AWSManagedRulesAmazonIpReputationList
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesAmazonIpReputationList
+              ExcludedRules: []
+        - Name: AWS-AWSManagedRulesKnownBadInputsRuleSet
+          Priority: 2
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWS-AWSManagedRulesKnownBadInputsRuleSet
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesKnownBadInputsRuleSet
+              ExcludedRules: []
+        - Name: AWS-AWSManagedRulesLinuxRuleSet
+          Priority: 3
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWS-AWSManagedRulesLinuxRuleSet
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesLinuxRuleSet
+              ExcludedRules: []
+        - Name: AWS-AWSManagedRulesCommonRuleSet
+          Priority: 4
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWS-AWSManagedRulesCommonRuleSet
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+              ExcludedRules: []
+
+Outputs:
+  Waf:
+    Value: !GetAtt Waf.Arn
+    Export:
+      Name: !Sub ${EnvironmentName}-${AppName}-Waf

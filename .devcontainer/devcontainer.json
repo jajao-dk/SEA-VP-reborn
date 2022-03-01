@@ -1,0 +1,103 @@
+{
+    "extensions": [
+        "amazonwebservices.aws-toolkit-vscode",
+        "kddejong.vscode-cfn-lint",
+        "ryanluker.vscode-coverage-gutters",
+        "ms-azuretools.vscode-docker",
+        "dbaeumer.vscode-eslint",
+        "mhutchie.git-graph",
+        "eamodio.gitlens",
+        "golang.Go",
+        "ms-toolsai.jupyter",
+        "ms-toolsai.jupyter-keymap",
+        "ms-toolsai.jupyter-renderers",
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "johnsoncodehk.volar",
+        "redhat.vscode-yaml"
+    ],
+
+    "settings": {
+        "files.exclude": {
+            "**/.git": true,
+            "**/.svn": true,
+            "**/.hg": true,
+            "**/CVS": true,
+            "**/.DS_Store": true,
+            "**/__pycache__": true,
+            "**/.pytest_cache": true,
+            "**/node_modules": true
+        },
+        "terminal.integrated.defaultProfile.linux": "zsh",
+
+        "eslint.validate": [
+            "vue"
+        ],
+        "javascript.validate.enable": false,
+        "[javascript]": {
+            "editor.codeActionsOnSave": {
+                "source.fixAll.eslint": true
+            },
+        },
+        "[vue]": {
+            "editor.codeActionsOnSave": {
+                "source.fixAll.eslint": true
+            },
+        },
+
+        "python.analysis.typeCheckingMode": "strict",
+        "python.formatting.provider": "autopep8",
+        "python.linting.flake8Enabled": true,
+        "python.linting.lintOnSave": true,
+        "python.linting.pylintEnabled": false,
+        "[python]": {
+            "editor.codeActionsOnSave": {
+                "source.organizeImports": true
+            },
+            "editor.formatOnSave": true
+        },
+        "notebook.cellToolbarLocation": {
+            "default": "left"
+        },
+
+        "yaml.customTags": [
+            "!And",
+            "!If",
+            "!Not",
+            "!Equals",
+            "!Or",
+            "!FindInMap",
+            "!Base64",
+            "!Cidr",
+            "!Ref",
+            "!Sub",
+            "!GetAtt",
+            "!GetAZs",
+            "!ImportValue",
+            "!Select",
+            "!Split",
+            "!Join",
+            "!And sequence",
+            "!If sequence",
+            "!Not sequence",
+            "!Equals sequence",
+            "!Or sequence",
+            "!FindInMap sequence",
+            "!Join sequence",
+            "!Sub sequence",
+            "!ImportValue sequence",
+            "!Select sequence",
+            "!Split sequence"
+        ],
+        "yaml.schemas": {
+            "https://d33vqc0rt9ld30.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json": "template.yaml"
+        }
+    },
+
+    "dockerComposeFile": [
+        "../docker-compose.yaml"
+    ],
+    "service": "develop",
+    "workspaceFolder": "/root/develop",
+    "shutdownAction": "none"
+}

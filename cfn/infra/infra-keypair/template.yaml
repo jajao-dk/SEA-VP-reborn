@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+    Default: infra
+
+  AppName:
+    Type: String
+    Default: infra-keypair
+
+Resources:
+  PublicKey:
+    Type: AWS::CloudFront::PublicKey
+    Properties:
+      PublicKeyConfig:
+        Name: !Sub ${EnvironmentName}-${AppName}
+        EncodedKey: !Sub '{{resolve:ssm:/${EnvironmentName}/${AppName}/rsa/public}}'
+        CallerReference: !Sub ${EnvironmentName}-${AppName}
+
+  KeyGroup:
+    Type: AWS::CloudFront::KeyGroup
+    Properties:
+      KeyGroupConfig:
+        Name: !Sub ${EnvironmentName}-${AppName}
+        Items:
+          - !Ref PublicKey
+
+Outputs:
+  PublicKey:
+    Value: !Ref PublicKey
+    Export:
+      Name: !Sub ${EnvironmentName}-${AppName}-PublicKey
+
+  KeyGroup:
+    Value: !Ref KeyGroup
+    Export:
+      Name: !Sub ${EnvironmentName}-${AppName}-KeyGroup

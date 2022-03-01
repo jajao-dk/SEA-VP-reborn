@@ -1,0 +1,203 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+    Default: api
+
+  AppName:
+    Type: String
+    Default: api-quicksight
+
+  DeploymentPreference:
+    Type: String
+    Default: AllAtOnce
+
+  LogLevel:
+    Type: String
+    Default: debug
+
+  Timeout:
+    Type: Number
+    Default: 30
+
+Globals:
+  Function:
+    Runtime: python3.8
+    Handler: app.lambda_function.lambda_handler
+    Timeout: !Ref Timeout
+    AutoPublishAlias: live
+    Layers:
+      - arn:aws:lambda:ap-northeast-1:475582256308:layer:env-infra-lib-layer-common:4
+    VpcConfig:
+      SecurityGroupIds:
+        - {"Fn::ImportValue": !Sub "${EnvironmentName}-infra-security-SecurityGroup"}
+      SubnetIds:
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private0
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private1
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private2
+    Environment:
+      Variables:
+        LOG_LEVEL: !Ref LogLevel
+        POWERTOOLS_SERVICE_NAME: !Sub ${EnvironmentName}-${AppName}
+        POWERTOOLS_LOGGER_LOG_EVENT: true
+
+Resources:
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      OpenApiVersion: 3.0.2
+      StageName: api
+      EndpointConfiguration:
+        Type: REGIONAL
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiLogGroup.Arn
+        Format: '{"apiId":"$context.apiId","requestId":"$context.requestId","userId":"$context.authorizer.principalId","method":"$context.httpMethod","path":"$context.path","sourceIp":"$context.identity.sourceIp","userAgent":"$context.identity.userAgent","status":"$context.status","wafStatus":"$context.waf.status","authorizerStatus":"$context.authorizer.status","integrationStatus":"$context.integration.status","latency":"$context.responseLatency","wafLatency":"$context.waf.latency","authorizerLatency":"$context.authorizer.latency","integrationLatency":"$context.integration.latency","requestTime":"$context.requestTime","requestTimeEpoch":"$context.requestTimeEpoch","length":"$context.responseLength","errorType":"$context.error.responseType","error":"$context.error.message","wafError":"$context.waf.error","authorizerError":"$context.authorizer.error","integrationError":"$context.integration.error"}'
+      MethodSettings:
+        - HttpMethod: "*"
+          ResourcePath: /*
+          LoggingLevel: "OFF"
+          ThrottlingRateLimit: 100
+          ThrottlingBurstLimit: 200
+      Auth:
+        Authorizers:
+          JwtAuthorizer:
+            FunctionPayloadType: TOKEN
+            FunctionArn: {"Fn::ImportValue": !Sub "${EnvironmentName}-guard-authorizer-Function"}
+            Identity:
+              ValidationExpression: ^Bearer [-_0-9a-zA-Z.]+$
+              ReauthorizeEvery: 3600
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'*'"
+        AllowMethods: "'*'"
+        MaxAge: "'3600'"
+
+  ApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/apigateway/${EnvironmentName}-${AppName}
+      RetentionInDays: 90
+
+  Api4XXErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      Namespace: AWS/ApiGateway
+      MetricName: 4XXError
+      Dimensions:
+        - Name: ApiName
+          Value: !Sub ${EnvironmentName}-${AppName}
+      Statistic: Sum
+      Period: 60
+      Threshold: 10
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      DatapointsToAlarm: 1
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - {"Fn::ImportValue": !Sub "${EnvironmentName}-alert-topic-Topic"}
+
+  Api5XXErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      Namespace: AWS/ApiGateway
+      MetricName: 5XXError
+      Dimensions:
+        - Name: ApiName
+          Value: !Sub ${EnvironmentName}-${AppName}
+      Statistic: Sum
+      Period: 60
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      DatapointsToAlarm: 1
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - {"Fn::ImportValue": !Sub "${EnvironmentName}-alert-topic-Topic"}
+
+  Association:
+    DependsOn:
+      - ApiapiStage
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      ResourceArn: !Sub arn:aws:apigateway:${AWS::Region}::/restapis/${Api}/stages/api
+      WebACLArn: {"Fn::ImportValue": !Sub "${EnvironmentName}-guard-waf-Waf"}
+
+  Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: {"Fn::ImportValue": !Sub "${EnvironmentName}-infra-security-LambdaRole"}
+      MemorySize: 1024
+      CodeUri: src/quicksight
+      DeploymentPreference:
+        Enabled: true
+        Type: !Ref DeploymentPreference
+        Alarms:
+          - !Ref FunctionErrorsAlarm
+      Environment:
+        Variables:
+          AWS_ACCOUNT_ID: !Ref AWS::AccountId
+      Events:
+        QuicksightGet:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Method: GET
+            Path: /v1/quicksight
+            Auth:
+              Authorizer: JwtAuthorizer
+
+  FunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${Function}
+      RetentionInDays: 90
+
+  FunctionLogGroupSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: {"Fn::ImportValue": !Sub "${EnvironmentName}-alert-slack-Function"}
+      FilterPattern: '?"\"level\":\"CRITICAL\"" ?"\"level\":\"ERROR\"" ?"\"level\":\"WARNING\""'
+      LogGroupName: !Ref FunctionLogGroup
+
+  FunctionErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref Function
+        - Name: Resource
+          Value: !Sub
+            - ${Function}:${Version}
+            - Version: !GetAtt Function.Version.Version
+      Statistic: Sum
+      Period: 60
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      DatapointsToAlarm: 1
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
+
+Outputs:
+  Api:
+    Value: !Ref Api
+    Export:
+      Name: !Sub ${EnvironmentName}-${AppName}-Api

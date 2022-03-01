@@ -1,0 +1,10 @@
+{
+    "Parameters": {
+        "DeploymentPreference": "AllAtOnce",
+        "LogLevel": "debug",
+        "CustomerDataBucket": "dev-wni-sea-business-oe-ane1"
+    },
+    "Tags": {
+        "map-migrated": "d-server-00ofs92gm4wvoj"
+    }
+}

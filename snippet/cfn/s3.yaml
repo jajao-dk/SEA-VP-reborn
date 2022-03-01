@@ -1,0 +1,159 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+    Default: ""
+
+  AppName:
+    Type: String
+    Default: ""
+
+Resources:
+  #
+  # HTMLなどのコンテンツを保存するBucket
+  #
+  HostingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub wni-${EnvironmentName}-${AppName}-hosting-${Region}
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      LifecycleConfiguration:
+        Rules:
+          - Id: !Sub ${EnvironmentName}-${AppName}-delete-multipart
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "*"
+            AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - HEAD
+              - GET
+            MaxAge: 3600
+
+  HostingBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Statement:
+          - Action: s3:GetObject
+            Effect: Allow
+            Resource:
+              - !Sub
+                - ${Bucket}/*
+                - Bucket: !GetAtt HostingBucket.Arn
+            Principal:
+              CanonicalUser: !GetAtt CloudFrontOriginAccessIdentity.S3CanonicalUserId
+
+  CloudFrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref AWS::StackName
+
+  #
+  # 気象・ビジネスデータを保存するBucket
+  #
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub wni-${EnvironmentName}-${AppName}-data-${Region}
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      LifecycleConfiguration:
+        Rules:
+          - Id: !Sub ${EnvironmentName}-${AppName}-delete-multipart
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+
+  #
+  # Logを保存するBucket
+  #
+  LogBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub wni-${EnvironmentName}-${AppName}-log-${Region}
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      LifecycleConfiguration:
+        Rules:
+          - Id: !Sub ${EnvironmentName}-${AppName}-delete-multipart
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+          - Id: !Sub ${EnvironmentName}-${AppName}-glacier-ir
+            Status: Enabled
+            Transitions:
+              - StorageClass: GLACIER_IR
+                TransitionInDays: 90
+
+  #
+  # 過去データを保存するBucket
+  #
+  HistoricalBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub wni-${EnvironmentName}-${AppName}-historical-${Region}
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      LifecycleConfiguration:
+        Rules:
+          - Id: !Sub ${EnvironmentName}-${AppName}-delete-multipart
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+          - Id: !Sub ${EnvironmentName}-${AppName}-intelligent-tiering
+            Status: Enabled
+            Transitions:
+              - StorageClass: INTELLIGENT-TIERING
+                TransitionInDays: 90
+      IntelligentTieringConfigurations:
+        - Id: !Sub ${EnvironmentName}-${AppName}
+          Status: Enabled
+          Tierings:
+            - AccessTier: ARCHIVE_ACCESS
+              Days: 400
+            - AccessTier: DEEP_ARCHIVE_ACCESS
+              Days: 731

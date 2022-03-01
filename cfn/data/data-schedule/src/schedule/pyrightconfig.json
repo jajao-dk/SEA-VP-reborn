@@ -1,0 +1,9 @@
+{
+    "reportGeneralTypeIssues": "information",
+    "reportMissingTypeStubs": "none",
+    "reportUnknownArgumentType": "none",
+    "reportUnknownMemberType": "none",
+    "reportUnknownParameterType": "none",
+    "reportUnknownVariableType": "none",
+    "reportUntypedFunctionDecorator": "none"
+}

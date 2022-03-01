@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+  pre_build:
+    commands:
+      - echo PreBuild `date`
+      - aws --version
+      - sam --version
+  build:
+    commands:
+      - echo Build `date`
+      - sam build
+  post_build:
+    commands:
+      - echo PostBuild `date`
+      - sam package
+            --s3-bucket $S3_BUCKET
+            --s3-prefix artifact/$ENVIRONMENT_NAME/$APP_NAME
+            --output-template-file packaged.yaml
+artifacts:
+  files:
+    - packaged.yaml
+  discard-paths: yes

@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+    develop:
+        image: weathernews/with-develop:latest
+        container_name: develop
+        init: true
+        tty: true
+        restart: always
+        volumes:
+            - develop:/root/develop
+            - $HOME/.zshrc:/root/.zshrc
+            - $HOME/.aws:/root/.aws
+            - $HOME/.config:/root/.config
+            - $HOME/.ssh:/root/.ssh
+
+    nginx:
+        image: nginx:1.21.6-alpine
+        container_name: nginx
+        restart: always
+        volumes:
+            - ./docker/nginx:/etc/nginx/templates
+            - ./docker/certs:/etc/pki/tls/certs
+        ports:
+            - 3000:443
+        environment:
+            - CLOUD_FRONT_DOMAIN=$CLOUD_FRONT_DOMAIN
+
+x-mutagen:
+    sync:
+        defaults:
+            ignore:
+                paths:
+                    - "__pycache__"
+                    - ".pytest_cache"
+                    - "node_modules"
+                    - "tmp"
+            permissions:
+                defaultFileMode: 0644
+                defaultDirectoryMode: 0755
+        develop:
+            alpha: .
+            beta: volume://develop
+
+volumes:
+    develop:

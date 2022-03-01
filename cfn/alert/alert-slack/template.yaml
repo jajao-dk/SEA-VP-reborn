@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+    Default: alert
+
+  AppName:
+    Type: String
+    Default: alert-slack
+
+  LogLevel:
+    Type: String
+    Default: debug
+
+  SlackUserName:
+    Type: String
+    Default: with-wxtech-template
+
+  SlackIconEmoji:
+    Type: String
+    Default: ":moji_ng:"
+
+  SlackIconUrl:
+    Type: String
+    Default: ""
+
+  AlertLevel:
+    Type: String
+    Default: info,warning,error,critical
+
+  Timezone:
+    Type: String
+    Default: Asia/Tokyo
+
+  Timeout:
+    Type: Number
+    Default: 900
+
+Globals:
+  Function:
+    Runtime: python3.8
+    Handler: app.lambda_function.lambda_handler
+    Timeout: !Ref Timeout
+    AutoPublishAlias: live
+    Layers:
+      - arn:aws:lambda:ap-northeast-1:475582256308:layer:env-infra-lib-layer-common:4
+    VpcConfig:
+      SecurityGroupIds:
+        - {"Fn::ImportValue": !Sub "${EnvironmentName}-infra-security-SecurityGroup"}
+      SubnetIds:
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private0
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private1
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private2
+    Environment:
+      Variables:
+        LOG_LEVEL: !Ref LogLevel
+        POWERTOOLS_SERVICE_NAME: !Sub ${EnvironmentName}-${AppName}
+        POWERTOOLS_LOGGER_LOG_EVENT: true
+
+Resources:
+  Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: {"Fn::ImportValue": !Sub "${EnvironmentName}-infra-security-LambdaRole"}
+      MemorySize: 1024
+      CodeUri: src/slack
+      Layers:
+        - !Ref Layer
+      Environment:
+        Variables:
+          SLACK_OAUTH_TOKEN: !Sub '{{resolve:ssm:/${EnvironmentName}/infra-resource/slack/oauth-token}}'
+          SLACK_CHANNEL_ID: !Sub '{{resolve:ssm:/${EnvironmentName}/infra-resource/slack/channel-id/logs}}'
+          SLACK_USER_NAME: !Ref SlackUserName
+          SLACK_ICON_EMOJI: !Ref SlackIconEmoji
+          SLACK_ICON_URL: !Ref SlackIconUrl
+          TIMEZONE: !Ref Timezone
+          ALERT_LEVEL: !Ref AlertLevel
+
+  FunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${Function}
+      RetentionInDays: 90
+
+  FunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref Function
+      Principal: logs.amazonaws.com
+      SourceArn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*
+
+  Layer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub ${EnvironmentName}-${AppName}
+      ContentUri: src/layer
+      CompatibleRuntimes:
+        - python3.8
+      CompatibleArchitectures:
+        - x86_64
+      RetentionPolicy: Retain
+    Metadata:
+      BuildMethod: python3.8
+
+Outputs:
+  Function:
+    Value: !GetAtt Function.Arn
+    Export:
+      Name: !Sub ${EnvironmentName}-${AppName}-Function

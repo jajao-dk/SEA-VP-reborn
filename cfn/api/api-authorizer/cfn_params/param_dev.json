@@ -1,0 +1,10 @@
+{
+    "Parameters": {
+        "DeploymentPreference": "AllAtOnce",
+        "LogLevel": "debug",
+        "CookieExpiresIn": "2592000"
+    },
+    "Tags": {
+        "map-migrated": "d-server-00ofs92gm4wvoj"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "Parameters": {
+        "Cname": "oe.weathernews.com",
+        "AcmCertificateArn": "arn:aws:acm:us-east-1:801004915087:certificate/729b2487-8f25-4a68-b019-7646d693cfbb",
+        "MapBucket": "wni-sea-mapwidget-ane1"
+    },
+    "Tags": {
+        "map-migrated": "d-server-038u5n84kol2jr"
+    }
+}

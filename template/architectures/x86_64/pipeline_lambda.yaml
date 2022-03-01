@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+
+  AppName:
+    Type: String
+
+  CiCdPrefix:
+    Type: String
+
+Resources:
+  CodeBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${EnvironmentName}-${AppName}
+      ServiceRole: {"Fn::ImportValue": !Sub "${CiCdPrefix}-CodeBuildRole"}
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        EnvironmentVariables:
+          - Name: ENVIRONMENT_NAME
+            Value: !Ref EnvironmentName
+          - Name: APP_NAME
+            Value: !Ref AppName
+          - Name: S3_BUCKET
+            Value: {"Fn::ImportValue": !Sub "${CiCdPrefix}-Bucket"}
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec.yaml
+
+  CodeBuildLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/codebuild/${CodeBuild}
+      RetentionInDays: 90
+
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub ${EnvironmentName}-${AppName}
+      RoleArn: {"Fn::ImportValue": !Sub "${CiCdPrefix}-CodePipelineRole"}
+      ArtifactStore:
+        Type: S3
+        Location: {"Fn::ImportValue": !Sub "${CiCdPrefix}-Bucket"}
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: download-source
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: 1
+                Provider: S3
+              Configuration:
+                S3Bucket: {"Fn::ImportValue": !Sub "${CiCdPrefix}-Bucket"}
+                S3ObjectKey: !Sub artifact/${EnvironmentName}/${AppName}_input.zip
+              OutputArtifacts:
+                - Name: SourceOutput
+        - Name: Build
+          Actions:
+            - Name: build-lambda
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref CodeBuild
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildLambdaOutput
+        - Name: PreDeploy
+          Actions:
+            - Name: create-changeset
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              Configuration:
+                StackName: !Sub ${EnvironmentName}-${AppName}
+                ChangeSetName: changeset
+                ActionMode: CHANGE_SET_REPLACE
+                RoleArn: {"Fn::ImportValue": !Sub "${CiCdPrefix}-CodePipelineRole"}
+                Capabilities: CAPABILITY_NAMED_IAM
+                TemplatePath: BuildLambdaOutput::packaged.yaml
+                TemplateConfiguration: SourceOutput::cfn_params/param.json
+              InputArtifacts:
+                - Name: SourceOutput
+                - Name: BuildLambdaOutput
+        - Name: Approval
+          Actions:
+            - Name: approve
+              ActionTypeId:
+                Category: Approval
+                Owner: AWS
+                Version: 1
+                Provider: Manual
+        - Name: Deploy
+          Actions:
+            - Name: execute-changeset
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              Configuration:
+                StackName: !Sub ${EnvironmentName}-${AppName}
+                ChangeSetName: changeset
+                ActionMode: CHANGE_SET_EXECUTE
+                RoleArn: {"Fn::ImportValue": !Sub "${CiCdPrefix}-CodePipelineRole"}

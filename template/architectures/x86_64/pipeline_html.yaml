@@ -1,0 +1,104 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+
+  AppName:
+    Type: String
+
+  CiCdPrefix:
+    Type: String
+
+  BucketName:
+    Type: String
+
+  DistributionId:
+    Type: String
+
+Resources:
+  CodeBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${EnvironmentName}-${AppName}
+      ServiceRole: {"Fn::ImportValue": !Sub "${CiCdPrefix}-CodeBuildRole"}
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        EnvironmentVariables:
+          - Name: ENVIRONMENT_NAME
+            Value: !Ref EnvironmentName
+          - Name: APP_NAME
+            Value: !Ref AppName
+          - Name: S3_BUCKET
+            Value: !Ref BucketName
+          - Name: DISTRIBUTION_ID
+            Value: {"Fn::ImportValue": !Ref DistributionId}
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec.yaml
+
+  CodeBuildLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/codebuild/${CodeBuild}
+      RetentionInDays: 90
+
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub ${EnvironmentName}-${AppName}
+      RoleArn: {"Fn::ImportValue": !Sub "${CiCdPrefix}-CodePipelineRole"}
+      ArtifactStore:
+        Type: S3
+        Location: {"Fn::ImportValue": !Sub "${CiCdPrefix}-Bucket"}
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: download-source
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: 1
+                Provider: S3
+              Configuration:
+                S3Bucket: {"Fn::ImportValue": !Sub "${CiCdPrefix}-Bucket"}
+                S3ObjectKey: !Sub artifact/${EnvironmentName}/${AppName}_input.zip
+              OutputArtifacts:
+                - Name: SourceOutput
+        - Name: Approval
+          Actions:
+            - Name: approve
+              ActionTypeId:
+                Category: Approval
+                Owner: AWS
+                Version: 1
+                Provider: Manual
+        - Name: Build-Deploy
+          Actions:
+            - Name: build-deploy-html
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref CodeBuild
+              InputArtifacts:
+                - Name: SourceOutput

@@ -1,0 +1,316 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+    Default: hosting
+
+  AppName:
+    Type: String
+    Default: hosting-cloudfront
+
+  Cname:
+    Type: String
+    Default: oe.seapln-osr.pt-aws.wni.com
+
+  AcmCertificateArn:
+    Type: String
+    Default: arn:aws:acm:us-east-1:716990209761:certificate/a023e741-f306-4e67-8bf8-3dce03cb37f3
+
+  MapBucket:
+    Type: String
+    Default: wni-sea-mapwidget-ane1
+
+Resources:
+  CloudFront:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - !Ref 'Cname'
+        ViewerCertificate:
+          AcmCertificateArn: !Ref AcmCertificateArn
+          SslSupportMethod: sni-only
+        Enabled: true
+        HttpVersion: http2
+        PriceClass: PriceClass_All
+        Logging:
+          Bucket: !Sub ${LogBucket}.s3.amazonaws.com
+          Prefix: cloudfront/
+        Origins:
+          - Id: !Sub ${EnvironmentName}-${AppName}-s3
+            DomainName: !GetAtt Bucket.RegionalDomainName
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}
+          - Id: !Sub ${EnvironmentName}-${AppName}-authorizer
+            DomainName: !Sub
+              - ${Api}.execute-api.${AWS::Region}.amazonaws.com
+              - Api: {"Fn::ImportValue": !Sub "${EnvironmentName}-api-authorizer-Api"}
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols:
+                - TLSv1.2
+          - Id: !Sub ${EnvironmentName}-${AppName}-api-quicksight
+            DomainName: !Sub
+              - ${Api}.execute-api.${AWS::Region}.amazonaws.com
+              - Api: {"Fn::ImportValue": !Sub "${EnvironmentName}-api-quicksight-Api"}
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols:
+                - TLSv1.2
+          - Id: !Sub ${EnvironmentName}-${AppName}-api-s3proxy
+            DomainName: !Sub
+              - ${Api}.execute-api.${AWS::Region}.amazonaws.com
+              - Api: {"Fn::ImportValue": !Sub "${EnvironmentName}-api-s3proxy-Api"}
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols:
+                - TLSv1.2
+          - Id: !Sub ${EnvironmentName}-${AppName}-s3-map
+            DomainName: !Sub "${MapBucket}.s3.${AWS::Region}.amazonaws.com"
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          TargetOriginId: !Sub ${EnvironmentName}-${AppName}-s3
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          CachePolicyId: !Ref S3CachePolicy
+          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf
+          ViewerProtocolPolicy: redirect-to-https
+          Compress: true
+          TrustedKeyGroups:
+            - {"Fn::ImportValue": !Sub "${EnvironmentName}-infra-keypair-KeyGroup"}
+        CacheBehaviors:
+          - TargetOriginId: !Sub ${EnvironmentName}-${AppName}-s3
+            PathPattern: /public/*
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+            OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+          - TargetOriginId: !Sub ${EnvironmentName}-${AppName}-authorizer
+            PathPattern: /api/v1/auth/*
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachePolicyId: !Ref ApiCachePolicy
+            OriginRequestPolicyId: !Ref AuthorizerOriginRequestPolicy
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+          - TargetOriginId: !Sub ${EnvironmentName}-${AppName}-api-quicksight
+            PathPattern: /api/v1/quicksight
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachePolicyId: !Ref ApiCachePolicy
+            OriginRequestPolicyId: !Ref ApiOriginRequestPolicy
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+          - TargetOriginId: !Sub ${EnvironmentName}-${AppName}-api-s3proxy
+            PathPattern: /customer/*
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachePolicyId: !Ref ApiCachePolicy
+            OriginRequestPolicyId: !Ref ApiOriginRequestPolicy
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+          - TargetOriginId: !Sub ${EnvironmentName}-${AppName}-s3-map
+            PathPattern: /map/*
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachePolicyId: !Ref S3CachePolicy
+            OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            TrustedKeyGroups:
+              - {"Fn::ImportValue": !Sub "${EnvironmentName}-infra-keypair-KeyGroup"}
+          - TargetOriginId: !Sub ${EnvironmentName}-${AppName}-s3-map
+            PathPattern: /data/*
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachePolicyId: !Ref S3CachePolicy
+            OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            TrustedKeyGroups:
+              - {"Fn::ImportValue": !Sub "${EnvironmentName}-infra-keypair-KeyGroup"}
+
+  CloudFrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref AWS::StackName
+
+  S3CachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub ${EnvironmentName}-${AppName}-s3
+        DefaultTTL: 86400
+        MinTTL: 1
+        MaxTTL: 31536000
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: none
+          CookiesConfig:
+            CookieBehavior: whitelist
+            Cookies:
+              - cloudfront-policy
+              - cloudfront-signature
+              - cloudfront-key-pair-id
+          QueryStringsConfig:
+            QueryStringBehavior: none
+
+  ApiCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub ${EnvironmentName}-${AppName}-api
+        DefaultTTL: 86400
+        MinTTL: 0
+        MaxTTL: 31536000
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers:
+              - authorization
+          CookiesConfig:
+            CookieBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: none
+
+  AuthorizerOriginRequestPolicy:
+    Type: AWS::CloudFront::OriginRequestPolicy
+    Properties:
+      OriginRequestPolicyConfig:
+        Name: !Sub ${EnvironmentName}-${AppName}-authorizer
+        HeadersConfig:
+          HeaderBehavior: whitelist
+          Headers:
+            - origin
+        CookiesConfig:
+          CookieBehavior: whitelist
+          Cookies:
+            - cloudfront-policy
+            - cloudfront-signature
+            - cloudfront-key-pair-id
+        QueryStringsConfig:
+          QueryStringBehavior: none
+
+  ApiOriginRequestPolicy:
+    Type: AWS::CloudFront::OriginRequestPolicy
+    Properties:
+      OriginRequestPolicyConfig:
+        Name: !Sub ${EnvironmentName}-${AppName}-api
+        HeadersConfig:
+          HeaderBehavior: whitelist
+          Headers:
+            - origin
+        CookiesConfig:
+          CookieBehavior: none
+        QueryStringsConfig:
+          QueryStringBehavior: all
+
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub wni-${EnvironmentName}-${AppName}-${Region}
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      LifecycleConfiguration:
+        Rules:
+          - Id: !Sub ${EnvironmentName}-${AppName}-delete-multipart
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "*"
+            AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - HEAD
+              - GET
+            MaxAge: 3600
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Statement:
+          - Action: s3:GetObject
+            Effect: Allow
+            Resource:
+              - !Sub
+                - ${Bucket}/*
+                - Bucket: !GetAtt Bucket.Arn
+            Principal:
+              CanonicalUser: !GetAtt CloudFrontOriginAccessIdentity.S3CanonicalUserId
+
+  LogBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub wni-${EnvironmentName}-${AppName}-log-${Region}
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      LifecycleConfiguration:
+        Rules:
+          - Id: !Sub ${EnvironmentName}-${AppName}-delete-multipart
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+          - Id: !Sub ${EnvironmentName}-${AppName}-glacier-ir
+            Status: Enabled
+            Transitions:
+              - StorageClass: GLACIER_IR
+                TransitionInDays: 90
+
+Outputs:
+  CloudFront:
+    Value: !Ref CloudFront
+    Export:
+      Name: !Sub ${EnvironmentName}-${AppName}-CloudFront

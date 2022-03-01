@@ -1,0 +1,9 @@
+{
+    "Parameters": {
+        "DeploymentPreference": "Canary10Percent5Minutes",
+        "LogLevel": "info"
+    },
+    "Tags": {
+        "map-migrated": "d-server-038u5n84kol2jr"
+    }
+}

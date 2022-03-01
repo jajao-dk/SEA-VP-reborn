@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Region:
+    Type: String
+    Default: ane1
+
+  EnvironmentPrefix:
+    Type: String
+    Default: dev-with-wxtech
+
+  EnvironmentName:
+    Type: String
+    Default: dev-with-wxtech-template
+
+  CategoryName:
+    Type: String
+    Default: infra
+
+  AppName:
+    Type: String
+    Default: infra-security
+
+Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: lambda.amazonaws.com
+      Path: /
+      Policies:
+        - PolicyName: Database
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: DynamoDBAccess
+                Effect: Allow
+                Action: dynamodb:*
+                Resource: "*"
+              - Sid: S3Access
+                Effect: Allow
+                Action: s3:*
+                Resource: "*"
+        - PolicyName: DataLake
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: AthenaAccess
+                Effect: Allow
+                Action: athena:*
+                Resource: "*"
+              - Sid: GlueAccess
+                Effect: Allow
+                Action: glue:*
+                Resource: "*"
+        - PolicyName: EventDriven
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: EventsAccess
+                Effect: Allow
+                Action: events:*
+                Resource: "*"
+              - Sid: SNSAccess
+                Effect: Allow
+                Action: sns:*
+                Resource: "*"
+              - Sid: SQSAccess
+                Effect: Allow
+                Action: sqs:*
+                Resource: "*"
+        - PolicyName: Parameter
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: SecretManagerAccess
+                Effect: Allow
+                Action: secretmanager:*
+                Resource: "*"
+              - Sid: SSMAccess
+                Effect: Allow
+                Action: ssm:*
+                Resource: "*"
+        - PolicyName: Visualize
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: QuicksightAccess
+                Effect: Allow
+                Action: quicksight:*
+                Resource: "*"
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: {"Fn::ImportValue": !Sub "ibaws-vpcId-ibaws-system-vpc-${AWS::Region}"}
+      GroupDescription: Security Group
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+
+Outputs:
+  LambdaRole:
+    Value: !GetAtt LambdaRole.Arn
+    Export:
+      Name: !Sub ${EnvironmentName}-${AppName}-LambdaRole
+
+  SecurityGroup:
+    Value: !Ref SecurityGroup
+    Export:
+      Name: !Sub ${EnvironmentName}-${AppName}-SecurityGroup
