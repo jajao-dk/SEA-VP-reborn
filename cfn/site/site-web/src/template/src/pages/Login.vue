@@ -12,11 +12,11 @@ const { login } = useAuth()
           <div>
             <img
               src="/logo.svg"
-              class="mx-auto h-12 sm:h-24"
+              class="mx-auto h-40"
             >
           </div>
           <div class="text-gray-700 text-2xl">
-            <div>Support for construction and logistics</div>
+            <div>Carbon Intensity Monitoring</div>
             <div>powered by Weathernews</div>
           </div>
           <div>
