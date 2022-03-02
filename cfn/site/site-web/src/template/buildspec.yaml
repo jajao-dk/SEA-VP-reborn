@@ -7,7 +7,7 @@ env:
     AUTH0_IDENTIFIER: /$ENVIRONMENT_NAME/infra-resource/auth0/identifier
     MAPBOX_ACCESS_TOKEN: /$ENVIRONMENT_NAME/infra-resource/mapbox/access-token
   variables:
-    TARGET: public
+    TARGET: public/cim
 
 phases:
   install:
@@ -26,9 +26,9 @@ phases:
   build:
     commands:
       - echo Build `date`
-      - npm run build -- --base=/$TARGET/cim/
+      - npm run build -- --base=/$TARGET/
   post_build:
     commands:
       - echo PostBuild `date`
-      - aws s3 sync dist/ s3://$S3_BUCKET/$TARGET/cim/ --delete
-      - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/$TARGET/cim/*"
+      - aws s3 sync dist/ s3://$S3_BUCKET/$TARGET/ --delete
+      - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/$TARGET/*"
