@@ -4,7 +4,6 @@ import json
 from base64 import b64encode
 from datetime import datetime, timezone
 from http.cookies import SimpleCookie
-from typing import Any
 
 from aws_lambda_powertools.event_handler.api_gateway import (Response,
                                                              ResponseBuilder,
@@ -36,11 +35,6 @@ def encode_base64(val: bytes):
     return b64encode(val).replace(b'+', b'-').replace(b'=', b'_').replace(b'/', b'~')
 
 
-def check_user(event: APIGatewayProxyEvent, claims: dict[str, Any], user: dict[str, Any]):
-    # TODO: サービスを利用して良いUserIDかチェックする
-    return claims['sub'].startswith('google-apps|') or claims['sub'].startswith('auth0|')
-
-
 def create_signature(url: str, date_less_than: datetime, name: str):
     cf_signer = CloudFrontSigner(Env.CLOUDFRONT_PUBLIC_KEY_ID, rsa_signer)
     policy = cf_signer.build_policy(url, date_less_than).encode()
@@ -70,8 +64,6 @@ def set_signed_cookie(event: APIGatewayProxyEvent):
     authorizer = event.request_context.authorizer
     claims = json.loads(authorizer['claims'])
     user = json.loads(authorizer['user'])
-    if not check_user(event, claims, user):
-        return Response(403, 'text/plain', 'Forbidden'), [], 'max-age=0'
 
     expires = int(claims.get('iat', 0)) + Env.COOKIE_EXPIRES_IN
     policy_64, signature_64 = create_signature(
