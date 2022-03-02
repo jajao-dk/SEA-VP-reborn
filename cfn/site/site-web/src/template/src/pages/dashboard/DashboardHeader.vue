@@ -14,7 +14,7 @@ watch(toRef(route, 'name'), () => { store.close() })
 <template>
   <div class="flex border-b-2 border-gray-200">
    <!--  <div class="container mx-auto h-16 relative"> -->
-     <div class="container mx-auto h-12 relative">
+     <div class="flex-auto px-4 h-12 relative">
       <div class="h-full flex items-center">
         <div class="flex-1">
           <div class="flex gap-4">
@@ -37,7 +37,7 @@ watch(toRef(route, 'name'), () => { store.close() })
               </div>
               <div class="flex-col space-y-0">
                 <div class="font-bold">
-                  Support for construction and logistics
+                  Carbon Intensity Monitoring
                 </div>
                 <div class="text-xs">
                   powered by Weathernews
