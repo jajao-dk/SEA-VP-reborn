@@ -88,7 +88,7 @@ def set_signed_cookie(event: APIGatewayProxyEvent):
     return (
         Response(200, 'application/json', json.dumps({el: user[el] for el in Env.RESPONSE_KEYS if el in user}, separators=(',', ':'))),
         [el.output().replace('Set-Cookie: ', '') for _, el in cookie.items()],
-        'max-age=600'
+        'max-age=0'
     )
 
 
