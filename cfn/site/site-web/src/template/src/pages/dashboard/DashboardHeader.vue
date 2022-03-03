@@ -72,7 +72,7 @@ watch(toRef(route, 'name'), () => { store.close() })
       >
         <div class="bg-white overflow-hidden rounded shadow">
           <div class="flex flex-col text-base text-gray-500">
-            <router-link
+            <!-- <router-link
               class="px-4 py-2 hover:bg-gray-200 cursor-pointer flex items-center gap-2"
               to="/profile"
             >
@@ -82,7 +82,7 @@ watch(toRef(route, 'name'), () => { store.close() })
               <span>
                 Profile
               </span>
-            </router-link>
+            </router-link> -->
             <a
               class="px-4 py-2 hover:bg-gray-200 cursor-pointer flex items-center gap-2"
               @click="logout()"
