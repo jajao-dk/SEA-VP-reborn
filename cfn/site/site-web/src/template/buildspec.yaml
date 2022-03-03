@@ -6,6 +6,8 @@ env:
     AUTH0_CLIENT_ID: /$ENVIRONMENT_NAME/infra-resource/auth0/client-id
     AUTH0_IDENTIFIER: /$ENVIRONMENT_NAME/infra-resource/auth0/identifier
     MAPBOX_ACCESS_TOKEN: /$ENVIRONMENT_NAME/infra-resource/mapbox/access-token
+    GTAG_GA4_MEASUREMENT_ID: /$ENVIRONMENT_NAME/infra-resource/googleanalytics/ga4-measurement-id
+    GTAG_UA_MEASUREMENT_ID: /$ENVIRONMENT_NAME/infra-resource/googleanalytics/ua-measurement-id
   variables:
     TARGET: public/cim
 
@@ -23,6 +25,8 @@ phases:
       - sed -i "s#__AUTH0_CLIENT_ID__#$AUTH0_CLIENT_ID#" .env.production
       - sed -i "s#__AUTH0_IDENTIFIER__#$AUTH0_IDENTIFIER#" .env.production
       - sed -i "s#__MAPBOX_ACCESS_TOKEN__#$MAPBOX_ACCESS_TOKEN#" .env.production
+      - sed -i "s#__GTAG_GA4_MEASUREMENT_ID__#$GTAG_GA4_MEASUREMENT_ID#" .env.production
+      - sed -i "s#__GTAG_UA_MEASUREMENT_ID__#$GTAG_UA_MEASUREMENT_ID#" .env.production
   build:
     commands:
       - echo Build `date`
