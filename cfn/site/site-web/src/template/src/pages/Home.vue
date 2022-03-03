@@ -18,7 +18,7 @@ const { getToken, getUser } = useAuth()
 onMounted(async () => {
   const token = await getToken()
   const res = await axios.get('/api/v1/quicksight', { headers: { Authorization: `Bearer ${token}` } })
-  
+
   const options = {
     url: res.data.EmbedUrl,
     container: container.value,
@@ -52,7 +52,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div 
+  <div
     ref="container"
     class="h-full"
   />
