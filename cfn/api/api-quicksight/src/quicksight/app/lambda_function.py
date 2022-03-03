@@ -27,12 +27,12 @@ def check_user(event: APIGatewayProxyEvent, claims: dict[str, Any], user: dict[s
 @api_handler(validation_handler=check_user)
 def get_embed_url(event: APIGatewayProxyEvent):
     user = event.request_context.authorizer['user']
-    if 'oe' not in user:
+    if 'cim' not in user:
         return Response(403, 'text/plain', 'Forbidden')
 
-    name_space = user.get('oe',{}).get('qs_ns',None)
-    user_name = user.get('oe',{}).get('qs_user',None)
-    dashboard_id = user.get('oe',{}).get('qs_did',None)
+    name_space = user.get('cim',{}).get('qs_ns',None)
+    user_name = user.get('cim',{}).get('qs_user',None)
+    dashboard_id = user.get('cim',{}).get('qs_did',None)
     if not (name_space and user_name and dashboard_id) :
         return Response(403, 'text/plain', 'Forbidden')
 
