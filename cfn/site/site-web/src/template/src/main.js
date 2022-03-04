@@ -8,10 +8,13 @@ import 'tailwindcss/tailwind.css'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './scripts/mapbox'
 import './assets/font'
+import { gtagConfig } from './scripts/gtag'
+import VueGtag from 'vue-gtag'
 
 const app = createApp(App)
 app.use(createPinia())
 app.use(auth)
 app.use(router)
+app.use(VueGtag, gtagConfig)
 app.component('FontAwesomeIcon', FontAwesomeIcon)
 app.mount('#app')
