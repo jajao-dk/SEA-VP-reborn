@@ -37,23 +37,38 @@ def get_user(auth0, user_id):
     user=auth0.users.get(user_id)
     print(json.dumps(user))
 
-def add_user(auth0, file):
+def add_user(auth0, email):
     print("add")
-    userdata={}
-    with open(file, 'r') as f:
-        userdata=json.load(f)
-    userdata['user_id']=userdata['email']
-    userdata['username']=re.sub('@','#a#',userdata['email'])
-    userdata['password']=generate_password()
-    userdata['connection']='Username-Password-Authentication'
-    userdata['email_verified']=True
-    userdata['blocked']=False
-    # print(userdata)
+    user_id=email.lower()
+    password=generate_password()
+    username=re.sub('@','#a#',email)
+
+    userdata={
+        "user_id": user_id,
+        "email": email,
+        "name": email,
+        "username": username,
+        "password": password,
+        "connection": "Username-Password-Authentication",
+        "email_verified": True,
+        "blocked": False,
+        "user_metadata": {
+            "lang": "en"
+        },
+        "app_metadata": {
+            "plannings": [
+                "SEA"
+            ],
+            "applications": [
+                "CIM"
+            ]
+        }
+    }
     try:
         user = auth0.users.create(userdata)
         print(user)
         user_id = user.get('user_id')
-        print(f'user_id:{user_id}, password:{userdata["password"]}')
+        print(f'user_id:{user_id}, email:{email}, password:{userdata["password"]}')
     except Exception as error:
         print(error)
 
@@ -85,11 +100,9 @@ def main():
     parser.add_argument("--file",      help="user json file: necessary for add and update")
     parser.add_argument("--user_id",   help="user_id : necessary for get and update")
     parser.add_argument("--client_id", help="client_id : necessary for send verification mail")
-
+    parser.add_argument("--email",     help="email : necessary for add")
     args=parser.parse_args()
 
-    # print(args.mode)
-    # print(args)
     mgmt_api_token = get_access_token(AUTH0_DOMAIN,AUTH0_CLIENT_ID,AUTH0_CLIENT_SECRET)
     auth0 = Auth0(AUTH0_DOMAIN, mgmt_api_token)
 
@@ -98,7 +111,7 @@ def main():
     elif(args.command == 'get'):
         get_user(auth0, args.user_id)
     elif(args.command == 'add'):
-        add_user(auth0, args.file)
+        add_user(auth0, args.email)
     elif(args.command == 'send_verification_mail'):
         send_verification_mail(auth0, args.user_id, args.client_id)
     else:
