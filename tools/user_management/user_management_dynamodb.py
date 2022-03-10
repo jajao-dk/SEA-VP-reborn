@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import boto3
+import re
 from boto3.session import Session
 
 PROFILE_PREFIX='sea_vp_'
@@ -25,6 +26,9 @@ def add_user(table,env,user_id,customer_id,qs_user):
     qs_prefix=''
     if(env == 'dev' or env == 'stg') :
         qs_prefix= f'{env}-'
+
+    if qs_user == None:
+        qs_user = re.sub(r"^auth0\|", "", user_id)
 
     userdata={
       "uid": user_id,
@@ -88,7 +92,7 @@ def main():
     elif(args.command == 'get'):
         get_user(table,args.user_id)
     elif(args.command == 'add'):
-        add_user(table,args.env,args.user_id,args.customer_id,args.qs_user)
+        add_user(table,args.env,args.user_id,args.customer_id,args.qs_user or None)
     elif(args.command == 'upd'):
         update_user(table,args.file)
     elif(args.command == 'del'):
