@@ -31,13 +31,13 @@ watch(toRef(route, 'name'), () => { store.close() })
             >
               <div>
                 <img
-                  src="/logo.svg"
+                  src="/sailingship.svg"
                   class="h-10"
                 >
               </div>
               <div class="flex-col space-y-0">
                 <div class="font-bold">
-                  Carbon Intensity Monitoring
+                  SAFETY STATUS MONITORING Lite-version
                 </div>
                 <div class="text-xs">
                   powered by Weathernews
