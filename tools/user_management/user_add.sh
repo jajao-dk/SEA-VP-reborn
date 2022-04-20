@@ -12,7 +12,8 @@ if [ "$#" -eq 3 ]; then
     read -p "ok? (y/N): " yn
     case "$yn" in [yY]*) ;; *) echo "abort." ; exit ;; esac
 
-    USER_ID="auth0|${EMAIL}"
+    EMAIL_LC=`echo ${EMAIL}|tr [A-Z] [a-z]`
+    USER_ID="auth0|${EMAIL_LC}"
 
     #
     ./user_management_auth0.py add --email ${EMAIL}
