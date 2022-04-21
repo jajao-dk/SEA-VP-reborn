@@ -34,6 +34,10 @@ Parameters:
     Type: Number
     Default: 30
 
+  QuickSightEnvironmentPrefix:
+    Type: String
+    Default: dev-
+
 Globals:
   Function:
     Runtime: python3.8
@@ -152,6 +156,7 @@ Resources:
       Environment:
         Variables:
           AWS_ACCOUNT_ID: !Ref AWS::AccountId
+          QUICKSIGHT_ENV_PREFIX: !Ref QuickSightEnvironmentPrefix
       Events:
         QuicksightGet:
           Type: Api
