@@ -1,0 +1,13 @@
+{
+    "Parameters": {
+        "LogLevel": "info",
+        "SlackUserName": "WithWxTechTemplate",
+        "SlackIconEmoji": ":moji_ng:",
+        "AlertLevel": "info,warning,error,critical",
+        "Timezone": "Asia/Tokyo"
+    },
+    "Tags": {
+        "map-migrated": "d-server-038u5n84kol2jr"
+    }
+}
+

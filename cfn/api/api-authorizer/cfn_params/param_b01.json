@@ -1,0 +1,10 @@
+{
+    "Parameters": {
+        "DeploymentPreference": "Canary10Percent5Minutes",
+        "LogLevel": "info",
+        "CookieExpiresIn": "2592000"
+    },
+    "Tags": {
+        "map-migrated": "d-server-038u5n84kol2jr"
+    }
+}
