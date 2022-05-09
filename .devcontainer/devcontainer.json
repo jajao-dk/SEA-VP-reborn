@@ -13,7 +13,7 @@
         "ms-toolsai.jupyter-renderers",
         "ms-python.vscode-pylance",
         "ms-python.python",
-        "johnsoncodehk.volar",
+        "vue.volar",
         "redhat.vscode-yaml"
     ],
 

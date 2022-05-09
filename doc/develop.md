@@ -18,7 +18,7 @@ Docker/Mutagen(Mutage Compose)/mkcertがインストールされていること
   mkcert \
     -cert-file /path/to/docker/certs/localhost.pem \
     -key-file /path/to/docker/certs/localhost-key.pem \
-    localhost 127.0.0.1 ::1
+    dev.localhost localhost 127.0.0.1 ::1
   ```
 
 ### 開発コンテナのビルド
@@ -47,6 +47,12 @@ mutagen-compose up -d
 
 ### 開発環境の立ち上げ
 VSCodeで`/path/to`ディレクトリを開き、`Open Folder in Container`を実行する
+
+VSCodeコンテナ内で、 
+- cd `/path/to/`cfn/site/site-web/src/template/
+- npm install (必要に応じて)
+- npm run dev
+- https://dev.localhost:3000/
 
 ## Customize
 ### ランタイムのバージョンを変更する

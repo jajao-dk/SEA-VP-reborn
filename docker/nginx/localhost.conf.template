@@ -11,10 +11,12 @@ server {
     ssl_certificate_key  /etc/pki/tls/certs/localhost-key.pem;
 
     location /api/ {
+	proxy_ssl_server_name on;
         proxy_pass         https://$CLOUD_FRONT_DOMAIN/api/;
     }
 
     location /customer/ {
+	proxy_ssl_server_name on;
         proxy_pass         https://$CLOUD_FRONT_DOMAIN/customer/;
     }
 
