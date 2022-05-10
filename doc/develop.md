@@ -48,11 +48,13 @@ mutagen-compose up -d
 ### 開発環境の立ち上げ
 VSCodeで`/path/to`ディレクトリを開き、`Open Folder in Container`を実行する
 
-VSCodeコンテナ内で、 
-- cd `/path/to/`cfn/site/site-web/src/template/
-- npm install (必要に応じて)
-- npm run dev
-- https://dev.localhost:3000/
+VSCodeコンテナ内で、
+``` 
+cd cfn/site/site-web/src/template/
+npm install (必要に応じて)
+npm run dev
+https://dev.localhost:3000/
+```
 
 ## Customize
 ### ランタイムのバージョンを変更する
