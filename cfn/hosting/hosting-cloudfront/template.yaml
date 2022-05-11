@@ -79,6 +79,14 @@ Resources:
               OriginProtocolPolicy: https-only
               OriginSSLProtocols:
                 - TLSv1.2
+          - Id: !Sub ${EnvironmentName}-${AppName}-api-onpreproxy
+            DomainName: !Sub
+              - ${Api}.execute-api.${AWS::Region}.amazonaws.com
+              - Api: {"Fn::ImportValue": !Sub "${EnvironmentName}-api-onpreproxy-Api"}
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols:
+                - TLSv1.2
           - Id: !Sub ${EnvironmentName}-${AppName}-s3-map
             DomainName: !Sub "${MapBucket}.s3.${AWS::Region}.amazonaws.com"
             S3OriginConfig:
@@ -137,6 +145,18 @@ Resources:
             OriginRequestPolicyId: !Ref ApiOriginRequestPolicy
             ViewerProtocolPolicy: redirect-to-https
             Compress: true
+          - TargetOriginId: !Sub ${EnvironmentName}-${AppName}-api-onpreproxy
+            PathPattern: /api/v1/onpreproxy
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachePolicyId: !Ref ApiOnpreproxyCachePolicy
+            OriginRequestPolicyId: !Ref ApiOriginRequestPolicy
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            TrustedKeyGroups:
+              - {"Fn::ImportValue": !Sub "${EnvironmentName}-infra-keypair-KeyGroup"}
           - TargetOriginId: !Sub ${EnvironmentName}-${AppName}-s3-map
             PathPattern: /map/*
             AllowedMethods:
@@ -209,6 +229,28 @@ Resources:
             CookieBehavior: none
           QueryStringsConfig:
             QueryStringBehavior: none
+
+  ApiOnpreproxyCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub ${EnvironmentName}-${AppName}-apionpreproxy
+        DefaultTTL: 86400
+        MinTTL: 1
+        MaxTTL: 31536000
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: none
+          CookiesConfig:
+            CookieBehavior: whitelist
+            Cookies:
+              - cloudfront-policy
+              - cloudfront-signature
+              - cloudfront-key-pair-id
+          QueryStringsConfig:
+            QueryStringBehavior: all
 
   AuthorizerOriginRequestPolicy:
     Type: AWS::CloudFront::OriginRequestPolicy
