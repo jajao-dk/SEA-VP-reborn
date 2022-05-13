@@ -34,6 +34,10 @@ Parameters:
     Type: Number
     Default: 30
 
+  VpOnpreUrl:
+    Type: String
+    Default: http://pt-vpportinfo01-vmg.wni.co.jp
+
 Globals:
   Function:
     Runtime: python3.8
@@ -143,6 +147,10 @@ Resources:
         Type: !Ref DeploymentPreference
         Alarms:
           - !Ref FunctionErrorsAlarm
+      Environment:
+        Variables:
+          AWS_ACCOUNT_ID: !Ref AWS::AccountId
+          VP_ONPRE_URL: !Ref VpOnpreUrl
       Events:
         OnpreproxyGet:
           Type: Api
@@ -150,7 +158,25 @@ Resources:
             RestApiId: !Ref Api
             Method: GET
             Path: /v1/onpreproxy
-
+            RequestParameters:
+            - method.request.querystring.client_code:
+                Required: false
+                Caching: false
+            - method.request.querystring.port_code:
+                Required: false
+                Caching: false
+            - method.request.querystring.term:
+                Required: false
+                Caching: false
+            - method.request.querystring.exclude_schedule:
+                Required: false
+                Caching: false
+            - method.request.querystring.type:
+                Required: false
+                Caching: false
+            - method.request.querystring.onpre_endpoint:
+                Required: true
+                Caching: false
   FunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:

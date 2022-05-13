@@ -235,14 +235,16 @@ Resources:
     Properties:
       CachePolicyConfig:
         Name: !Sub ${EnvironmentName}-${AppName}-apionpreproxy
-        DefaultTTL: 86400
+        DefaultTTL: 300
         MinTTL: 1
-        MaxTTL: 31536000
+        MaxTTL: 600
         ParametersInCacheKeyAndForwardedToOrigin:
           EnableAcceptEncodingBrotli: true
           EnableAcceptEncodingGzip: true
           HeadersConfig:
-            HeaderBehavior: none
+            HeaderBehavior: whitelist
+            Headers:
+              - Accept-Language
           CookiesConfig:
             CookieBehavior: whitelist
             Cookies:

@@ -1,7 +1,8 @@
 {
     "Parameters": {
         "DeploymentPreference": "Canary10Percent5Minutes",
-        "LogLevel": "info"
+        "LogLevel": "info",
+        "VpOnpreUrl": "http://vpportinfovs.wni.co.jp"
     },
     "Tags": {
         "map-migrated": "d-server-038u5n84kol2jr"

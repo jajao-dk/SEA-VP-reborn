@@ -13,13 +13,22 @@ from botocore.exceptions import ClientError
 
 from .utils.handler import api_handler
 from .values import Env
+from .utils.get_port_schedule import get_port_schedule
+from .utils.get_gpf_content import get_gpf_content
 
 logger = Logger()
 app = ApiGatewayResolver(ProxyEventType.APIGatewayProxyEvent)
 
 @api_handler()
 def get_content(event: APIGatewayProxyEvent):
+    query_parameters = event['queryStringParameters']
     try:
+        domain = Env.VP_ONPRE_URL
+        onpre_endpoint = query_parameters['onpre_endpoint']
+        if onpre_endpoint == 'port_schedule':
+            return get_port_schedule(query_parameters, domain)
+        if onpre_endpoint == 'gpf_content':
+            return get_gpf_content(query_parameters, domain)
         return Response(200, 'text/plain', 'OK')
     except ClientError as error:
         code = error.response['Error']['Code']

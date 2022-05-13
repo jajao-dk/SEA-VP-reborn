@@ -1,7 +1,8 @@
 {
     "Parameters": {
         "DeploymentPreference": "AllAtOnce",
-        "LogLevel": "debug"
+        "LogLevel": "debug",
+        "VpOnpreUrl": "http://pt-vpportinfo01-vmg.wni.co.jp"
     },
     "Tags": {
         "map-migrated": "d-server-00ofs92gm4wvoj"
