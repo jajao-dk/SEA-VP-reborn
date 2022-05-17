@@ -21,8 +21,8 @@ const { login } = useAuth()
           </div>
           <div>
             <button
-              class="px-8 py-2 bg-blue-500 hover:bg-blue-700 rounded text-white text-xl"
               id="login-btn"
+              class="px-8 py-2 bg-blue-500 hover:bg-blue-700 rounded text-white text-xl"
               @click="login()"
             >
               Login
