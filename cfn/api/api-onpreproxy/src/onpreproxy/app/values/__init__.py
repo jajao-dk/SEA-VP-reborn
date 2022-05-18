@@ -17,7 +17,7 @@ class ConstType(NamedTuple):
 
 class EnvType(NamedTuple):
     AWS_REGION = get_env('AWS_REGION', str)
-    ONPRE_ENV = get_env('ONPRE_ENV', str)
+    VP_ONPRE_URL = get_env('VP_ONPRE_URL', str)
 
 
 Const = ConstType()

@@ -23,12 +23,12 @@ app = ApiGatewayResolver(ProxyEventType.APIGatewayProxyEvent)
 def get_content(event: APIGatewayProxyEvent):
     query_parameters = event['queryStringParameters']
     try:
-        domain = Env.VP_ONPRE_URL
+        url = Env.VP_ONPRE_URL
         onpre_endpoint = query_parameters['onpre_endpoint']
         if onpre_endpoint == 'port_schedule':
-            return get_port_schedule(query_parameters, domain)
+            return get_port_schedule(query_parameters, url)
         if onpre_endpoint == 'gpf_content':
-            return get_gpf_content(query_parameters, domain)
+            return get_gpf_content(query_parameters, url)
         return Response(200, 'text/plain', 'OK')
     except ClientError as error:
         code = error.response['Error']['Code']
