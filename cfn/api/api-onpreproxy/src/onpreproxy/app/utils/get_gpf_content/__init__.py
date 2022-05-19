@@ -27,7 +27,7 @@ def get_gpf_content(query, url):
             'port_code':port_code,
             'client_code':client_code
         }
-        response = requests.get(full_url, params=payload)
+        response = requests.get(full_url, params=payload, timeout=10)
         print(f"Body: {response.content}")
         # file_typeにより返し方を変える。
         if (file_type == "pdf"):

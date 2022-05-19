@@ -28,7 +28,7 @@ def get_port_schedule(query, url):
             'port_code':port_code,
             'client_code':client_code
         }
-        response = requests.get(full_url, params=payload)
+        response = requests.get(full_url, params=payload, timeout=10)
         print(f"Body: {response.content}")
         return [200, 'application/json' ,response.content]
     except:
