@@ -1,8 +1,18 @@
-import json
 import requests
-import base64
-from aws_lambda_powertools.event_handler.api_gateway import (Response)
 
+"""
+@Param
+  query {object}:
+    'type': 'txt', 'pdf'
+    'term': '48h','5d','7d'
+    'port_code': port_code, ex 'ANC'
+    'client_code': 'WNI'
+  url {str}: wni vp onpre url
+@Return {Array}
+  [0] {str}: HTTP status code
+  [1] {str}: MINE Type
+  [2] {str}: Body
+"""
 def get_gpf_content(query, url):
     try:
         client_code = query['client_code']
@@ -22,18 +32,10 @@ def get_gpf_content(query, url):
         # file_typeにより返し方を変える。
         if (file_type == "pdf"):
             print('pdfで返す')  
-            return Response(200, 'application/pdf',response.content)
+            return [200, 'application/pdf',response.content]
         elif (file_type == "txt"):
             print('txtで返す')
-            return Response(200, 'text/plain',response.content , {'charset':'UTF-8'})
-        return {
-            'headers': { "Content-Type": "text/plain; charset=UTF-8" },
-            'statusCode': 500,
-            'body': 'file type ERROR'
-        }
+            return [200, 'text/plain',response.content]
+        return [500, 'text/plain','file type ERROR']
     except:
-        return {
-              'headers': { "Content-Type": "text/plain; charset=UTF-8" },
-              'statusCode': 500,
-              'body': 'file type ERROR'
-          }
+        return [500, 'text/plain','file type ERROR']

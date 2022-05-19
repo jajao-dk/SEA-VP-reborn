@@ -1,8 +1,18 @@
-import json
 import requests
-import base64
-from aws_lambda_powertools.event_handler.api_gateway import (Response)
 
+"""
+@Param
+  query {object}:
+    'term': '48h','5d','7d'
+    'port_code': port_code, ex 'ANC'
+    'client_code': 'WNI'
+    'exclude_schedule': True
+  url {str}: wni vp onpre url
+@Return {Array}
+  [0] {str}: HTTP status code
+  [1] {str}: MINE Type
+  [2] {str}: Body
+"""
 def get_port_schedule(query, url):
     try:
         client_code = query['client_code']
@@ -20,6 +30,6 @@ def get_port_schedule(query, url):
         }
         response = requests.get(full_url, params=payload)
         print(f"Body: {response.content}")
-        return Response(200, 'application/json' ,response.content , {'charset':'UTF-8'})
+        return [200, 'application/json' ,response.content]
     except:
-        return Response(500, 'text/plain', 'file type ERROR')
+        return [500, 'text/plain', 'file type ERROR']

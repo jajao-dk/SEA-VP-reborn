@@ -22,20 +22,19 @@ app = ApiGatewayResolver(ProxyEventType.APIGatewayProxyEvent)
 @api_handler()
 def get_content(event: APIGatewayProxyEvent):
     query_parameters = event['queryStringParameters']
+    response = [404, 'text/plain', 'NotFound']
     try:
         url = Env.VP_ONPRE_URL
         onpre_endpoint = query_parameters['onpre_endpoint']
         if onpre_endpoint == 'port_schedule':
-            return get_port_schedule(query_parameters, url)
+            response = get_port_schedule(query_parameters, url)
         if onpre_endpoint == 'gpf_content':
-            return get_gpf_content(query_parameters, url)
-        return Response(200, 'text/plain', 'OK')
+            response = get_gpf_content(query_parameters, url)
     except ClientError as error:
         code = error.response['Error']['Code']
         if code in ['NoSuchKey', 'AccessDenied']:
-            return Response(404, 'text/plain', 'NotFound')
-
-        raise error
+            response = [404, 'text/plain', 'Happened Error']
+    return Response(response[0], response[1], response[2])
 
 
 @app.get('.+')
