@@ -159,7 +159,7 @@ function init () {
 
 function check_env () {
     if [ $# -lt 1 ]; then
-        echo "need EnvironmentName[dev|stg|prd]"
+        echo "need EnvironmentName[dev|stg|b01|prd]"
         exit 1
     fi
 
@@ -168,6 +168,10 @@ function check_env () {
         EnvironmentPrefix=${Planning}
         EnvironmentName=${Project}
         Profile="${ProfilePrefix}_prd"
+    elif [ "$ParamEnvironment" = "b01" ]; then
+        EnvironmentPrefix="b01-${Planning}"
+        EnvironmentName="b01-${Project}"
+        Profile="${ProfilePrefix}_b01"
     elif [ "$ParamEnvironment" = "stg" ]; then
         EnvironmentPrefix="stg-${Planning}"
         EnvironmentName="stg-${Project}"
@@ -177,14 +181,14 @@ function check_env () {
         EnvironmentName="dev-${Project}"
         Profile="${ProfilePrefix}_dev"
     else
-        echo "need EnvironmentName[dev|stg|prd]"
+        echo "need EnvironmentName[dev|stg|b01|prd]"
         exit 1
     fi
 }
 
 function check_env_region () {
     if [ $# -lt 2 ]; then
-        echo "need EnvironmentName[dev|stg|prd] DeployRegion[ane1|use1|..etc]"
+        echo "need EnvironmentName[dev|stg|b01|prd] DeployRegion[ane1|use1|..etc]"
         exit 1
     fi
 
@@ -193,6 +197,10 @@ function check_env_region () {
         EnvironmentPrefix=${Planning}
         EnvironmentName=${Project}
         Profile="${ProfilePrefix}_prd"
+    elif [ "$ParamEnvironment" = "b01" ]; then
+        EnvironmentPrefix="b01-${Planning}"
+        EnvironmentName="b01-${Project}"
+        Profile="${ProfilePrefix}_b01"
     elif [ "$ParamEnvironment" = "stg" ]; then
         EnvironmentPrefix="stg-${Planning}"
         EnvironmentName="stg-${Project}"
@@ -202,7 +210,7 @@ function check_env_region () {
         EnvironmentName="dev-${Project}"
         Profile="${ProfilePrefix}_dev"
     else
-        echo "need EnvironmentName[dev|stg|prd] DeployRegion[ane1|use1|..etc]"
+        echo "need EnvironmentName[dev|stg|b01|prd] DeployRegion[ane1|use1|..etc]"
         exit 1
     fi
 

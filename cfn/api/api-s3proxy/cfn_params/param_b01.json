@@ -2,7 +2,7 @@
     "Parameters": {
         "DeploymentPreference": "Canary10Percent5Minutes",
         "LogLevel": "info",
-        "QuickSightEnvironmentPrefix": ""
+        "CustomerDataBucket": "b01-wni-sea-business-vp-ane1"
     },
     "Tags": {
         "map-migrated": "d-server-038u5n84kol2jr"

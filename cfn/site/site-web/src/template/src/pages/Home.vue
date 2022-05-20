@@ -37,8 +37,7 @@ onMounted(async () => {
 
   // GA4用の記述
   gtagSet('user_id', user.email)
-  gtagSet('login_id', user.email)
-  gtagSet('customer_id', user.customer_ids?.[0])
+  gtagSet('user_properties', {login_id: user.email, customer_id: user.customer_ids?.[0]})
 
   // UA用の記述
   gtagCustomMap('dimension1', 'login_id')

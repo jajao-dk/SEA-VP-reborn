@@ -24,7 +24,7 @@ def add_user(table,env,user_id,customer_id,qs_user):
     print("add")
 
     qs_prefix=''
-    if(env == 'dev' or env == 'stg') :
+    if(env != 'prd') :
         qs_prefix= f'{env}-'
 
     if qs_user == None:
@@ -71,7 +71,7 @@ def delete_user(table,user_id):
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument("env",           choices=["dev","stg","prd"])
+    parser.add_argument("env",           choices=["dev","stg","prd","b01"])
     parser.add_argument("command",       choices=["list","get","add","del"])
     parser.add_argument("--file",        help="user json file: necessary for update")
     parser.add_argument("--user_id",     help="user_id : necessary for get,add,update")
@@ -81,7 +81,7 @@ def main():
 
     profile_name=f'{PROFILE_PREFIX}{args.env}'
     table_name=TABLENAME_BASE
-    if(args.env == 'dev' or args.env == 'stg') :
+    if(args.env != 'prd'):
         table_name = f'{args.env}-{TABLENAME_BASE}'
 
     session=Session(profile_name=profile_name)

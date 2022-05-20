@@ -1,8 +1,8 @@
 #! /bin/sh
 
 ENV=$1
-EMAIL=$2
-CUSTOMER_ID=$3
+CUSTOMER_ID=$2
+EMAIL=$3
 
 if [ "$#" -eq 3 ]; then
     echo "ENV        : " ${ENV}
@@ -12,7 +12,8 @@ if [ "$#" -eq 3 ]; then
     read -p "ok? (y/N): " yn
     case "$yn" in [yY]*) ;; *) echo "abort." ; exit ;; esac
 
-    USER_ID="auth0|${EMAIL}"
+    EMAIL_LC=`echo ${EMAIL}|tr [A-Z] [a-z]`
+    USER_ID="auth0|${EMAIL_LC}"
 
     #
     ./user_management_auth0.py add --email ${EMAIL}
@@ -21,7 +22,7 @@ if [ "$#" -eq 3 ]; then
     ./user_management_dynamodb.py ${ENV} get --user_id "${USER_ID}" |jq .
 
 else
-    echo "Usage: $0 <ENV> <EMAIL> <CUSTOMER_ID>"
+    echo "Usage: $0 <ENV> <CUSTOMER_ID> <EMAIL>"
     exit
 fi
 

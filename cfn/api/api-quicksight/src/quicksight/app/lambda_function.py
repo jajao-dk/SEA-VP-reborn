@@ -27,12 +27,31 @@ def check_user(event: APIGatewayProxyEvent, claims: dict[str, Any], user: dict[s
 @api_handler(validation_handler=check_user)
 def get_embed_url(event: APIGatewayProxyEvent):
     user = event.request_context.authorizer['user']
-    if 'cim' not in user:
-        return Response(403, 'text/plain', 'Forbidden')
+    claims = event.request_context.authorizer['claims']
+    params = event.get('queryStringParameters')
+    if params==None: params = {}
 
-    name_space = user.get('cim',{}).get('qs_ns',None)
-    user_name = user.get('cim',{}).get('qs_user',None)
-    dashboard_id = user.get('cim',{}).get('qs_did',None)
+    name_space=None
+    dashboard_id=None
+    user_name=None
+    if(params.get('application','') == 'SSM'):
+        customer_id=params.get('customer_id','')
+        customer_ids=user.get('customer_ids',[])
+        applications=claims.get('https://weathernews.com/app_metadata',{}).get('applications',[])
+        if ('SSM' not in  applications) \
+            or (customer_id not in customer_ids) :
+            return Response(403, 'text/plain', 'Forbidden')
+        name_space = f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-namespace-sea-vp-{customer_id}'
+        dashboard_id=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-dashboard-sea-vp-ssm-{customer_id}'
+        user_name=params.get('user_id',
+            claims.get('app_metadata',{}).get('https://weathernews.com/email',None))
+    else:
+        if 'cim' not in user:
+            return Response(403, 'text/plain', 'Forbidden')
+        name_space = user.get('cim',{}).get('qs_ns',None)
+        dashboard_id = user.get('cim',{}).get('qs_did',None)
+        user_name = user.get('cim',{}).get('qs_user',None)
+
     if not (name_space and user_name and dashboard_id) :
         return Response(403, 'text/plain', 'Forbidden')
 

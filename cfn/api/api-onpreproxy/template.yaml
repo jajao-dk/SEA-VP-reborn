@@ -20,7 +20,7 @@ Parameters:
 
   AppName:
     Type: String
-    Default: api-quicksight
+    Default: api-onpreproxy
 
   DeploymentPreference:
     Type: String
@@ -34,9 +34,9 @@ Parameters:
     Type: Number
     Default: 30
 
-  QuickSightEnvironmentPrefix:
+  VpOnpreUrl:
     Type: String
-    Default: dev-
+    Default: http://pt-vpportinfo01-vmg.wni.co.jp
 
 Globals:
   Function:
@@ -69,26 +69,20 @@ Resources:
         Type: REGIONAL
       AccessLogSetting:
         DestinationArn: !GetAtt ApiLogGroup.Arn
-        Format: '{"apiId":"$context.apiId","requestId":"$context.requestId","userId":"$context.authorizer.principalId","method":"$context.httpMethod","path":"$context.path","sourceIp":"$context.identity.sourceIp","userAgent":"$context.identity.userAgent","status":"$context.status","wafStatus":"$context.waf.status","authorizerStatus":"$context.authorizer.status","integrationStatus":"$context.integration.status","latency":"$context.responseLatency","wafLatency":"$context.waf.latency","authorizerLatency":"$context.authorizer.latency","integrationLatency":"$context.integration.latency","requestTime":"$context.requestTime","requestTimeEpoch":"$context.requestTimeEpoch","length":"$context.responseLength","errorType":"$context.error.responseType","error":"$context.error.message","wafError":"$context.waf.error","authorizerError":"$context.authorizer.error","integrationError":"$context.integration.error"}'
+        Format: '{"apiId":"$context.apiId","requestId":"$context.requestId","userId":"$context.authorizer.principalId","method":"$context.httpMethod","path":"$context.resourcePath","sourceIp":"$context.identity.sourceIp","userAgent":"$context.identity.userAgent","status":"$context.status","wafStatus":"$context.waf.status","authorizerStatus":"$context.authorizer.status","integrationStatus":"$context.integration.status","latency":"$context.responseLatency","wafLatency":"$context.waf.latency","authorizerLatency":"$context.authorizer.latency","integrationLatency":"$context.integration.latency","requestTime":"$context.requestTime","requestTimeEpoch":"$context.requestTimeEpoch","length":"$context.responseLength","errorType":"$context.error.responseType","error":"$context.error.message","wafError":"$context.waf.error","authorizerError":"$context.authorizer.error","integrationError":"$context.integration.error"}'
       MethodSettings:
         - HttpMethod: "*"
           ResourcePath: /*
           LoggingLevel: "OFF"
           ThrottlingRateLimit: 100
           ThrottlingBurstLimit: 200
-      Auth:
-        Authorizers:
-          JwtAuthorizer:
-            FunctionPayloadType: TOKEN
-            FunctionArn: {"Fn::ImportValue": !Sub "${EnvironmentName}-guard-authorizer-Function"}
-            Identity:
-              ValidationExpression: ^Bearer [-_0-9a-zA-Z.]+$
-              ReauthorizeEvery: 3600
       Cors:
         AllowOrigin: "'*'"
         AllowHeaders: "'*'"
         AllowMethods: "'*'"
         MaxAge: "'3600'"
+      BinaryMediaTypes:
+        - "*~1*"
 
   ApiLogGroup:
     Type: AWS::Logs::LogGroup
@@ -147,7 +141,7 @@ Resources:
     Properties:
       Role: {"Fn::ImportValue": !Sub "${EnvironmentName}-infra-security-LambdaRole"}
       MemorySize: 1024
-      CodeUri: src/quicksight
+      CodeUri: src/onpreproxy
       DeploymentPreference:
         Enabled: true
         Type: !Ref DeploymentPreference
@@ -156,17 +150,33 @@ Resources:
       Environment:
         Variables:
           AWS_ACCOUNT_ID: !Ref AWS::AccountId
-          QUICKSIGHT_ENV_PREFIX: !Ref QuickSightEnvironmentPrefix
+          VP_ONPRE_URL: !Ref VpOnpreUrl
       Events:
-        QuicksightGet:
+        OnpreproxyGet:
           Type: Api
           Properties:
             RestApiId: !Ref Api
             Method: GET
-            Path: /v1/quicksight
-            Auth:
-              Authorizer: JwtAuthorizer
-
+            Path: /v1/onpreproxy
+            RequestParameters:
+            - method.request.querystring.client_code:
+                Required: false
+                Caching: false
+            - method.request.querystring.port_code:
+                Required: false
+                Caching: false
+            - method.request.querystring.term:
+                Required: false
+                Caching: false
+            - method.request.querystring.exclude_schedule:
+                Required: false
+                Caching: false
+            - method.request.querystring.type:
+                Required: false
+                Caching: false
+            - method.request.querystring.onpre_endpoint:
+                Required: true
+                Caching: false
   FunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
