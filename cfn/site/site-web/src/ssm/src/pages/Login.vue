@@ -17,7 +17,7 @@ const { login } = useAuth()
           </div>
           <div class="text-gray-700 text-2xl">
             <div>SAFETY STATUS MONITORING</div>
-            <div>Lite-version</div>	    
+            <div>Lite-version</div>
             <div>powered by Weathernews</div>
           </div>
           <div>

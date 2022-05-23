@@ -17,7 +17,16 @@ const { getToken, getUser } = useAuth()
 
 onMounted(async () => {
   const token = await getToken()
-  const res = await axios.get('/api/v1/quicksight', { headers: { Authorization: `Bearer ${token}` } })
+  const user = await getUser()
+  let dashboard;
+  const res = await axios.get('/api/v1/quicksight',{
+    headers: { Authorization: `Bearer ${token}` },
+    params: {
+      application: 'SSM',
+      customer_id: user.customer_ids?.[0],
+      user_id: user.email
+    }
+  })
 
   const options = {
     url: res.data.EmbedUrl,
@@ -29,9 +38,21 @@ onMounted(async () => {
     height: '100%',
     locale: 'ja_JP'
   }
-  QuickSightEmbedding.embedDashboard(options)
 
-  const user = await getUser()
+  dashboard = QuickSightEmbedding.embedDashboard(options)
+  const reload = () => {
+      let dashboardVesselParameters = '';
+      dashboard.getActiveParameterValues(function(value){
+        dashboardVesselParameters = value['parameters'][1]['value']
+        if (dashboardVesselParameters == ['All']){
+          dashboard.setParameters({VesselName:[' ']});
+        }else{
+          dashboard.setParameters({VesselName:['All']});
+        }
+        dashboard.setParameters({VesselName: dashboardVesselParameters});
+      });
+  }
+  setInterval(reload, 3600000);
 
   gtagOptin() // gtag.js にて、プラグイン登録時にプラグイン無効化しているので、ここで有効化する
 
