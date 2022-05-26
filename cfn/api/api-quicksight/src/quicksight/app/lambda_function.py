@@ -43,7 +43,7 @@ def get_embed_url(event: APIGatewayProxyEvent):
             return Response(403, 'text/plain', 'Forbidden')
         name_space = f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-namespace-sea-vp-{customer_id}'
         dashboard_id=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-dashboard-sea-vp-ssm-{customer_id}'
-        user_name=params.get('user_id',
+        user_name=params.get('user_name',
             claims.get('app_metadata',{}).get('https://weathernews.com/email',None))
     else:
         if 'cim' not in user:
