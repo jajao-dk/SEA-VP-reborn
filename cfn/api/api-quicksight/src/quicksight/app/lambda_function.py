@@ -62,15 +62,22 @@ def get_embed_url(event: APIGatewayProxyEvent):
         user_name,
     )
 
-    res = get_quicksight_client().get_dashboard_embed_url(
-        AwsAccountId=Env.AWS_ACCOUNT_ID,
-        DashboardId=dashboard_id,
-        IdentityType='QUICKSIGHT',
-        SessionLifetimeInMinutes=600,
-        UserArn=user_arn,
-        Namespace=name_space,
-    )
-    return Response(200, 'application/json', json.dumps({'EmbedUrl': res['EmbedUrl']}, separators=(',', ':')))
+    res=None
+    try:
+        res = get_quicksight_client().get_dashboard_embed_url(
+            AwsAccountId=Env.AWS_ACCOUNT_ID,
+            DashboardId=dashboard_id,
+            IdentityType='QUICKSIGHT',
+            SessionLifetimeInMinutes=600,
+            UserArn=user_arn,
+            Namespace=name_space,
+        )
+    except:
+        pass
+    if(res):
+        return Response(200, 'application/json', json.dumps({'EmbedUrl': res['EmbedUrl']}, separators=(',', ':')))
+    else:
+        return Response(403, 'text/plain', 'Forbidden')
 
 
 @app.get('/quicksight', cache_control='max-age=0')
