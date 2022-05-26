@@ -24,7 +24,7 @@ onMounted(async () => {
     params: {
       application: 'SSM',
       customer_id: user.customer_ids?.[0],
-      user_id: user.email
+      user_name: user.email
     }
   })
 
