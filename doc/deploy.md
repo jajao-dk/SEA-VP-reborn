@@ -161,6 +161,15 @@ cd /path/to/cfn/api/api-authorizer
   ./add_tag.sh (dev|stg|prd)
   ```
 
+- Onpre Proxy
+  ```
+  # Slack通知用Lambdaの構築と同じ
+  cd /path/to/cfn/api/api-onpreproxy
+  ./upload_to_pipeline.sh (dev|stg|prd)
+  ./deploy_pipeline.sh (dev|stg|prd)
+  ./add_tag.sh (dev|stg|prd)
+  ```
+
 ### データ処理の構築
 - Stock on S3
   ```

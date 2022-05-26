@@ -15,6 +15,8 @@ import requests
 """
 def get_port_schedule(query, url):
     try:
+        if not all((query.get('client_code'), query.get('port_code'), query.get('term'), query.get('exclude_schedule'), url)):
+            return [400, 'text/plain','Bad Request']
         client_code = query['client_code']
         port_code = query['port_code']
         term = query['term']

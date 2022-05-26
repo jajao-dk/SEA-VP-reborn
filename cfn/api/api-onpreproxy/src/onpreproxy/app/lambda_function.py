@@ -33,7 +33,7 @@ def get_content(event: APIGatewayProxyEvent):
     except ClientError as error:
         code = error.response['Error']['Code']
         if code in ['NoSuchKey', 'AccessDenied']:
-            response = [404, 'text/plain', 'Happened Error']
+            response = [404, 'text/plain', 'Not Found']
     return Response(response[0], response[1], response[2])
 
 
