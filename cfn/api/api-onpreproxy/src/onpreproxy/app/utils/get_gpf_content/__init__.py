@@ -15,12 +15,12 @@ import requests
 """
 def get_gpf_content(query, url):
     try:
-        if not all((query.get('client_code'), query.get('port_code'), query.get('term'), query.get('type'), url)):
+        client_code = query.get('client_code')
+        port_code = query.get('port_code')
+        term = query.get('term')
+        file_type = query.get('type')
+        if not all((client_code, port_code, term, file_type, url)):
             return [400, 'text/plain','Bad Request']
-        client_code = query['client_code']
-        port_code = query['port_code']
-        term = query['term']
-        file_type = query['type']
         # full_url = 'http://pt-vpportinfo01-vmg.wni.co.jp/PortInfo/cgi/get_gpf_content.cgi?type=pdf&term=5d&port_code=ANC&client_code=WNI'
         full_url = f'{url}/PortInfo/cgi/get_gpf_content.cgi'
         payload = {
