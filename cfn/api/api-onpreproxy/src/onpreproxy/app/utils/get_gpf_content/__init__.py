@@ -15,7 +15,7 @@ import requests
 """
 def get_gpf_content(query, url):
     try:
-        if not all((query.get('client_code'), query.get('port_code'), query.get('term'), query.get('file_type'), url)):
+        if not all((query.get('client_code'), query.get('port_code'), query.get('term'), query.get('type'), url)):
             return [400, 'text/plain','Bad Request']
         client_code = query['client_code']
         port_code = query['port_code']
