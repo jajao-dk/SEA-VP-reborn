@@ -15,10 +15,12 @@ import requests
 """
 def get_gpf_content(query, url):
     try:
-        client_code = query['client_code']
-        port_code = query['port_code']
-        term = query['term']
-        file_type = query['type']
+        client_code = query.get('client_code')
+        port_code = query.get('port_code')
+        term = query.get('term')
+        file_type = query.get('type')
+        if not all((client_code, port_code, term, file_type, url)):
+            return [400, 'text/plain','Bad Request']
         # full_url = 'http://pt-vpportinfo01-vmg.wni.co.jp/PortInfo/cgi/get_gpf_content.cgi?type=pdf&term=5d&port_code=ANC&client_code=WNI'
         full_url = f'{url}/PortInfo/cgi/get_gpf_content.cgi'
         payload = {
@@ -36,6 +38,6 @@ def get_gpf_content(query, url):
         elif (file_type == "txt"):
             print('txtで返す')
             return [200, 'text/plain',response.content]
-        return [500, 'text/plain','file type ERROR']
+        return [400, 'text/plain','Bad Request']
     except:
         return [500, 'text/plain','file type ERROR']

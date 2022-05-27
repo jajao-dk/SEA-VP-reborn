@@ -15,10 +15,12 @@ import requests
 """
 def get_port_schedule(query, url):
     try:
-        client_code = query['client_code']
-        port_code = query['port_code']
-        term = query['term']
-        exclude_schedule = query['exclude_schedule']
+        client_code = query.get('client_code')
+        port_code = query.get('port_code')
+        term = query.get('term')
+        exclude_schedule = query.get('exclude_schedule')
+        if not all((client_code, port_code, term, exclude_schedule, url)):
+            return [400, 'text/plain','Bad Request']
         print(f"クエリの中身：{query}")
         # full_url = 'http://pt-vpportinfo01-vmg.wni.co.jp/PortInfo/cgi/aedyn/get_port_schedule.cgi?client_code=WNI&port_code=WUHAN&term=5d&exclude_schedule=true'
         full_url = f'{url}/PortInfo/cgi/aedyn/get_port_schedule.cgi'
