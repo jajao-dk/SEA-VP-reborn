@@ -1,0 +1,529 @@
+{
+	"info": {
+		"_postman_id": "317cf463-c7d7-4cc7-8449-6258192bbd79",
+		"name": "api-quicksight",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5163829"
+	},
+	"item": [
+		{
+			"name": "NORMAL-CIM",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('EmbedUrl is filled', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "SSM",
+							"disabled": true
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_SSM_customer_id}}",
+							"disabled": true
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_SSM_user_name}}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-CIM-no-auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 401 Unauthorized\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "SSM",
+							"disabled": true
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_SSM_customer_id}}",
+							"disabled": true
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_SSM_user_name}}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-SSM",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('EmbedUrl is filled', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_SSM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=SSM&customer_id={{PARAM_SSM_customer_id}}&user_name={{PARAM_SSM_user_name}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "SSM"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_SSM_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_SSM_user_name}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-SSM-no-auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 401 Unauthorized\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=SSM&customer_id={{PARAM_SSM_customer_id}}&user_name={{PARAM_SSM_user_name}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "SSM"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_SSM_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_SSM_user_name}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-SSM-no-SSM-in-token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=SSM&customer_id={{PARAM_SSM_customer_id}}&user_name={{PARAM_SSM_user_name}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "SSM"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_SSM_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_SSM_user_name}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-SSM-no-param-application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_SSM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?customer_id={{PARAM_SSM_customer_id}}&user_name={{PARAM_SSM_user_name}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "SSM",
+							"disabled": true
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_SSM_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_SSM_user_name}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-SSM-no-param-customer_id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_SSM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=SSM&user_name={{PARAM_SSM_user_name}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "SSM"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_SSM_customer_id}}",
+							"disabled": true
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_SSM_user_name}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-SSM-no-param-user_name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('EmbedUrl is filled', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_SSM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=SSM&customer_id={{PARAM_SSM_customer_id}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "SSM"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_SSM_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_SSM_user_name}}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-SSM-no-param-all",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_SSM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "SSM",
+							"disabled": true
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_SSM_customer_id}}",
+							"disabled": true
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_SSM_user_name}}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ENDPOINT",
+			"value": "https://vp.seapln-osr.pt-aws.wni.com/api/v1/quicksight",
+			"type": "string"
+		},
+		{
+			"key": "TOKEN_FOR_CIM",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "TOKEN_FOR_SSM",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "PARAM_SSM_user_name",
+			"value": "sea-dev%2Bneom%40wni.co.jp",
+			"type": "string"
+		},
+		{
+			"key": "PARAM_SSM_customer_id",
+			"value": "NEOM",
+			"type": "string"
+		}
+	]
+}
