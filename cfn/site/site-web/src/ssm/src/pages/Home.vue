@@ -40,19 +40,19 @@ onMounted(async () => {
   }
 
   dashboard = QuickSightEmbedding.embedDashboard(options)
-  const reload = () => {
-      let dashboardVesselParameters = '';
-      dashboard.getActiveParameterValues(function(value){
-        dashboardVesselParameters = value['parameters'][1]['value']
-        if (dashboardVesselParameters == ['All']){
-          dashboard.setParameters({VesselName:[' ']});
-        }else{
-          dashboard.setParameters({VesselName:['All']});
-        }
-        dashboard.setParameters({VesselName: dashboardVesselParameters});
-      });
-  }
-  setInterval(reload, 3600000);
+  // const reload = () => {
+  //     let dashboardVesselParameters = '';
+  //     dashboard.getActiveParameterValues(function(value){
+  //       dashboardVesselParameters = value['parameters'][1]['value']
+  //       if (dashboardVesselParameters == ['All']){
+  //         dashboard.setParameters({VesselName:[' ']});
+  //       }else{
+  //         dashboard.setParameters({VesselName:['All']});
+  //       }
+  //       dashboard.setParameters({VesselName: dashboardVesselParameters});
+  //     });
+  // }
+  // setInterval(reload, 3600000);
 
   gtagOptin() // gtag.js にて、プラグイン登録時にプラグイン無効化しているので、ここで有効化する
 
