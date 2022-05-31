@@ -1,0 +1,1946 @@
+{
+	"info": {
+		"_postman_id": "44d8dbce-ad3d-4411-8984-2908f54155ea",
+		"name": "api-onpreproxy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21235412"
+	},
+	"item": [
+		{
+			"name": "ERROR-no-onpre_endpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule",
+							"disabled": true
+						},
+						{
+							"key": "client_code",
+							"value": "WNI",
+							"disabled": true
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN",
+							"disabled": true
+						},
+						{
+							"key": "term",
+							"value": "48h",
+							"disabled": true
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "false",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-JSON-48h",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Respnse JSON is valid', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.result).to.eq('OK');",
+							"  pm.expect(jsonData.data).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=port_schedule&client_code=WNI&port_code=WUHAN&term=48h&exclude_schedule=false",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-JSON-5d",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Respnse JSON is valid', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.result).to.eq('OK');",
+							"  pm.expect(jsonData.data).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=port_schedule&client_code=WNI&port_code=WUHAN&term=5d&exclude_schedule=true",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "5d"
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-JSON-7d",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Respnse JSON is valid', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.result).to.eq('OK');",
+							"  pm.expect(jsonData.data).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=port_schedule&client_code=WNI&port_code=WUHAN&term=7d&exclude_schedule=true",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "7d"
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-JSON-no-client_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=port_schedule&port_code=WUHAN&term=48h&exclude_schedule=false",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI",
+							"disabled": true
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-JSON-no-port_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=port_schedule&client_code=WNI&term=48h&exclude_schedule=false",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN",
+							"disabled": true
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-JSON-no-term",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=port_schedule&client_code=WNI&port_code=WUHAN&exclude_schedule=false",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h",
+							"disabled": true
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-JSON-no-exclude_schedule",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=port_schedule&client_code=WNI&port_code=WUHAN&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "false",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-no-type",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&client_code=WNI&port_code=WUHAN&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "pdf",
+							"disabled": true
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-invalid-type",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=svg&client_code=WNI&port_code=WUHAN&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "svg"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GPF_CONTENT-PDF-48h",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response is Valid PDF', function () {",
+							"  var body = pm.response.text();",
+							"  pm.expect(body).to.match(/^%PDF-1.2/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=pdf&client_code=WNI&port_code=WUHAN&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "pdf"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GPF_CONTENT-PDF-5d",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response is Valid PDF', function () {",
+							"  var body = pm.response.text();",
+							"  pm.expect(body).to.match(/^%PDF-1.2/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=pdf&client_code=WNI&port_code=WUHAN&term=5d",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "pdf"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "5d"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GPF_CONTENT-PDF-7d",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response is Valid PDF', function () {",
+							"  var body = pm.response.text();",
+							"  pm.expect(body).to.match(/^%PDF-1.2/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=pdf&client_code=WNI&port_code=WUHAN&term=7d",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "pdf"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "7d"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-PDF-no-client_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=pdf&port_code=WUHAN&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "pdf"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI",
+							"disabled": true
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-PDF-no-port_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=pdf&client_code=WNI&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "pdf"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN",
+							"disabled": true
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-PDF-no-term",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=pdf&client_code=WNI&port_code=WUHAN",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "pdf"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GPF_CONTENT-PDF-invalid-client_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response is Valid PDF', function () {",
+							"  var body = pm.response.text();",
+							"  pm.expect(body).to.match(/^%PDF-1.2/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=pdf&client_code=AZEYAN&port_code=WUHAN&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "pdf"
+						},
+						{
+							"key": "client_code",
+							"value": "AZEYAN"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-PDF-invalid-port_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 Collapsed PDF', function () {",
+							"  pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=pdf&client_code=WNI&port_code=AZEYAN&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "pdf"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "AZEYAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-PDF-invalid-term",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 Collapsed PDF', function () {",
+							"  pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=pdf&client_code=WNI&port_code=WUHAN&term=10d",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "pdf"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "10d"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GPF_CONTENT-TXT-48h",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response is Valid TXT', function () {",
+							"  var text = pm.response.text();",
+							"  pm.expect(text).to.match(/48 hour GLOBAL PORT FORECAST WEATHERNEWS\\.INC/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=txt&client_code=WNI&port_code=WUHAN&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "txt"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GPF_CONTENT-TXT-5d",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response is Valid TXT', function () {",
+							"  var text = pm.response.text();",
+							"  pm.expect(text).to.match(/5 day GLOBAL PORT FORECAST WEATHERNEWS\\.INC/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=txt&client_code=WNI&port_code=WUHAN&term=5d",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "txt"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "5d"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GPF_CONTENT-TXT-7d",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response is Valid TXT', function () {",
+							"  var text = pm.response.text();",
+							"  pm.expect(text).to.match(/7 day GLOBAL PORT FORECAST WEATHERNEWS\\.INC/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=txt&client_code=WNI&port_code=WUHAN&term=7d",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "txt"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "7d"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-TXT-no-client_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=txt&port_code=WUHAN&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "txt"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI",
+							"disabled": true
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-TXT-no-port_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=txt&client_code=WNI&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "txt"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN",
+							"disabled": true
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-TXT-no-term",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {",
+							"  pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=txt&client_code=WNI&port_code=WUHAN",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "txt"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GPF_CONTENT-TXT-invalid-client_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response is Valid TXT', function () {",
+							"  var text = pm.response.text();",
+							"  pm.expect(text).to.match(/48 hour GLOBAL PORT FORECAST WEATHERNEWS\\.INC/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=txt&client_code=AZEYAN&port_code=WUHAN&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "txt"
+						},
+						{
+							"key": "client_code",
+							"value": "AZEYAN"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-TXT-invalid-port_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Respnse JSON is valid', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.result).to.eq('NG');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=txt&client_code=WNI&port_code=AZEYAN&term=48h",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "txt"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "AZEYAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GPF_CONTENT-TXT-invalid-term",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Respnse JSON is valid', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.result).to.eq('NG');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=gpf_content&type=txt&client_code=WNI&port_code=WUHAN&term=10d",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "gpf_content"
+						},
+						{
+							"key": "type",
+							"value": "txt"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "10d"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ENDPOINT",
+			"value": "https://vp.seapln-osr.pt-aws.wni.com/api/v1/onpreproxy",
+			"type": "string"
+		}
+	]
+}
