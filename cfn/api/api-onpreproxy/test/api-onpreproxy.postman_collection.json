@@ -559,6 +559,295 @@
 			"response": []
 		},
 		{
+			"name": "ERROR-JSON-invalid-client_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Respnse JSON is valid', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.result).to.eq('OK');",
+							"  pm.expect(jsonData.data).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=port_schedule&client_code=AZEYAN&port_code=WUHAN&term=48h&exclude_schedule=false",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule"
+						},
+						{
+							"key": "client_code",
+							"value": "AZEYAN"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-JSON-invalid-port_code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test('Respnse JSON is invalid', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.data[0].time_list.length).to.eq(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=port_schedule&client_code=WNI&port_code=AZEYAN&term=48h&exclude_schedule=false",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "AZEYAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-JSON-invalid-term",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Respnse JSON is valid', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.result).to.eq('NG');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=port_schedule&client_code=WNI&port_code=WUHAN&term=10d&exclude_schedule=false",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "10d"
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-JSON-invalid-exclude_schedule",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Respnse JSON is valid', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.result).to.eq('OK');",
+							"  pm.expect(jsonData.data).to.exist;",
+							"});",
+							"",
+							"pm.test('Respnse JSON do not have schedule_list key', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.data[0]).to.not.have.key('schedule_list');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CloudFront-Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjU2NTYyNzQ5fX19XX0_; CloudFront-Signature=nK-wgXvqbmoVPj7vJNcpf6emo2uYBdzJcCU4X4vldkCDN6Qn1EereGpk1QskPdlWu4A~bWHEE3x5RrlM6OXImj2BF2AdjWq8~I0iT7K2OCOrhVDrZF6xQd8A31gu~L75IR7nd8dxHjJ61INHDbikFiZghh0JtO8GXfX7cEJWdylKeg6HOg00-XEGFtiWACDC51bbtqx0NOu8V0DHKPRtJFd~2qynXTsifEOIRrkfMB9F3BCPs1H~FXW4cdCdn~bRfwBQXXxJY3SoP35YSa-d~0Nylj-S6TgVUaghwhzlNUFrtIZ6pfWpMUDyMThfOb1i5MeJQwe7syX5W6oPm6uJDA__; CloudFront-Key-Pair-Id=K1AT0MGMOW7D2G",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{ENDPOINT}}?onpre_endpoint=port_schedule&client_code=WNI&port_code=WUHAN&term=48h&exclude_schedule=yes",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "onpre_endpoint",
+							"value": "port_schedule"
+						},
+						{
+							"key": "client_code",
+							"value": "WNI"
+						},
+						{
+							"key": "port_code",
+							"value": "WUHAN"
+						},
+						{
+							"key": "term",
+							"value": "48h"
+						},
+						{
+							"key": "exclude_schedule",
+							"value": "yes"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "ERROR-GPF_CONTENT-no-type",
 			"event": [
 				{
