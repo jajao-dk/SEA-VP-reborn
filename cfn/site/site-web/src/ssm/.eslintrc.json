@@ -1,0 +1,13 @@
+{
+    "env": {
+        "vue/setup-compiler-macros": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2021
+    },
+    "extends": [
+        "standard",
+        "plugin:vue/vue3-recommended"
+    ],
+    "ignorePatterns": "dist/*"
+}
