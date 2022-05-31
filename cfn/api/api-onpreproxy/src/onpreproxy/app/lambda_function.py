@@ -25,7 +25,7 @@ def get_content(event: APIGatewayProxyEvent):
     response = [404, 'text/plain', 'NotFound']
     try:
         url = Env.VP_ONPRE_URL
-        onpre_endpoint = query_parameters['onpre_endpoint']
+        onpre_endpoint = query_parameters.get('onpre_endpoint')
         if onpre_endpoint == 'port_schedule':
             response = get_port_schedule(query_parameters, url)
         if onpre_endpoint == 'gpf_content':
