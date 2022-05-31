@@ -49,6 +49,7 @@ watch(toRef(route, 'name'), () => { store.close() })
         <div class="flex-1">
           <div class="flex justify-end">
             <a
+              id="toggle-menu"
               class="hover:bg-gray-200 text-gray-500 cursor-pointer px-2 flex justify-end items-center gap-4"
               @click="store.toggleMenu()"
             >
@@ -84,6 +85,7 @@ watch(toRef(route, 'name'), () => { store.close() })
               </span>
             </router-link> -->
             <a
+              id="logout"
               class="px-4 py-2 hover:bg-gray-200 cursor-pointer flex items-center gap-2"
               @click="logout()"
             >
