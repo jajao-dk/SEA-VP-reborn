@@ -22,6 +22,8 @@ app = ApiGatewayResolver(ProxyEventType.APIGatewayProxyEvent)
 @api_handler()
 def get_content(event: APIGatewayProxyEvent):
     query_parameters = event['queryStringParameters']
+    if not query_parameters:
+        return Response(400, 'text/plain', 'Bad Request')
     response = [404, 'text/plain', 'NotFound']
     try:
         url = Env.VP_ONPRE_URL
