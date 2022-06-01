@@ -4,7 +4,7 @@
     - Env: dev
 
 1. Edit dev.postman_environment.json
-    Copy CloudFront-Policy from dev.postman_environment.tmpl.json
+    Copy from dev.postman_environment.tmpl.json
     Fill value "Cookie"
 
 2. Run test
