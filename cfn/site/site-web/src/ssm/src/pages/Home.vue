@@ -8,18 +8,30 @@ import {
   pageview as gtagPageview,
   optIn as gtagOptin,
   event as gtagEvent,
-  customMap as gtagCustomMap,
+  customMap as gtagCustomMap
 } from 'vue-gtag'
 
 const container = ref(null)
 
 const { getToken, getUser } = useAuth()
 
+function onMessage (event) {
+  if (event.origin === location.origin && event.data) {
+    switch (event.data.messageType) {
+      case 'openWindow':
+        window.open(event.data.url, event.data.windowName)
+        break
+    }
+  }
+}
+
+window.addEventListener('message', onMessage, false)
+
 onMounted(async () => {
   const token = await getToken()
   const user = await getUser()
-  let dashboard;
-  const res = await axios.get('/api/v1/quicksight',{
+  // let dashboard
+  const res = await axios.get('/api/v1/quicksight', {
     headers: { Authorization: `Bearer ${token}` },
     params: {
       application: 'SSM',
@@ -38,8 +50,8 @@ onMounted(async () => {
     height: '100%',
     locale: 'en-US'
   }
-
-  dashboard = QuickSightEmbedding.embedDashboard(options)
+  QuickSightEmbedding.embedDashboard(options)
+  // dashboard = QuickSightEmbedding.embedDashboard(options)
   // const reload = () => {
   //     let dashboardVesselParameters = '';
   //     dashboard.getActiveParameterValues(function(value){
@@ -58,7 +70,7 @@ onMounted(async () => {
 
   // GA4用の記述
   gtagSet('user_id', user.email)
-  gtagSet('user_properties', {login_id: user.email, customer_id: user.customer_ids?.[0]})
+  gtagSet('user_properties', { login_id: user.email, customer_id: user.customer_ids?.[0] })
   // UA用の記述
   gtagCustomMap('dimension1', 'login_id')
   gtagCustomMap('dimension2', 'customer_id')
@@ -66,7 +78,6 @@ onMounted(async () => {
 
   // pageview送信
   gtagPageview(location.href)
-  
 })
 </script>
 
