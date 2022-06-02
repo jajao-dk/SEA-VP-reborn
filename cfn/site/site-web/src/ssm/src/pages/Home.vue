@@ -15,6 +15,18 @@ const container = ref(null)
 
 const { getToken, getUser } = useAuth()
 
+const onMessage = (event) => {
+  if (event.origin === location.origin && event.data) {
+    switch (event.data.messageType) {
+      case 'openWindow':
+        window.open(event.data.url, event.data.windowName)
+        break
+    }
+  }
+}
+
+window.addEventListener('message', onMessage, false)
+
 onMounted(async () => {
   const token = await getToken()
   const user = await getUser()
