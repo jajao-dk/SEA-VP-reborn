@@ -15,7 +15,7 @@ const container = ref(null)
 
 const { getToken, getUser } = useAuth()
 
-function onMessage (event) {
+const onMessage = (event) => {
   if (event.origin === location.origin && event.data) {
     switch (event.data.messageType) {
       case 'openWindow':
