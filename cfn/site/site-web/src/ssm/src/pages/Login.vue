@@ -86,9 +86,6 @@ const { login } = useAuth()
 </template>
 
 <style scoped>
-    text-decoration : none ;
-  }
-
   .img {
     border : 0px ;
   }
