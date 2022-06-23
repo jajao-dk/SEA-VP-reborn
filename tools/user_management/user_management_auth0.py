@@ -43,6 +43,9 @@ def add_user(auth0, email):
     password=generate_password()
     username=re.sub('@','#a#',email)
 
+    with open('app.json', 'r') as f:
+        app = json.load(f)
+
     userdata={
         "user_id": user_id,
         "email": email,
@@ -59,9 +62,7 @@ def add_user(auth0, email):
             "plannings": [
                 "SEA"
             ],
-            "applications": [
-                "CIM"
-            ]
+            "applications": app['applications']
         }
     }
     try:
