@@ -30,6 +30,10 @@ def add_user(table,env,user_id,customer_id,qs_user):
     if qs_user == None:
         qs_user = re.sub(r"^auth0\|", "", user_id)
 
+    if(not user_id.islower()):
+        print("Please input user_id in all lower case")
+        exit()
+
     userdata={
       "uid": user_id,
       "customer_ids":[customer_id],
