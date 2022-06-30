@@ -23,8 +23,8 @@ if [ "$#" -eq 3 ]; then
   grep 'user_id:auth0|' user_add_members.log >>password.csv
 
   #error count
-  error_count=`grep -o -i PasswordStrengthError user_add_members.log | wc -l`
-  echo "Auth0 PasswordStrengthError: ${error_count}"
+  error_count=`grep -o -i Error user_add_members.log | wc -l`
+  echo "ErrorMessage: ${error_count}"
 
 else
     echo "Usage: $0 <ENV> <EMAILLIST> <APP_FILE>"

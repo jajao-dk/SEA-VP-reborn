@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import string
-import random
+import secrets
 import argparse
 import json
 import os
@@ -86,14 +86,19 @@ def send_verification_mail(auth0, user_id, client_id):
 def generate_password():
     characters = list(string.ascii_letters + string.digits + "!@#$%^&*()")
     length=10
-    random.shuffle(characters)
-	
-    password = []
-    for i in range(length):
-        password.append(random.choice(characters))
-    random.shuffle(password)
-
-    return "".join(password)
+    while True:
+        password = ''.join(secrets.choice(characters) for i in range(length))
+        n = 0
+        if any(c.islower() for c in password):
+            n = n + 1
+        if any(c.isupper() for c in password):
+            n = n + 1
+        if any(c.isdigit() for c in password):
+            n = n + 1
+        if bool(re.search(r'!|@|#|\$|%|\^|&|\*|(|)', password)):
+            n = n + 1
+        if n >= 3:
+            return password
 
 def main():
     parser=argparse.ArgumentParser()
