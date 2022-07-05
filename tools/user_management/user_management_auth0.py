@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import string
-import random
+import secrets
 import argparse
 import json
 import os
@@ -37,11 +37,14 @@ def get_user(auth0, user_id):
     user=auth0.users.get(user_id)
     print(json.dumps(user))
 
-def add_user(auth0, email):
+def add_user(auth0, email, app_file):
     print("add")
     user_id=email.lower()
     password=generate_password()
     username=re.sub('@','#a#',email)
+
+    with open(app_file, 'r') as f:
+        app = json.load(f)
 
     userdata={
         "user_id": user_id,
@@ -59,9 +62,7 @@ def add_user(auth0, email):
             "plannings": [
                 "SEA"
             ],
-            "applications": [
-                "CIM"
-            ]
+            "applications": app['applications']
         }
     }
     try:
@@ -85,14 +86,19 @@ def send_verification_mail(auth0, user_id, client_id):
 def generate_password():
     characters = list(string.ascii_letters + string.digits + "!@#$%^&*()")
     length=10
-    random.shuffle(characters)
-	
-    password = []
-    for i in range(length):
-        password.append(random.choice(characters))
-    random.shuffle(password)
-
-    return "".join(password)
+    while True:
+        password = ''.join(secrets.choice(characters) for i in range(length))
+        n = 0
+        if any(c.islower() for c in password):
+            n = n + 1
+        if any(c.isupper() for c in password):
+            n = n + 1
+        if any(c.isdigit() for c in password):
+            n = n + 1
+        if bool(re.search(r'!|@|#|\$|%|\^|&|\*|(|)', password)):
+            n = n + 1
+        if n >= 3:
+            return password
 
 def main():
     parser=argparse.ArgumentParser()
@@ -101,6 +107,7 @@ def main():
     parser.add_argument("--user_id",   help="user_id : necessary for get and update")
     parser.add_argument("--client_id", help="client_id : necessary for send verification mail")
     parser.add_argument("--email",     help="email : necessary for add")
+    parser.add_argument("--app_file",   help="appfile : necessary for add")
     args=parser.parse_args()
 
     mgmt_api_token = get_access_token(AUTH0_DOMAIN,AUTH0_CLIENT_ID,AUTH0_CLIENT_SECRET)
@@ -111,7 +118,7 @@ def main():
     elif(args.command == 'get'):
         get_user(auth0, args.user_id)
     elif(args.command == 'add'):
-        add_user(auth0, args.email)
+        add_user(auth0, args.email, args.app_file)
     elif(args.command == 'send_verification_mail'):
         send_verification_mail(auth0, args.user_id, args.client_id)
     else:
