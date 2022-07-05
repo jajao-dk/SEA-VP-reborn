@@ -19,25 +19,15 @@ const { getToken, getUser } = useAuth()
 let dashboard
 
 const onchangedQsParameters = (payload) => {
-  console.log(payload)
   if (Object.keys(mapWindow).length) {
-    console.log('mapWindowあるよ')
     for (const i in payload.changedParameters) {
       switch (payload.changedParameters[i].name) {
         case 'VesselName':
-          // document.getEle...... ? Mapにvesselnameデータ送るところ
-          // Allの時は船の値を全部取得できるのか確認
-          // mapwidgetからパラメータを変えてきた時もここの動作は実行されるの確認
-
           if (payload.changedParameters[i].value !== 'All') {
-            console.log('switch onchange vesselName')
-            console.log(payload.changedParameters[i].value)
             mapWindow.postMessage({ messageType: 'selectVesselFromQsToMap', vesselName: payload.changedParameters[i].value })
           }
       }
     }
-  } else {
-    console.log('空です')
   }
 }
 
@@ -47,6 +37,11 @@ const onMessage = (event) => {
       case 'openWindow':
         window.open(event.data.url, event.data.windowName)
         break
+      case 'initSetMapWindow':
+        // map windowを登録
+        mapWindow = event.source
+        break
+      /*
       case 'selectVesselFromMapToQs':
         // vesselNameをQS側に送る
         console.log('selectVesselFromMapToQs')
@@ -55,14 +50,7 @@ const onMessage = (event) => {
         dashboard.setParameters({ VesselName: [' '] })
         dashboard.setParameters({ VesselName: event.data.vesselName })
         break
-      case 'initSetMapWindow':
-        // map windowを登録
-        mapWindow = event.source
-        console.log('mapWindow追加')
-        break
-      case 'pushAlertToMap':
-        mapWindow.postMessage({ messageType: 'selectVesselFromQsToMap', vesselName: 'azeyan-test-ship' })
-        break
+      */
     }
   }
 }
@@ -93,21 +81,25 @@ onMounted(async () => {
   }
 
   dashboard = QuickSightEmbedding.embedDashboard(options)
-  // パラメータが変わったことを検知
+  // changed Paramater
   dashboard.on('parametersChange', onchangedQsParameters)
-  // const reload = () => {
-  //     let dashboardVesselParameters = '';
-  //     dashboard.getActiveParameterValues(function(value){
-  //       dashboardVesselParameters = value['parameters'][1]['value']
-  //       if (dashboardVesselParameters == ['All']){
-  //         dashboard.setParameters({VesselName:[' ']});
-  //       }else{
-  //         dashboard.setParameters({VesselName:['All']});
-  //       }
-  //       dashboard.setParameters({VesselName: dashboardVesselParameters});
-  //     });
-  // }
-  // setInterval(reload, 3600000);
+
+  /*
+  // reload
+  const reload = () => {
+      let dashboardVesselParameters = '';
+      dashboard.getActiveParameterValues(function(value){
+        dashboardVesselParameters = value['parameters'][1]['value']
+        if (dashboardVesselParameters == ['All']){
+          dashboard.setParameters({VesselName:[' ']});
+        }else{
+          dashboard.setParameters({VesselName:['All']});
+        }
+        dashboard.setParameters({VesselName: dashboardVesselParameters});
+      });
+  }
+  setInterval(reload, 3600000);
+  */
 
   gtagOptin() // gtag.js にて、プラグイン登録時にプラグイン無効化しているので、ここで有効化する
 
