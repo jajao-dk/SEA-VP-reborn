@@ -12,8 +12,24 @@ import {
 } from 'vue-gtag'
 
 const container = ref(null)
+let mapWindow = {}
 
 const { getToken, getUser } = useAuth()
+
+let dashboard
+
+const onchangedQsParameters = (payload) => {
+  if (Object.keys(mapWindow).length) {
+    for (const i in payload.changedParameters) {
+      switch (payload.changedParameters[i].name) {
+        case 'VesselName':
+          if (payload.changedParameters[i].value !== 'All') {
+            mapWindow.postMessage({ messageType: 'selectVesselFromQsToMap', vesselName: payload.changedParameters[i].value })
+          }
+      }
+    }
+  }
+}
 
 const onMessage = (event) => {
   if (event.origin === location.origin && event.data) {
@@ -21,6 +37,20 @@ const onMessage = (event) => {
       case 'openWindow':
         window.open(event.data.url, event.data.windowName)
         break
+      case 'initSetMapWindow':
+        // map windowを登録
+        mapWindow = event.source
+        break
+      /*
+      case 'selectVesselFromMapToQs':
+        // vesselNameをQS側に送る
+        console.log('selectVesselFromMapToQs')
+        console.log(event.data.vesselName)
+        // test
+        dashboard.setParameters({ VesselName: [' '] })
+        dashboard.setParameters({ VesselName: event.data.vesselName })
+        break
+      */
     }
   }
 }
@@ -30,7 +60,6 @@ window.addEventListener('message', onMessage, false)
 onMounted(async () => {
   const token = await getToken()
   const user = await getUser()
-  let dashboard;
   const res = await axios.get('/api/v1/quicksight',{
     headers: { Authorization: `Bearer ${token}` },
     params: {
@@ -52,19 +81,25 @@ onMounted(async () => {
   }
 
   dashboard = QuickSightEmbedding.embedDashboard(options)
-  // const reload = () => {
-  //     let dashboardVesselParameters = '';
-  //     dashboard.getActiveParameterValues(function(value){
-  //       dashboardVesselParameters = value['parameters'][1]['value']
-  //       if (dashboardVesselParameters == ['All']){
-  //         dashboard.setParameters({VesselName:[' ']});
-  //       }else{
-  //         dashboard.setParameters({VesselName:['All']});
-  //       }
-  //       dashboard.setParameters({VesselName: dashboardVesselParameters});
-  //     });
-  // }
-  // setInterval(reload, 3600000);
+  // changed Paramater
+  dashboard.on('parametersChange', onchangedQsParameters)
+
+  /*
+  // reload
+  const reload = () => {
+      let dashboardVesselParameters = '';
+      dashboard.getActiveParameterValues(function(value){
+        dashboardVesselParameters = value['parameters'][1]['value']
+        if (dashboardVesselParameters == ['All']){
+          dashboard.setParameters({VesselName:[' ']});
+        }else{
+          dashboard.setParameters({VesselName:['All']});
+        }
+        dashboard.setParameters({VesselName: dashboardVesselParameters});
+      });
+  }
+  setInterval(reload, 3600000);
+  */
 
   gtagOptin() // gtag.js にて、プラグイン登録時にプラグイン無効化しているので、ここで有効化する
 
