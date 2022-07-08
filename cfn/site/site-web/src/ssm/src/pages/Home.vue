@@ -24,7 +24,7 @@ const onchangedQsParameters = (payload) => {
       switch (payload.changedParameters[i].name) {
         case 'VesselName':
           if (payload.changedParameters[i].value !== 'All') {
-            mapWindow.postMessage({ messageType: 'selectVesselFromQsToMap', vesselName: payload.changedParameters[i].value })
+            mapWindow.postMessage({ messageType: 'selectVesselFromQsToMap', vesselName: [payload.changedParameters[i].value] })
           }
       }
     }
