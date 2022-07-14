@@ -1,0 +1,253 @@
+<script setup>
+// import { useData } from './data'
+import { ref, reactive, onMounted } from 'vue'
+import EasyDataTable from 'vue3-easy-data-table'
+import 'vue3-easy-data-table/dist/style.css'
+
+// const { data } = useData()
+
+onMounted(async () => {
+  console.log('MOUNTED')
+})
+
+const client = ref('')
+let vesselList
+
+const itemsSelected = ref([])
+const isEditing = ref(false)
+const editingItem = reactive({
+  height: '',
+  weight: 0,
+  id: 0
+})
+const deleteItem = (val) => {
+  items.value = items.value.filter((item) => item.id !== val.id)
+}
+const editItem = (val) => {
+  isEditing.value = true
+  const { height, weight, id } = val
+  editingItem.height = height
+  editingItem.weight = weight
+  editingItem.id = id
+}
+const submitEdit = () => {
+  isEditing.value = false
+  const item = items.value.find((item) => item.id === editingItem.id)
+  item.height = editingItem.height
+  item.weight = editingItem.weight
+}
+
+const getLatestERRM = async () => {
+  console.log('getVesselList')
+  console.log('Client code: ', client.value)
+
+  if (client.value === '') {
+    return false
+  }
+  // client.value = 'NYK'
+  // const section = 'ALL_ALL'
+  // const section = 'ANGL'
+  // const group = 'angl_all_all'
+  // const group = 'angl_angl'
+  // const url = "http://tmax.seapln-osr.pt-aws.wni.com/T-max/api/okamaw_get_vessel_list.cgi?search_type=file_name&val=all&client="+client.value
+  // const url = "https://tmax.seapln-osr.pt-aws.wni.com/T-Max/api/okamaw_get_vessel_list.cgi?search_type=file_name&val=all&client="+client.value
+  // const url = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?search_type=file_name&val=all&client=' + client.value
+  const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value
+  // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value + '&section=' + section + '&group=' + group
+  const resp = await fetch(urlSetting)
+  const data = await resp.json()
+  console.log(data)
+  if (data.result === 'OK') {
+    vesselList = data.data.vessel_list
+  }
+  const allVessels = vesselList.map(ship => { return ship.wnishipnum }).join(',')
+  console.log(vesselList)
+  console.log(allVessels)
+
+  const urlLatest = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_latest_enrouterisk.cgi'
+  const body = ['TEST', JSON.stringify({ ships: allVessels, group: '', client: client.value })]
+
+  const perfJson = await fetch(urlLatest, {
+    mode: 'cors',
+    method: 'POST',
+    body: JSON.stringify(body)
+  })
+    .then((res) => res.json())
+    .catch(console.error)
+
+  console.log(perfJson)
+
+  if (perfJson.result === 'OK') {
+    const vessels = perfJson.data
+    for (let i = 0; i < vessels.length; i++) {
+      makeTable(i, vessels[i])
+      // makeGraph(i, vessels[i])
+      // makeGeoJSON(i, vessels[i])
+    }
+  }
+}
+
+const makeTable = (i, vessel) => {
+  const latest = vessel.latest
+  console.log(latest.vessel_name)
+  const tmpRaw = {
+    id: i,
+    vessel_name: latest.vessel_name,
+    service_type: latest.service_type,
+    risk: '',
+    laden_ballast: latest.loading_condition,
+    priority: latest.voyage_priority,
+    atd: latest.dep_time_utc,
+    arrival_port: latest.arr_port,
+    eta: latest.arr_time_utc,
+    rta: latest.req_arr_time_utc,
+    speed: latest.average_speed,
+    ordered_speed: latest.ordered_speed,
+    rpm: latest.average_rpm,
+    suggested_rpm: latest.suggested_rpm,
+    total_foc: latest.total_foc,
+    ordered_foc: latest.ordered_foc,
+    total_dogo: latest.total_dogo,
+    ordered_dogo: latest.ordered_dogo
+  }
+  items.value.push(tmpRaw)
+}
+
+const headers = ref([
+  { text: 'Vessel name', value: 'vessel_name' },
+  { text: 'Service type', value: 'service_type' },
+  { text: 'Risk', value: 'risk' },
+  { text: 'L/B', value: 'laden_ballast' },
+  { text: 'Priority', value: 'priority' },
+  { text: 'ATD', value: 'atd', sortable: true },
+  { text: 'Arriva port', value: 'arrival_port' },
+  { text: 'ETA', value: 'eta' },
+  { text: 'RTA', value: 'rta' },
+  { text: 'Speed', value: 'speed' },
+  { text: 'Ordered Speed', value: 'ordered_speed', sortable: true },
+  { text: 'RPM', value: 'rpm' },
+  { text: 'Suggested RPM', value: 'suggested_rpm' },
+  { text: 'Total FOC', value: 'total_foc' },
+  { text: 'Ordered FOC', value: 'ordered_foc', sortable: true },
+  { text: 'Total DO/GO', value: 'total_dogo' },
+  { text: 'Ordered DO/GO', value: 'ordered_dogo', sortable: true },
+  { text: 'Operation', value: 'operation' }
+])
+
+const items = ref([])
+
+/*
+const items = ref([
+  {
+    id: 1,
+    player: 'Stephen Curry',
+    team: 'GSW',
+    number: 30,
+    position: 'G',
+    height: '6-2',
+    weight: 185,
+    lastAttended: 'Davidson',
+    country: 'USA'
+  },
+  {
+    id: 2,
+    player: 'Lebron James',
+    team: 'LAL',
+    number: 6,
+    position: 'F',
+    height: '6-9',
+    weight: 250,
+    lastAttended: 'St. Vincent-St. Mary HS (OH)',
+    country: 'USA'
+  },
+  {
+    id: 3,
+    player: 'Kevin Durant',
+    team: 'BKN',
+    number: 7,
+    position: 'F',
+    height: '6-10',
+    weight: 240,
+    lastAttended: 'Texas-Austin',
+    country: 'USA'
+  },
+  {
+    id: 4,
+    player: 'Giannis Antetokounmpo',
+    team: 'MIL',
+    number: 34,
+    position: 'F',
+    height: '6-11',
+    weight: 242,
+    lastAttended: 'Filathlitikos',
+    country: 'Greece'
+  }
+])
+*/
+</script>
+
+<template>
+  <div>
+    Input Client code:
+    <input
+      v-model="client"
+      class="perfin"
+      type="text"
+      placeholder=""
+    >
+    <button
+      class="perfbtn"
+      type="submit"
+      @click="getLatestERRM"
+    >
+      Submit
+    </button><br><br>
+    <EasyDataTable
+      v-model:items-selected="itemsSelected"
+      show-index
+      :headers="headers"
+      :items="items"
+    >
+      <template #item-operation="item">
+        <div class="operation-wrapper">
+          <img
+            src="./images/delete.png"
+            class="operation-icon"
+            @click="deleteItem(item)"
+          >
+          <img
+            src="./images/edit.png"
+            class="operation-icon"
+            @click="editItem(item)"
+          >
+        </div>
+      </template>
+    </EasyDataTable>
+    <div
+      v-if="isEditing"
+      class="edit-item"
+    >
+      height:<input
+        v-model="editingItem.height"
+        type="text"
+      >
+      <br>
+      weight:<input
+        v-model="editingItem.weight"
+        type="text"
+      >
+      <br>
+      <button @click="submitEdit">
+        ok
+      </button>
+    </div>
+    <div>{{ itemsSelected }}</div>
+  </div>
+</template>
+
+<style>
+.operation-wrapper .operation-icon {
+  width: 20px;
+  cursor: pointer;
+}
+</style>
