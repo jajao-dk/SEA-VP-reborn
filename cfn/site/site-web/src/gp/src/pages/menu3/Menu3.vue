@@ -6,7 +6,7 @@ const { data } = useData()
 
 <template>
   <!-- div>{{ data }}</div-->
-  <div>
+  <div class="perf">
     <iframe
       id="Peformance evaluation mockup"
       title="Performance evaluation mockup with VUE"
@@ -16,7 +16,7 @@ const { data } = useData()
 </template>
 
 <style scoped>
-* {
+.perf {
   margin: 0;
   padding: 0;
   overflow: hidden;

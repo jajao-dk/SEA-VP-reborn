@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="80" viewBox="0 0 30.41 80.49">
+<symbol id="lightning" viewBox="0 0 30.41 80.49">
+<defs>
+<style>
+</style>
+<linearGradient id="名称未設定グラデーション_37" x1="15.2" y1="78.04" x2="15.2" y2="2.46" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#fff"/>
+<stop offset="0" stop-color="#e60012"/>
+</linearGradient>
+</defs>
+<g id="レイヤー_2" data-name="レイヤー 2"><g id="グラフ線">
+<polygon class="cls-1" points="1.82 78.04 10.45 45.38 0.76 40.78 28.59 2.46 19.96 35.12 29.65 39.72 1.82 78.04" stroke-linecap=" butt" stroke="#191919" stroke-dasharray=" none" stroke-dashoffset="0" stroke-linejoin=" miter" stroke-miterlimit="4"/>
+</g></g>
+</symbol>
+</svg>

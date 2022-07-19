@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>btn_thundert_on</title>
+    <g id="アイコン" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="relife_frame_pc_MOL" transform="translate(-57.000000, -427.000000)">
+            <g id="btn_thundert_on" transform="translate(57.000000, 427.000000)">
+                <circle id="Oval" fill="#3E99FD" cx="15" cy="15" r="15"></circle>
+                <g id="Group" transform="translate(4.221825, 4.727922)" fill="#FFFFFF" fill-rule="nonzero">
+                    <g id="Path">
+                        <polygon points="18 8 13 8 15 1 7 1 4 11 10 11 9 21"></polygon>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

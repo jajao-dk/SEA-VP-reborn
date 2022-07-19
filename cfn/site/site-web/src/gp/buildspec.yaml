@@ -9,7 +9,7 @@ env:
     GTAG_GA4_MEASUREMENT_ID: /$ENVIRONMENT_NAME/infra-resource/googleanalytics/ga4-measurement-id
     GTAG_UA_MEASUREMENT_ID: /$ENVIRONMENT_NAME/infra-resource/googleanalytics/ua-measurement-id
   variables:
-    TARGET: public/okamaw-test/perftest
+    TARGET: public/gp
 
 phases:
   install:

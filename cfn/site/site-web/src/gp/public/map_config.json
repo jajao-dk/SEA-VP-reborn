@@ -1,0 +1,45 @@
+{
+  "theme": "light",
+  "map": {
+    "center": {
+      "lng": 0,
+      "lat": 0
+    },
+    "zoom": 1,
+    "maxZoom": 10
+  },
+  "layer": [
+    {
+      "name": "Graticule",
+      "title": "Graticule"
+    },
+    {
+      "name": "Cyclone",
+      "title": "Cyclone"
+    },
+    {
+      "name": "Current",
+      "title": "Current"
+    },
+    {
+      "name": "Wind",
+      "title": "Wind"
+    },
+    {
+      "name": "WxChart",
+      "title": "Pressure Pattern"
+    },
+    {
+      "name": "Wave",
+      "title": "Wave"
+    },
+    {
+      "name": "EcaArea",
+      "title": "EcaArea"
+    },
+    {
+      "name": "ERRM",
+      "title": "Enroute Risk Monitoring"
+    }
+  ]
+}

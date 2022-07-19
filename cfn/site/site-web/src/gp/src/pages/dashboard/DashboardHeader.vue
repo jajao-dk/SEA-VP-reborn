@@ -13,8 +13,8 @@ watch(toRef(route, 'name'), () => { store.close() })
 
 <template>
   <div class="flex border-b-2 border-gray-200">
-   <!--  <div class="container mx-auto h-16 relative"> -->
-     <div class="flex-auto px-4 h-12 relative">
+    <!--  <div class="container mx-auto h-16 relative"> -->
+    <div class="flex-auto px-4 h-12 relative">
       <div class="h-full flex items-center">
         <div class="flex-1">
           <div class="flex gap-4">
@@ -31,13 +31,13 @@ watch(toRef(route, 'name'), () => { store.close() })
             >
               <div>
                 <img
-                  src="/sailingship.svg"
+                  src="/green-sailing-ship.svg"
                   class="h-10"
                 >
               </div>
               <div class="flex-col space-y-0">
                 <div class="font-bold">
-                  GREEN PLATFORM
+                  GREEN-Dashboard by OSR/PMS-e
                 </div>
                 <div class="text-xs">
                   powered by Weathernews
