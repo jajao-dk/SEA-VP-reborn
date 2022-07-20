@@ -45,11 +45,6 @@
         ref="container"
         class="h-full"
       />
-      <!--iframe
-        width="960"
-        height="720"
-        src="https://ap-northeast-1.quicksight.aws.amazon.com/sn/embed/share/accounts/716990209761/dashboards/1cca6f7c-2ee4-4c0d-91d1-42cbe40d995c?directory_alias=sea-analytics"
-      /-->
     </div>
   </div>
 </template>
@@ -57,11 +52,8 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { loadMapConfig } from '../../scripts/mapConfig.js'
-// import values from '../../scripts/values/'
 import Table from './components/Table.vue'
 import Map from './components/Map.vue'
-// import EasyDataTable from 'vue3-easy-data-table'
-// import 'vue3-easy-data-table/dist/style.css'
 import { useAuth } from '../../plugins/auth'
 import * as QuickSightEmbedding from 'amazon-quicksight-embedding-sdk'
 
@@ -72,14 +64,12 @@ const authorized = ref(false)
 const config = reactive({})
 const pathParams = ref({ shopName: 'vp' })
 const mapFocusVessel = ref('')
+let dashboard
 
-// Table component
+// For Table & Map components
 const errmVessels = ref({})
 
-// MapWidget
-// const errmGeoJson = ref({})
-
-// QS
+// For QuickSight
 const container = ref(null)
 
 onMounted(async () => {
@@ -87,7 +77,7 @@ onMounted(async () => {
   customerId.value = user.customer_ids[0]
   // console.log(user.customer_ids[0])
 
-  const mapConfigUrl = './map_config.json'
+  const mapConfigUrl = './map_config_menu4.json'
   config.value = await loadMapConfig(mapConfigUrl, null)
   console.log(config.value)
 
@@ -98,7 +88,8 @@ onMounted(async () => {
   // console.log(authorized.value)
 
   const options = {
-    url: 'https://ap-northeast-1.quicksight.aws.amazon.com/sn/embed/share/accounts/716990209761/dashboards/1cca6f7c-2ee4-4c0d-91d1-42cbe40d995c?directory_alias=sea-analytics',
+    url: 'https://ap-northeast-1.quicksight.aws.amazon.com/sn/embed/share/accounts/716990209761/dashboards/9e6e3e10-2ea8-4b32-bbba-d73d907687bb?directory_alias=sea-analytics',
+    // url: 'https://ap-northeast-1.quicksight.aws.amazon.com/sn/embed/share/accounts/716990209761/dashboards/1cca6f7c-2ee4-4c0d-91d1-42cbe40d995c?directory_alias=sea-analytics',
     container: container.value,
     iframeResizeOnSheetChange: true,
     printEnabled: true,
@@ -107,7 +98,7 @@ onMounted(async () => {
     height: '100%',
     locale: 'en-US'
   }
-  QuickSightEmbedding.embedDashboard(options)
+  dashboard = QuickSightEmbedding.embedDashboard(options)
 
   getLatestERRM()
 })
@@ -116,6 +107,8 @@ onMounted(async () => {
 const tableVesselSelected = selectedVessel => {
   console.log('emit! ' + selectedVessel)
   mapFocusVessel.value = selectedVessel
+  dashboard.setParameters({ IMO: [''] })
+  dashboard.setParameters({ IMO: selectedVessel })
 }
 
 // Create Table
@@ -166,32 +159,6 @@ const getLatestERRM = async () => {
 </script>
 
 <style>
-/*
-.boxA {float: left; width: 70%; height: 100%}
-.qspane {float: left; width: 30%; height: 720px}
-*/
-
-/*
-.allpane {
-  display: grid;
-  height: 100vh;
-  grid-template-rows: 5% 65% 30%;
-  grid-template-columns: 100%;
-}
-.inputpane {
-  grid-row: 1;
-  grid-column: 1;
-}
-.boxA {
-  grid-row: 2;
-  grid-column: 1;
-}
-.qspane {
-  grid-row: 3;
-  grid-column: 1;
-}
-*/
-
 .allpane {
   display: grid;
   height: 100%;
@@ -227,12 +194,5 @@ body {
 #app {
   height: 100%;
 }
-
-/*
-.operation-wrapper .operation-icon {
-  width: 20px;
-  cursor: pointer;
-}
-*/
 
 </style>

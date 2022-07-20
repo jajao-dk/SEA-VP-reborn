@@ -7,11 +7,12 @@ const { data } = useData()
 <template>
   <!-- div>{{ data }}</div-->
   <div class="tap">
-    <iframe
+    CIM SIMULATOR
+    <!--iframe
       id="TAP mockup"
       title="TAP mockup with mapbox"
       src="https://d6mw5wbrp0lzx.cloudfront.net/map/customers/ssm-with-tap/nyk/index.html"
-    />
+    /-->
   </div>
 </template>
 

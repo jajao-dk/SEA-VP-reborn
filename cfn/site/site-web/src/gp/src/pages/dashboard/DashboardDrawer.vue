@@ -1,7 +1,7 @@
 <script setup>
-import { useStore } from "./store";
+import { useStore } from './store'
 
-const store = useStore();
+const store = useStore()
 </script>
 
 <template>
@@ -33,6 +33,12 @@ const store = useStore();
         to="/menu4"
       >
         4. ERRM with CII
+      </router-link>
+      <router-link
+        class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+        to="/menu5"
+      >
+        5. Voyage Comparison
       </router-link>
     </div>
   </div>

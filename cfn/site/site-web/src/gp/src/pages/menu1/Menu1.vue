@@ -39,14 +39,14 @@ const rpmEventHandler = async () => {
 </script>
 
 <template>
+  EMISSION DASHBOARD
   <!-- div>{{ data }}</div-->
-  <div class="rpm">
+  <!--div class="rpm">
     VUE-TEST-TAKAO:<br><br>
     <form
       novalidate
       @submit.prevent="onSubmit"
     >
-      <!-- div class="field"-->
       Input LEG-ID1
       <input
         v-model="legid1"
@@ -61,7 +61,6 @@ const rpmEventHandler = async () => {
         type="text"
         placeholder="sid20220430_000349"
       ><br><br>
-      <!-- /div-->
       <button
         class="simbtn"
         type="submit"
@@ -70,7 +69,7 @@ const rpmEventHandler = async () => {
         Submit
       </button>
     </form>
-  </div>
+  </div-->
 </template>
 
 <style>
