@@ -95,7 +95,7 @@ def generate_password():
             n = n + 1
         if any(c.isdigit() for c in password):
             n = n + 1
-        if bool(re.search(r'!|@|#|\$|%|\^|&|\*|(|)', password)):
+        if bool(re.search(r'!|@|#|\$|%|\^|&|\*|\(|\)', password)):
             n = n + 1
         if n >= 3:
             return password
