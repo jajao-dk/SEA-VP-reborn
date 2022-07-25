@@ -27,7 +27,7 @@ onMounted(async () => {
     scrolling: 'auto',
     width: '100%',
     height: '100%',
-    locale: 'ja_JP'
+    locale: 'en-US'
   }
   QuickSightEmbedding.embedDashboard(options)
 
