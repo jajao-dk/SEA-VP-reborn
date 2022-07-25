@@ -50,11 +50,11 @@ const hideTooltip = (text) => {
   </div>
 </template>
 
-<style>
+<style scoped>
 #layers {
   position: absolute;
-  top: 30px;
-  left: 20px;
+  top: 10px; /* 30px */
+  left: 56%; /* 20px */
   background-color: rgba(200, 200, 200, 0.8);
   z-index: 1;
 }
@@ -62,7 +62,7 @@ const hideTooltip = (text) => {
   list-style-type: none;
   margin: 0;
   padding: 10px;
-  max-height: calc(100vh - 80px);
+  max-height: calc(70vh - 80px);
   border-radius: 5px;
   overflow-y: auto;
 }
@@ -212,11 +212,23 @@ const hideTooltip = (text) => {
 #layers li input#toggleERRM:checked ~ label {
   background-image: url("/images/btns_svg/btn_ship_on.svg");
 }
+#layers li input#toggleVoyCom ~ label {
+  background-image: url("/images/btns_svg/btn_ship_off.svg");
+}
+#layers li input#toggleVoyCom:checked ~ label {
+  background-image: url("/images/btns_svg/btn_ship_on.svg");
+}
+#layers li input#toggleTAP ~ label {
+  background-image: url("/images/btns_svg/btn_ship_off.svg");
+}
+#layers li input#toggleTAP:checked ~ label {
+  background-image: url("/images/btns_svg/btn_ship_on.svg");
+}
 .layerList_icon_desc {
   /* ツールチップのスタイル */
   position: absolute;
   padding: 2px 10px;
-  left: 60px;
+  left: 59%; /* 60px */
   border-radius: 10px; /* 角の丸み */
   transform: translate(0px, 6px);
   background-color: rgba(255, 255, 255, 0.75);

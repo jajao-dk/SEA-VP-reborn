@@ -1,0 +1,87 @@
+{
+  "theme": "light",
+  "map": {
+    "center": {
+      "lng": 0,
+      "lat": 0
+    },
+    "zoom": 1,
+    "maxZoom": 10
+  },
+  "layer": [
+    {
+      "name": "Graticule",
+      "title": "Graticule"
+    },
+    {
+      "name": "Cyclone",
+      "title": "Cyclone"
+    },
+    {
+      "name": "Current",
+      "title": "Current"
+    },
+    {
+      "name": "Wind",
+      "title": "Wind"
+    },
+    {
+      "name": "WxChart",
+      "title": "Pressure Pattern"
+    },
+    {
+      "name": "Wave",
+      "title": "Wave"
+    },
+    {
+      "name": "EcaArea",
+      "title": "EcaArea"
+    },
+    {
+      "name": "VoyCom",
+      "title": "Voyage Comparison",
+      "zIndex": 1000
+    }
+  ],
+  "alert": {
+    "ocean": {
+      "using": true
+    },
+    "coastal": {
+      "using": true
+    },
+    "company": {
+      "using": true
+    },
+    "group": {
+      "using": true
+    },
+    "piracy": {
+      "using": true
+    },
+    "tc": {
+      "using": true
+    },
+    "tsunami": {
+      "using": true
+    },
+    "grd_ais": {
+      "using": false
+    },
+    "grd_pp": {
+      "using": false
+    },
+    "grd_ot": {
+      "using": false
+    },
+    "port": {
+      "using": true
+    },
+    "rep_miss": {
+      "using": true
+    },
+    "pos_diff": {
+      "using": true
+    }
+  }
+}

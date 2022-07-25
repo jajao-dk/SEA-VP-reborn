@@ -46,6 +46,7 @@ watch(customerId, (newValue) => {
 })
 */
 
+// Event: new errmVessels is provided by Menu4.vue
 watch(errmVessels, (newValue) => {
   console.log('ERRM Handler 2')
   console.log(newValue)
@@ -53,6 +54,7 @@ watch(errmVessels, (newValue) => {
   layerList.ERRM.content.updateMapHandler(props.errmVessels)
 })
 
+// Event: map focus order from Menu4.vue
 watch(mapFocusVessel, (newValue) => {
   console.log('FOCUS VESSEL on MAP')
   console.log(newValue)
@@ -90,6 +92,20 @@ onMounted(async () => {
   await map.onPromise('load')
   registLayer(map, layerList, { colorMode: props.config.theme })
   // registSidePanel(map, layerList, sidePanel)
+
+  /*
+  watch(layerList.ERRM.content.selectedIMO, (newValue) => {
+    console.log('VESSEL ICON is CLICKED.')
+    console.log(newValue)
+  })
+  */
+
+  layerList.ERRM.content.event.addEventListener('shipIconClick', (e) => {
+    console.log('ship icon click')
+    console.log(e)
+    const imo = e.detail.data
+    console.log(imo)
+  })
 
   ready.value = true
 })

@@ -1,16 +1,14 @@
 <template>
   <div class="tableplane">
     <EasyDataTable
-      dense
+      show-index
       header-background-color="#ddd"
-      :fixed-header="true"
       :headers="headers"
       :items="items"
       table-class-name="customize-table"
-      header-class-name="customize-table-header"
       @click-row="clickRow"
     >
-      <template #item-risk="{risk, riskLevel}">
+      <!--template #item-risk="{risk, riskLevel}">
         <div class="risk-wrapper">
           <img
             class="risk"
@@ -18,14 +16,9 @@
             alt=""
           >{{ risk }}
         </div>
-      </template>
+      </template-->
       <template #item-operation="item">
         <div class="operation-wrapper">
-          <!--img
-            src="../images/delete.png"
-            class="operation-icon"
-            @click="deleteItem(item)"
-          -->
           <img
             src="../images/edit.png"
             class="operation-icon"
@@ -57,31 +50,32 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, defineProps, watch, toRefs } from 'vue'
+import { ref, reactive, defineProps, watch, toRefs } from 'vue'
 import EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
 
 // Props
 const props = defineProps({
   customerId: { type: String, default: '' },
-  errmVessels: { type: Object, default: () => {} }
+  legData: { type: Object, default: () => {} }
 })
 
-const { customerId, errmVessels } = toRefs(props)
+const { customerId, legData } = toRefs(props)
 // watch(() => props.custtomerId, (newValue) => {
-watch(errmVessels, (newValue) => {
-  console.log('Table draw Handler')
+watch(legData, (newValue) => {
+  console.log('Table create Handler')
   console.log(newValue)
-  console.log(customerId.value)
   createTable(newValue)
 })
 
 // Emits
+/*
 const emits = defineEmits(['tableVesselSelected'])
 const clickRow = (item) => {
-  console.log(item.imo)
+  console.log(item.id)
   emits('tableVesselSelected', item.imo)
 }
+*/
 
 // Create Table
 const headers = ref([])
@@ -93,9 +87,6 @@ const editingItem = reactive({
   weight: 0,
   id: 0
 })
-const deleteItem = (val) => {
-  items.value = items.value.filter((item) => item.id !== val.id)
-}
 const editItem = (val) => {
   isEditing.value = true
   const { height, weight, id } = val
@@ -110,41 +101,57 @@ const submitEdit = () => {
   item.weight = editingItem.weight
 }
 
-const createTable = (errmVessels) => {
+const createTable = (legData) => {
   console.log('create table')
-  console.log(errmVessels)
+  console.log(legData)
+  items.value.length = 0
+  if (legData === undefined) {
+    return false
+  }
+  const plans = legData.plans
 
-  for (let i = 0; i < errmVessels.length; i++) {
-    const latest = errmVessels[i].latest
-    // console.log(latest.vessel_name)
-    const riskLevel = checkAlert(errmVessels[i])
-    console.log(riskLevel)
+  plans.sort(function (a, b) {
+    if (a.selected >= b.selected) return -1
+    if (a.selected < b.selected) return 1
+    return 0
+  })
+
+  for (let i = 0; i < plans.length; i++) {
+    const plan = plans[i]
+    // const riskLevel = checkAlert(errmVessels[i])
+    // console.log(riskLevel)
 
     // emits('tableVesselSelected', errmVessels[i].imo_num)
 
+    console.log(plans)
+
     const tmpRaw = {
       id: i,
-      vessel_name: latest.vessel_name,
-      imo: errmVessels[i].imo_num,
-      service_type: latest.service_type,
-      risk: '',
-      riskLevel,
-      laden_ballast: latest.loading_condition,
-      priority: latest.voyage_priority,
-      atd: (latest.dep_time_utc).slice(5, 16),
-      arrival_port: latest.arr_port,
-      eta: (latest.arr_time_utc).slice(5, 16),
-      rta: (latest.req_arr_time_utc).slice(5, 16),
-      speed: (Math.round(Number(latest.average_speed) * 10) / 10).toFixed(1),
-      ordered_speed: (Math.round(Number(latest.ordered_speed) * 10) / 10).toFixed(1),
-      rpm: (Math.round(Number(latest.average_rpm) * 10) / 10).toFixed(1),
-      suggested_rpm: (Math.round(Number(latest.suggested_rpm) * 10) / 10).toFixed(1),
-      total_foc: (Math.round(Number(latest.total_foc) * 10) / 10).toFixed(1),
-      ordered_foc: (Math.round(Number(latest.ordered_foc) * 10) / 10).toFixed(1),
-      total_dogo: (Math.round(Number(latest.total_dogo) * 10) / 10).toFixed(1),
-      ordered_dogo: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
+      select: plan.selected,
+      setting: plan.setting,
+      route: plan.route_name,
+      eta: plan.eta_lt,
+      co2: '',
       cii: '',
-      co2: ''
+      remain_dist: plan.distance.remain,
+      entire_dist: plan.distance.entire,
+      ocean_days: (Math.round(Number(plan.sailing_area.OpenOcean.sailing_days) * 10) / 10).toFixed(1),
+      remain_days: (Math.round(Number(plan.sailing_area.Remain.sailing_days) * 10) / 10).toFixed(1),
+      entire_days: (Math.round(Number(plan.sailing_area.Entire.sailing_days) * 10) / 10).toFixed(1),
+      goodwx_spd: plan.speed.perf,
+      wx_factor: plan.speed.wf,
+      cur_factor: plan.speed.cf,
+      og: plan.speed.og,
+      hsfo: plan.cons_fo_over_0_1,
+      lsfo: plan.cons_fo_max_0_1,
+      dogo: plan.cons_dogo_max_0_1,
+      est_foc: plan.wni_estimated_foc,
+      bunker_cost: plan.cost_bunker,
+      hire_cost: plan.cost_hire,
+      total_cost: plan.cost_total,
+      daily_cost: plan.cost_daily,
+      entire_cost: plan.cost_entire
+      // hire_cost: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
     }
     items.value.push(tmpRaw)
   }
@@ -168,26 +175,31 @@ const checkAlert = (vessel) => {
 
 // Table headers
 headers.value = [
-  { text: 'Vessel name', value: 'vessel_name', fixed: true, width: 100 },
-  { text: 'Service', value: 'service_type', width: 60 },
-  { text: 'Risk', value: 'risk', width: 50 },
-  { text: 'L/B', value: 'laden_ballast', width: 30 },
-  { text: 'Priority', value: 'priority', width: 110 },
-  { text: 'ATD', value: 'atd', sortable: true, width: 95 },
-  { text: 'Arrival port', value: 'arrival_port', width: 100 },
-  { text: 'ETA', value: 'eta', width: 95 },
-  { text: 'RTA', value: 'rta', width: 95 },
-  { text: 'Speed', value: 'speed', width: 50 },
-  { text: 'target', value: 'ordered_speed', sortable: true, width: 50 },
-  { text: 'RPM', value: 'rpm', width: 50 },
-  { text: 'target', value: 'suggested_rpm', width: 50 },
+  { text: 'Select', value: 'select', width: 60 },
+  { text: 'Setting', value: 'setting', width: 150 },
+  { text: 'Route', value: 'route', width: 120 },
+  { text: 'ETA (LT)', value: 'eta', width: 100 },
   { text: 'CO2', value: 'co2', width: 50 },
   { text: 'CII', value: 'cii', width: 50 },
-  { text: 'FOC', value: 'total_foc', width: 50 },
-  { text: 'target', value: 'ordered_foc', sortable: true, width: 50 },
-  { text: 'DO/GO', value: 'total_dogo', width: 50 },
-  { text: 'target', value: 'ordered_dogo', sortable: true, width: 50 },
-  { text: 'Edit', value: 'operation', width: 50 }
+  { text: 'Remain dist.', value: 'remain_dist', width: 50 },
+  { text: 'Entire dist.', value: 'entire_dist', width: 50 },
+  { text: 'Ocean days', value: 'ocean_days', width: 50 },
+  { text: 'Remain days', value: 'remain_days', width: 50 },
+  { text: 'Entire days', value: 'entire_days', width: 50 },
+  { text: 'GoodWx SPD', value: 'goodwx_days', width: 50 },
+  { text: 'Wx Factor', value: 'wx_factor', width: 50 },
+  { text: 'Cur Factor', value: 'cur_factor', width: 50 },
+  { text: 'O.G', value: 'og', width: 50 },
+  { text: 'HSFO', value: 'hsfo', width: 50 },
+  { text: 'LSFO', value: 'lsfo', sortable: true, width: 50 },
+  { text: 'DOGO', value: 'dogo', width: 50 },
+  { text: 'Est. FOC', value: 'est_foc', sortable: true, width: 50 },
+  { text: 'Bunker cost', value: 'bunker_cost', width: 50 },
+  { text: 'Hire cost', value: 'hire_cost', width: 50 },
+  { text: 'Total cost', value: 'total_cost', width: 50 },
+  { text: 'Daily cost', value: 'daily_cost', width: 50 },
+  { text: 'Entire cost', value: 'entire_cost', width: 50 }//,
+  // { text: 'EDIT', value: 'operation', width: 50 }
 ]
 
 </script>
@@ -196,14 +208,7 @@ headers.value = [
 .tableplane {
   width: 100%;
   height: 300px;
-  /* overflow: scroll; */
-}
-
-.customize-table .th{
-  position: sticky;
-  top: 0;
-  left: 0;
-  font-size: 20px;
+  overflow: scroll;
 }
 
 .operation-wrapper .operation-icon {

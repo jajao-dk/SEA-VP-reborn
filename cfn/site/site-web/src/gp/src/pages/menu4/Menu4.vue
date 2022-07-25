@@ -3,8 +3,8 @@
     id="app"
     class="allpane"
   >
-    <!--div class="inputpane">
-      &nbsp Client code:
+    <div class="inputpane">
+      &nbsp; Client code:
       <input
         v-model="client"
         class="perfin"
@@ -18,7 +18,7 @@
       >
         Submit
       </button>
-    </div-->
+    </div>
 
     <div class="mappane">
       <Map
@@ -116,10 +116,9 @@ const client = ref('')
 let vesselList
 
 const getLatestERRM = async () => {
-  /*
   console.log('getVesselList')
   console.log('Client code: ', client.value)
-
+  /*
   if (client.value === '') {
     return false
   }
@@ -162,15 +161,15 @@ const getLatestERRM = async () => {
 .allpane {
   display: grid;
   height: 100%;
-  grid-template-rows: 5% 55% 40%;
-  grid-template-columns: 75% 25%;
+  grid-template-rows: 8% 52% 40%;
+  grid-template-columns: 70% 30%;
 }
-/*
+
 .inputpane {
   grid-row: 1;
   grid-column: 2;
 }
-*/
+
 .mappane {
   grid-row: 1/3;
   grid-column: 1;

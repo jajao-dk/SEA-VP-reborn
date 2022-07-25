@@ -48,7 +48,7 @@ export class VesselERRMLayer extends Layer {
         'icon-image': 'vesselSymbol', // アイコンは、先に読み込んで置く
         'icon-allow-overlap': true,
         'icon-rotate': ['get', 'heading'],
-        'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.6, 4, 1.2],
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 0.5, 4, 0.9],
         'icon-pitch-alignment': 'map', // 3D表示や回転をしたときにも、地図に対して角度が保たれるように
         'icon-rotation-alignment': 'map', // 3D表示や回転をしたときにも、地図に対して角度が保たれるように
         'icon-ignore-placement': true, // 他のアイコンを間引いてしまわないように
@@ -56,7 +56,7 @@ export class VesselERRMLayer extends Layer {
         'text-field': [
           'format',
           ['get', 'vessel_name'],
-          { 'font-scale': 0.7 }
+          { 'font-scale': 0.6 }
           // '\n',
           // {},
           // ['downcase', ['get', 'imo']],
@@ -69,8 +69,8 @@ export class VesselERRMLayer extends Layer {
           ['linear'],
           ['zoom'],
           1,
-          0.5,
-          4,
+          0.6,
+          3,
           1.2
         ],
         'text-justify': 'auto',
@@ -283,6 +283,35 @@ export class VesselERRMLayer extends Layer {
     this.initialized = true
   }
 
+  async updateTimeSeriesIndex() {
+    super.updateTimeSeriesIndex()
+    console.log(this.timeSeries.globalTime)
+    if (this.visibility === 'visible' && this.timeSeries.globalTime) {
+      console.log('TIME SERIES')
+      /*
+      // Time slider update (including periodic update)
+      const tm = this.timeSeries.globalTime
+      const posttime = Math.floor(tm / 3600000 / 3) * 3600 * 3
+      console.log(posttime)
+      */
+
+      if (this.errmGeoJSON !== undefined) {
+        this.map.getSource(this.source).setData(this.errmGeoJSON.latest)
+        // this.map.getSource(`${this.source}Voycom`).setData(this.errmGeoJSON)
+        // this.map.flyTo({ center: this.latestPos })
+      }
+
+      /*
+      this.map.setFilter(`${this.layer}VoycomGhost`, [
+        'in',
+        'posttime',
+        posttime
+      ])
+      */
+    }
+    console.log('vessel layer update by timeseries-index!!!')
+  }
+
   onClickShipIcon(e, isFromOnMessage) {
     if (this.selectedVessel) {
       console.log('CLICK')
@@ -339,6 +368,13 @@ export class VesselERRMLayer extends Layer {
     // Side panel
     // this.sidepanelTrigger(e, 0)
     // this.popup.remove();
+
+    // event to Table/QS
+    this.event.dispatchEvent(
+      new CustomEvent('shipIconClick', {
+        detail: { data: this.selectedVessel.properties.imo }
+      })
+    )
   }
 
   onClickTable(imo) {
@@ -379,29 +415,31 @@ export class VesselERRMLayer extends Layer {
       0.5
     ])
 
-    this.map.getSource(`${this.source}Highlight`).setData(this.selectedVessel) // ハイライトするデータを設定
-    this.blinkHighlightLayer() // 点滅開始
+    if (this.visibility === 'visible' && this.errmGeoJSON !== undefined) {
+      this.map.getSource(`${this.source}Highlight`).setData(this.selectedVessel) // ハイライトするデータを設定
+      this.blinkHighlightLayer() // 点滅開始
 
-    if (location.href.match(/3d/)) {
-      this.map.flyTo({
-        center: this.selectedVessel.geometry.coordinates,
-        pitch: 40,
-        bearing: this.selectedVessel.properties.heading
-      }) // その船が地図のセンターになるように移動
-    } else {
-      this.map.flyTo({
-        center: this.selectedVessel.geometry.coordinates
-        // zoom: 9
-      }) // その船が地図のセンターになるように移動
+      if (location.href.match(/3d/)) {
+        this.map.flyTo({
+          center: this.selectedVessel.geometry.coordinates,
+          pitch: 40,
+          bearing: this.selectedVessel.properties.heading
+        }) // その船が地図のセンターになるように移動
+      } else {
+        this.map.flyTo({
+          center: this.selectedVessel.geometry.coordinates
+          // zoom: 9
+        }) // その船が地図のセンターになるように移動
+      }
+
+      // ルートデータを取得して、描画(setData)
+      const tmpRoute = this.errmGeoJSON[this.selectedVessel.properties.imo]
+      console.log(tmpRoute)
+      tmpRoute.features.forEach((feature) => {
+        convertCross180Coordinates(feature.geometry.coordinates)
+      })
+      this.map.getSource(`${this.source}Route`).setData(tmpRoute)
     }
-
-    // ルートデータを取得して、描画(setData)
-    const tmpRoute = this.errmGeoJSON[this.selectedVessel.properties.imo]
-    console.log(tmpRoute)
-    tmpRoute.features.forEach((feature) => {
-      convertCross180Coordinates(feature.geometry.coordinates)
-    })
-    this.map.getSource(`${this.source}Route`).setData(tmpRoute)
 
     // Side panel
     // this.sidepanelTrigger(e, 0)
@@ -409,6 +447,7 @@ export class VesselERRMLayer extends Layer {
   }
 
   // 180°またぎ対応を入れたいために、このようにしている。本来データ側で整形すべき
+  /*
   async getRouteGeoJSON(imo) {
     console.log(imo)
     return new Promise((resolve) => {
@@ -425,6 +464,7 @@ export class VesselERRMLayer extends Layer {
         })
     })
   }
+  */
 
   // 要素の点滅（ややエイヤだが、まあ十分か？）
   // 一定間隔で、opacity を 0/1 で切り替えている。
@@ -485,12 +525,18 @@ export class VesselERRMLayer extends Layer {
     this.map.getSource(this.source).setData(this.errmGeoJSON.latest)
     const tmp = this.errmGeoJSON.latest.features
     console.log('tmpvessels: ' + tmp.length)
+    const tmpIMO = tmp[0].properties.imo
     for (let i = 0; i < tmp.length; i++) {
       this.tmpVessels.push(tmp[i].properties.vessel_name)
       // this.IMOs[tmp[i].properties.imo] = tmp[i].properties.vessel_name
     }
     this.tmpVessels.sort()
     console.log(this.tmpVessels)
+
+    // Another dark art
+    const selected = this.errmGeoJSON.latest.features[0]
+    this.map.getSource(`${this.source}Highlight`).setData(selected)
+    this.map.getSource(`${this.source}Highlight`).setData(featureCollection([]))
   }
 
   makeGeoJSON(errmVessels) {

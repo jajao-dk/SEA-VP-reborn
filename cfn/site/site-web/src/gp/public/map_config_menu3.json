@@ -1,0 +1,25 @@
+{
+  "theme": "light",
+  "map": {
+    "center": {
+      "lng": 0,
+      "lat": 0
+    },
+    "zoom": 1,
+    "maxZoom": 10
+  },
+  "layer": [
+    {
+      "name": "Graticule",
+      "title": "Gridlines"
+    },
+    {
+      "name": "EcaArea",
+      "title": "EcaArea"
+    },
+    {
+      "name": "TAP",
+      "title": "Tonnage allocation planner"
+    }
+  ]
+}
