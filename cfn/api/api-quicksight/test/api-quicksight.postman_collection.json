@@ -3,7 +3,7 @@
 		"_postman_id": "317cf463-c7d7-4cc7-8449-6258192bbd79",
 		"name": "api-quicksight",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "5163829"
+		"_exporter_id": "18495470"
 	},
 	"item": [
 		{
@@ -316,58 +316,6 @@
 			"response": []
 		},
 		{
-			"name": "ERROR-SSM-no-param-customer_id",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"response status must be 403 Forbidden\", function () {",
-							"    pm.response.to.have.status(403);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{TOKEN_FOR_SSM}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{ENDPOINT}}?application=SSM&user_name={{PARAM_SSM_user_name}}",
-					"host": [
-						"{{ENDPOINT}}"
-					],
-					"query": [
-						{
-							"key": "application",
-							"value": "SSM"
-						},
-						{
-							"key": "customer_id",
-							"value": "{{PARAM_SSM_customer_id}}",
-							"disabled": true
-						},
-						{
-							"key": "user_name",
-							"value": "{{PARAM_SSM_user_name}}"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "NORMAL-SSM-no-param-user_name",
 			"event": [
 				{
@@ -477,6 +425,641 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "NORMAL-GP-contents_id-ssm",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('EmbedUrl is filled', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
+							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-ssm-PPB\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_GP}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=ssm",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "GP"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}"
+						},
+						{
+							"key": "contents_id",
+							"value": "ssm"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GP-contents_id-gperrm",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('EmbedUrl is filled', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
+							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-gperrm-PPB\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_GP}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=gperrm",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "GP"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}"
+						},
+						{
+							"key": "contents_id",
+							"value": "gperrm"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GP-contents_id-gpvcs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('EmbedUrl is filled', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
+							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-gpvcs-client_v1_0\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_GP}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=gpvcs",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "GP"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}"
+						},
+						{
+							"key": "contents_id",
+							"value": "gpvcs"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GP-contents_id-emd",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('EmbedUrl is filled', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
+							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-emd-client_v1_3\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_GP}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=emd",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "GP"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}"
+						},
+						{
+							"key": "contents_id",
+							"value": "emd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GP-no-auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 401 Unauthorized\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=emd",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "GP"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}"
+						},
+						{
+							"key": "contents_id",
+							"value": "emd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GP-no-GP-in-token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_CIM}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=emd",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "GP"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}"
+						},
+						{
+							"key": "contents_id",
+							"value": "emd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GP-no-param-application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_GP}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=emd",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "GP",
+							"disabled": true
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}"
+						},
+						{
+							"key": "contents_id",
+							"value": "emd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GP-no-param-customer_id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_GP}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=GP&user_name={{PARAM_GP_user_name}}&contents_id=emd",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "GP"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}",
+							"disabled": true
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}"
+						},
+						{
+							"key": "contents_id",
+							"value": "emd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NORMAL-GP-no-param-user_name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('EmbedUrl is filled', function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_GP}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&contents_id=emd",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "GP"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}",
+							"disabled": true
+						},
+						{
+							"key": "contents_id",
+							"value": "emd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-GP-no-param-contents_id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_GP}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "GP"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}"
+						},
+						{
+							"key": "contents_id",
+							"value": "emd",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-no-param-all",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_GP}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "SSM",
+							"disabled": true
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}",
+							"disabled": true
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}",
+							"disabled": true
+						},
+						{
+							"key": "countents_id",
+							"value": "emd",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -524,6 +1107,14 @@
 			"key": "PARAM_SSM_customer_id",
 			"value": "NEOM",
 			"type": "string"
+		},
+		{
+			"key": "PARAM_GP_customer_id",
+			"value": "PPB"
+		},
+		{
+			"key": "PARAM_GP_user_name",
+			"value": "sea-dev%2Bppb%40wni.co.jp"
 		}
 	]
 }

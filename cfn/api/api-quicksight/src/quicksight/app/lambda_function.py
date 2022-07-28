@@ -34,7 +34,7 @@ def get_embed_url(event: APIGatewayProxyEvent):
     name_space=None
     dashboard_id=None
     user_name=None
-    if(params.get('application','') == 'SSM'):
+    if params.get('application','') == 'SSM':
         customer_id=params.get('customer_id','')
         customer_ids=user.get('customer_ids',[])
         applications=claims.get('https://weathernews.com/app_metadata',{}).get('applications',[])
@@ -43,6 +43,25 @@ def get_embed_url(event: APIGatewayProxyEvent):
             return Response(403, 'text/plain', 'Forbidden')
         name_space = f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-namespace-sea-vp-{customer_id}'
         dashboard_id=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-dashboard-sea-vp-ssm-{customer_id}'
+        user_name=params.get('user_name',
+            claims.get('https://weathernews.com/email',None))
+    elif params.get('application','') == 'GP':
+        customer_id=params.get('customer_id','')
+        customer_ids=user.get('customer_ids',[])
+        applications=claims.get('https://weathernews.com/app_metadata',{}).get('applications',[])
+        if ('GP' not in  applications) \
+            or (customer_id not in customer_ids) :
+            return Response(403, 'text/plain', 'Forbidden')
+        name_space = f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-namespace-sea-vp-{customer_id}'
+        contents_id = params.get('contents_id')
+        if contents_id in ['ssm', 'gperrm']:
+            dashboard_id=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-dashboard-sea-vp-{contents_id}-{customer_id}'
+        elif contents_id == 'gpvcs':
+            dashboard_id=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-dashboard-sea-vp-{contents_id}-client_v1_0'
+        elif contents_id == 'emd':
+            dashboard_id=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-dashboard-sea-vp-{contents_id}-client_v1_3'
+        else:
+            return Response(403, 'text/plain', 'Forbidden')
         user_name=params.get('user_name',
             claims.get('https://weathernews.com/email',None))
     else:

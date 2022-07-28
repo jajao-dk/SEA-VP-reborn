@@ -8,7 +8,7 @@
 
 1. Edit dev.postman_environment.json
     Copy from dev.postman_environment.tmpl.json
-    Fill value "TOKEN_FOR_CIM" and "TOKEN_FOR_SSM".
+    Fill value "TOKEN_FOR_CIM", "TOKEN_FOR_SSM" and "TOKEN_FOR_GP".
 
 2. Run test
     ```
