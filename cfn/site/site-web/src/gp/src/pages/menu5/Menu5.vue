@@ -28,10 +28,10 @@
         </option>
         <option
           v-for="vsl in vesselList"
-          :key="vsl.wnishipnum"
+          :key="vsl.ship_num"
           :value="vsl"
         >
-          {{ vsl.vessel_name }}
+          {{ vsl.ship_name }}
         </option>
       </select>&nbsp;
       <button
@@ -163,28 +163,30 @@ const getVesselList = async () => {
   }
 
   // client.value = 'RIO'
-  const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value
+  // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value
   // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=menu_id&val=Tonnage'
+  const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=file_name&val=fam_vessel_list'
   const resp = await fetch(urlSetting)
   const data = await resp.json()
   console.log(data)
   if (data.result === 'OK') {
     // vesselList.value = data.data
-    
+
+    /*
     const list = data.data.vessel_list
     list.sort(function (a, b) {
       if (a.vessel_name < b.vessel_name) return -1
       if (a.vessel_name > b.vessel_name) return 1
       return 0
     })
-    /*
+    */
+
     const list = data.data
     list.sort(function (a, b) {
       if (a.ship_name < b.ship_name) return -1
       if (a.ship_name > b.ship_name) return 1
       return 0
     })
-    */
 
     // vesselList.value = checkVesselList(list)
     // checkVesselList(list)
@@ -264,8 +266,10 @@ const checkVesselList = async (list) => {
 
 // Get LEG data
 const getVoyComData = async () => {
-  console.log(selectedVessel.value.wnishipnum)
-  const urlVoyCom = 'https://tmax-b01.weathernews.com/T-Max/VoyageComparison/api/reborn_get_voy_comparison_data.cgi?wnishipnum=' + selectedVessel.value.wnishipnum + '&client=' + client.value
+  // console.log(selectedVessel.value.wnishipnum)
+  console.log(selectedVessel.value.ship_num)
+  // const urlVoyCom = 'https://tmax-b01.weathernews.com/T-Max/VoyageComparison/api/reborn_get_voy_comparison_data.cgi?wnishipnum=' + selectedVessel.value.wnishipnum + '&client=' + client.value
+  const urlVoyCom = 'https://tmax-b01.weathernews.com/T-Max/VoyageComparison/api/reborn_get_voy_comparison_data.cgi?wnishipnum=' + selectedVessel.value.ship_num + '&client=' + client.value
   // const urlLatest = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_latest_enrouterisk.cgi'
   // const body = ['TEST', JSON.stringify({ ships: allVessels, group: '', client: client.value })]
 

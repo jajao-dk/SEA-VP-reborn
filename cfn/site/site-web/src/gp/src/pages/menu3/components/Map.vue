@@ -8,17 +8,7 @@ import { createLayerList, registLayer } from './LayerList'
 import LayerListPanel from './LayerListPanel.vue'
 import { useAuth } from '../../../plugins/auth'
 // import '/src/assets/styles/app.css'
-
 // import from SEA-MapWidget-Web
-// import { sidePanel, registSidePanel } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/composables/SidePanel'
-// import LegendButton from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Modules/Control/LegendButton.js'
-// import LegendPanel from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Modules/LegendPanel.vue'
-// import TimeSlider from './TimeSlider.vue'
-// import TimeSlider from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Modules/TimeSlider.vue'
-// import SidePanel from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Modules/SidePanel/index.vue'
-// import VesselAlertList from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Modules/VesselAlertList.vue'
-// import VesselSectionList from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Modules/VesselSectionList.vue'
-// import VesselSearchVessel from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Modules/VesselSearch.vue'
 
 const { getToken } = useAuth()
 // const token = await getToken()
@@ -26,11 +16,11 @@ const { getToken } = useAuth()
 
 const props = defineProps({
   customerId: { type: String, default: '' },
-  legData: { type: Object, default: () => {} },
+  simDatas: { type: Object, default: () => {} },
+  // simUpdate: { type: String, default: '' },
   config: { type: Object, default: () => {} },
   pathParams: { type: Object, default: () => {} },
-  // errmVessels: { type: Object, default: () => {} },
-  mapFocusVessel: { type: String, default: '' },
+  mapFocusRoute: { type: String, default: () => {} },
   token: { type: String, default: '' }
 })
 
@@ -38,7 +28,7 @@ const props = defineProps({
 const ready = ref(false)
 // const layerList = createLayerList(props.config, props.customerId, getToken, token.value, props.pathParams, props.errmGeoJson)
 const layerList = createLayerList(props.config, props.customerId, getToken, props.token, props.pathParams, props.legData)
-const isLegendDisplay = ref(false)
+// const isLegendDisplay = ref(false)
 /*
 watch(() => token.value, (newValue) => {
   for (const layer of Object.values(layerList)) {
@@ -48,7 +38,7 @@ watch(() => token.value, (newValue) => {
 */
 
 // const test = ref(props.customerId)
-const { legData, mapFocusVessel } = toRefs(props)
+const { simDatas, /* simUpdate, */ mapFocusRoute } = toRefs(props)
 
 /*
 watch(customerId, (newValue) => {
@@ -58,21 +48,18 @@ watch(customerId, (newValue) => {
 })
 */
 
-watch(legData, (newValue) => {
-  console.log('voycom Handler 2')
+watch(simDatas, (newValue) => {
+  console.log('map TAP Handler 3')
   console.log(newValue)
-  console.log(props.legData)
-  layerList.VoyCom.content.updateRouteHandler(props.legData)
-})
+  layerList.TAP.content.displayRouteHandler(props.simDatas)
+}, { deep: true })
 
-/*
-watch(mapFocusVessel, (newValue) => {
-  console.log('FOCUS VESSEL on MAP')
+watch(mapFocusRoute, (newValue) => {
+  console.log('FOCUS ROUTE on MAP')
   console.log(newValue)
-  // layerList.ERRM.content.updateMapHandler(props.errmVessels)
-  layerList.ERRM.content.onClickTable(newValue)
-})
-*/
+  layerList.TAP.content.routeColoring(newValue)
+  // layerList.ERRM.content.onClickTable(newValue)
+}, { deep: true })
 
 const mapMenuLayerList = computed(() => {
   const filteredList = {}
@@ -133,29 +120,6 @@ onMounted(async () => {
     v-if="ready"
     :layer-list="mapMenuLayerList"
   />
-  <!--TimeSlider
-    v-if="ready"
-    :layer-list="layerList"
-    :back-hour="360"
-    :futuer-hour="360"
-    :color-mode="props.config.theme"
-    :update-interval-second="0"
-  />
-  <SidePanel
-    v-if="ready"
-    :show="sidePanel.show"
-    :type="sidePanel.type"
-    :content="sidePanel.content"
-  />
-  <LegendPanel
-    :layer-list="layerList"
-    :is-legend-display="isLegendDisplay"
-  /-->
-  <!--template v-if="layerList.Vessel">
-    <VesselSectionList :vessel-layer="layerList.Vessel" />
-    <VesselAlertList :vessel-layer="layerList.Vessel" />
-    <VesselSearchVessel :vessel-layer="layerList.Vessel" />
-  </template-->
 </template>
 
 <!-- style src="/src/assets/styles/app.css" scoped-->

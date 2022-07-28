@@ -348,7 +348,7 @@ export class VesselVoyComLayer extends Layer {
 
       if (this.voycomGeoJSON !== undefined) {
         this.map.getSource(`${this.source}Voycom`).setData(this.voycomGeoJSON)
-        this.map.flyTo({ center: this.latestPos })
+        // this.map.flyTo({ center: this.latestPos })
       }
 
       this.map.setFilter(`${this.layer}VoycomGhost`, [
