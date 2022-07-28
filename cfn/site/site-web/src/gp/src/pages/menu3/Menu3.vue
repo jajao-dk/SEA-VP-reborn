@@ -4,9 +4,9 @@
     class="allpane"
   >
     <div class="inputpane">
-      <font size="5">
+      <div class="head">
         <b>SIMULATION INPUT</b>
-      </font><br><br>
+      </div><br><br>
 
       <b>Vessel info</b>
       <div class="basic-info">
@@ -57,7 +57,7 @@
             <option
               v-for="speed in speeds"
               :key="speed.key"
-              :value="speed.item"
+              :value="speed.key"
             >
               {{ speed.item }}
             </option>
@@ -81,16 +81,25 @@
         </div>
       </div>
 
-      <b>VOYAGE PLAN</b>
+      <b>Voyage plan</b>
       <div class="voy-plan">
+        <div>
+          ETD(UTC):&nbsp;
+          <div class="dtp">
+            <Datepicker
+              v-model="date"
+              :utc="true"
+            />
+          </div>{{ date }}
+        </div><br>
         <table>
           <thead>
             <tr>
-              <th>Departure</th>
-              <th>Arrival</th>
-              <th>Port days</th>
+              <th>Port</th>
+              <!--th>Arrival</th-->
               <th>Laden/Ballast</th>
-              <th>Target ETA</th>
+              <!--th>Target ETA</th-->
+              <th>Port days</th>
               <th>Add/Delete</th>
             </tr>
           </thead>
@@ -100,7 +109,7 @@
               :key="plan.dep"
             >
               <td>
-                <select v-model="plan.dep">
+                <select v-model="plan.port">
                   <option
                     disalbled
                     value=""
@@ -116,7 +125,7 @@
                   </option>
                 </select>
               </td>
-              <td>
+              <!--td>
                 <select v-model="plan.arr">
                   <option
                     disalbled
@@ -132,8 +141,7 @@
                     {{ port }}
                   </option>
                 </select>
-              </td>
-              <td><input v-model="plan.port_days"></td>
+              </td-->
               <td>
                 <select
                   v-model="plan.lb"
@@ -148,8 +156,8 @@
                   </option>
                 </select>
               </td>
-              <td><input v-model="plan.eta"></td>
-
+              <!--td><input v-model="plan.eta"></td-->
+              <td><input v-model="plan.port_days"></td>
               <td>
                 <button
                   type="submit"
@@ -174,14 +182,14 @@
           class="simbtn"
           @click="simStartEventHandler"
         >
-          CO2 simulation
+          Simulation
         </button>&nbsp;
-        <button
+        <!--button
           class="simbtn"
           @click="simClearEventHandler"
         >
           CLEAR ALL
-        </button><br><br>
+        </button><br><br-->
       <!--div>
           <button class="simbtn" @click="tableRowsClearEventHandler">
             CLEAR Rows
@@ -212,9 +220,15 @@
     </div>
 
     <div class="simpane">
-      <font size="5">
+      <div class="head">
         <b>SIMULATION RESULT</b><br>
-      </font>
+      </div>
+      <Table
+        v-if="authorized"
+        :customer-id="customerId"
+        :sim-datas="simDatas"
+        @table-route-selected="tableRouteSelected"
+      />
     </div>
 
     <div class="mappane">
@@ -224,17 +238,21 @@
         :sim-datas="simDatas"
         :config="config.value"
         :path-params="pathParams"
-        :map-focus-vessel="mapFocusVessel"
+        :map-focus-route="mapFocusRoute"
         :token="token"
       />
     </div>
 
     <div class="tablepane">
+      <div class="head">
+        <b>
+          COST SHEET
+        </b>
+      </div>
       <VTable
         v-if="authorized"
         :customer-id="customerId"
         :sim-datas="simDatas"
-        @table-vessel-selected="tableVesselSelected"
       />
     </div>
   </div>
@@ -242,8 +260,11 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import Datepicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 import { loadMapConfig } from '../../scripts/mapConfig.js'
 import Map from './components/Map.vue'
+import Table from './components/Table.vue'
 import VTable from './components/VTable.vue'
 import { useAuth } from '../../plugins/auth'
 // import SimpleTypeAhead from 'vue3-simple-typeahead'
@@ -254,8 +275,9 @@ const customerId = ref('')
 const authorized = ref(false)
 const config = reactive({})
 const pathParams = ref({ shopName: 'vp' })
-const mapFocusVessel = ref('')
+const mapFocusRoute = ref('')
 const token = ref('')
+const date = ref()
 
 // Simulation input - basic info
 const client = ref('')
@@ -275,14 +297,12 @@ const ladSpeed = ref(0)
 const balSpeed = ref(0)
 
 // Simulation input - voyage plans
-const plans = ref([{
-  dep: '',
-  arr: '',
-  port_days: 0,
-  lb: 'L',
-  eta: ''
-}])
+const plans = ref([
+  { port: '', port_days: 0, lb: '---', eta: '---' },
+  { port: '', port_days: 0, lb: 'L', eta: '' }
+])
 const options = reactive([
+  { text: '---', value: '---', id: '---' },
   { text: 'Laden', value: 'L', id: 'L' },
   { text: 'Ballast', value: 'B', id: 'B' }
 ])
@@ -299,7 +319,7 @@ const delRaw = (index) => {
 }
 
 // Simulation result
-const simDatas = []
+const simDatas = ref([])
 // const simData = ref({})
 
 onMounted(async () => {
@@ -314,18 +334,17 @@ onMounted(async () => {
 
   pathParams.value.client = user.customer_ids[0]
   pathParams.value.application = 'ssm'
-  // console.log(pathParams.value)
   authorized.value = true
-  // console.log(authorized.value)
 
   // getVesselList()
   getPortList()
 })
 
 // Emit
-const tableVesselSelected = selectedVessel => {
-  console.log('emit! ' + selectedVessel)
-  mapFocusVessel.value = selectedVessel
+const tableRouteSelected = selectedRoutes => {
+  console.log('emit! table route selected')
+  console.log(selectedRoutes)
+  mapFocusRoute.value = selectedRoutes
 }
 
 // Get vessel list
@@ -339,7 +358,8 @@ const getVesselList = async () => {
 
   // client.value = 'RIO'
   // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value
-  const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=menu_id&val=Tonnage'
+  // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=menu_id&val=Tonnage'
+  const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=file_name&val=all'
   const resp = await fetch(urlSetting)
   const data = await resp.json()
   console.log(data)
@@ -353,24 +373,14 @@ const getVesselList = async () => {
 
     vesselList.value = list
   }
-
-  /*
-  const allVessels = []
-  const allIMOs = []
-  vesselList.value.map(ship => {
-    allVessels.push(ship.ship_name)
-    allIMOs.push(ship.imo_num)
-    return false
-  }) */
   console.log(vesselList.value)
-  // console.log(allVessels)
-  // console.log(allIMOs)
 }
 
 // Get port list
 const getPortList = async () => {
   console.log('getPortList')
-  const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_port_list.cgi?client=' + client.value
+  // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_port_list_all.cgi?client=' + client.value
+  const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_port_list_all.cgi?client=NYK'
   const resp = await fetch(urlSetting)
   const data = await resp.json()
   console.log(data)
@@ -387,218 +397,115 @@ const simStartEventHandler = async (item) => {
   console.log(ladSpeed.value)
   console.log(balSpeed.value)
   console.log(selectedVessel.value)
-  /*
-  if (props.vesselsimLayer.content.arrPort === '' || props.vesselsimLayer.content.depPort === '') {
-    console.log('Arr and/or Dep ports are missing.')
+
+  simDatas.value.length = 0
+
+  // validation
+  if (selectedVessel.value === undefined) {
+    console.log('Vessel name is missing.')
+    return false
+  }
+  if (ladSpeed.value === 0 || balSpeed.value === 0) {
+    console.log('Speed values are missing.')
     return false
   }
 
-  // console.log(props.vesselsimLayer.content.depPort)
-  // console.log(props.vesselsimLayer.content.arrPort)
-  const vesSimLayer = props.vesselsimLayer.content
-  const dep = vesSimLayer.portList[vesSimLayer.depPort].code
-  const arr = vesSimLayer.portList[vesSimLayer.arrPort].code
-  const depLat = vesSimLayer.portList[vesSimLayer.depPort].lat
-  const depLon = vesSimLayer.portList[vesSimLayer.depPort].lon
-  const arrLat = vesSimLayer.portList[vesSimLayer.arrPort].lat
-  const arrLon = vesSimLayer.portList[vesSimLayer.arrPort].lon
-  console.log(dep, arr)
-  console.log(selectedKey.value.id, ladSpeed.value, balSpeed.value)
-  console.log(hireCost.value, ifoCost.value, lsdogoCost.value)
-  console.log(etd.value, lorb.value)
-  */
+  // Create post data
+  const planName = 'plan'
+  console.log(planName)
+  const param = {}
+  param.PLAN = {
+    name: planName,
+    ship_info: {
+      wnishipnum: selectedVessel.value.ship_num,
+      shipname: selectedVessel.value.ship_name,
+      callsign: selectedVessel.value.call_sign,
+      imo_num: selectedVessel.value.imo_num,
+      shiptype: selectedVessel.value.ship_type,
+      dwt: {
+        min: selectedVessel.value.dwt,
+        max: selectedVessel.value.dwt
+      }
+    },
+    etd: '2022/03/27 21:45', // ETD
+    routeing_condition: {
+      type: selectedKey.value,
+      laden: String(ladSpeed.value),
+      ballast: String(balSpeed.value)
+    },
+    cost: {
+      hire: parseFloat(100),
+      ifo: parseFloat(200),
+      lsdogo: parseFloat(300)
+    },
+    port_rotation: []
+  }
 
+  // Create port rotation
+  const portCodes = []
+  let portDetail = {}
   for (let i = 0; i < plans.value.length; i++) {
-    simulateLeg()
-  }
+    const tmpPort = plans.value[i].port
+    const portCode = tmpPort.split(' / ')
+    portCodes.push(portCode[2])
 
-  /* conversion to GeoJSON along with the Greater Circle
-  vesSimLayer.tapResult = simJson
-  const tapRoutes = simJson.data['plan-c'].leg_infos
-  console.log(tapRoutes)
-
-  const tmpRows = table.rows.filter(function (item) {
-    return item.name !== 'aaa'
-  })
-  table.rows = tmpRows
-  for (let i = 0; i < tapRoutes.length; i++) {
-    // const route = tapRoutes[i].route_infos[0].waypoints
-    const routes = tapRoutes[i].route_infos
-    for (let j = 0; j < routes.length; j++) {
-      const route = tapRoutes[i].route_infos[j].waypoints
-      const latlon = []
-      for (let k = 0; k < route.length; k++) {
-        const tmplatlon = [route[k].lon, route[k].lat]
-        latlon.push(tmplatlon)
-      }
-      convertCross180Coordinates(latlon)
-      let tmpDist = 0
-      for (let k = 0; k < latlon.length - 1; k++) {
-        const from = point(latlon[k])
-        const to = point(latlon[k + 1])
-        const options = { units: 'kilometers' }
-        const dist = distance(from, to, options)
-        tmpDist = tmpDist + dist
-      }
-      console.log(tmpDist)
-      const arc = []
-      const tmpLine = lineString(latlon)
-      for (let k = 0; k < tmpDist; k += 100) { // 200km/6hours
-        const options = { units: 'kilometers' }
-        const segment = along(tmpLine, k, options)
-        arc.push(segment.geometry.coordinates)
-      }
-
-      const simResult = tapRoutes[i].route_infos[j].simulation_result
-      const tmpRoute = {
-        geometry: {
-          coordinates: arc,
-          type: 'LineString'
-        },
-        type: 'Feature',
-        properties: {
-          // 'routetype': String(i*routes.length+j+1),
-          // 'routeid': String(i*routes.length+j+1),
-          routetype: String(++maxId),
-          routeid: String(maxId),
-          vessel_type: '',
-          ETA: simResult.eta,
-          ETD: simResult.etd,
-          distance: simResult.distance, // shortestDist*0.539956803
-          hsfo: simResult.hsfo,
-          lsdogo: simResult.lsdogo,
-          current_f: simResult.current_factor,
-          weather_f: simResult.weather_factor
-        }
-      }
-      const tmpRow = {
-        // id: i*routes.length+j+1,
-        id: maxId,
-        dep,
-        arr,
-        lorb: lorb.value,
-        speed: spd,
-        eta: simResult.eta,
-        days: Math.round(simResult.at_sea_days * 10) / 10,
-        dist: Math.round(simResult.distance),
-        cost: Math.round(simResult.cost.total),
-        fuel: Math.round(simResult.hsfo + simResult.lsdogo),
-        co2: '--',
-        cii: '--'
-      }
-      table.rows.push(tmpRow)
-      vesSimLayer.simRoutes.features.push(tmpRoute)
-      console.log(maxId)
+    // validation
+    if (portCode === '' || portCode === undefined) {
+      console.log('ports is missing.')
+      return false
     }
   }
-  // maxId = maxId + routes.length*tapRoutes.length
 
-  console.log(vesSimLayer.simRoutes)
-  // vesSimLayer.simRoutes = simRoutes
-  vesSimLayer.map.getSource(`${vesSimLayer.source}simVoycom`).setData(vesSimLayer.simRoutes)
-  */
-  return false
-}
+  const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_port_info.cgi?client=' + client.value + '&port_codes=' + JSON.stringify(portCodes)
+  const resp = await fetch(urlSetting)
+  const data = await resp.json()
+  console.log(data)
+  if (data.result === 'OK') {
+    portDetail = data.data
+  }
 
-const simulateLeg = async () => {
-  const url = 'https://tmax.seapln-osr.pt-aws.wni.com/T-Max/TonnageAllocation/api/okamaw-test.cgi'
+  for (let i = 0; i < portCodes.length; i++) {
+    const tmpDetail = portDetail[portCodes[i]]
+
+    const tmpJSON = {
+      portcode: tmpDetail.AREA,
+      portname: tmpDetail.ENAME,
+      country: tmpDetail.CNTRY,
+      point: {
+        lat: tmpDetail.LATD,
+        lon: tmpDetail.LOND,
+        name: tmpDetail.ENAME,
+        timezone: tmpDetail.TZ,
+        country: tmpDetail.CNTRY
+      },
+      passage_days: '',
+      time_window: true,
+      target_eta: {
+        from: '',
+        to: ''
+      },
+      timezone: tmpDetail.TZ,
+      passage_portcode: ''
+    }
+
+    // Validation
+    if (plans.value[i].lb === '' || plans.value[i].lb === undefined) {
+      console.log('loading condition is missing.')
+      return false
+    }
+
+    if (i < portCodes.length - 1) {
+      tmpJSON.loading_condition = plans.value[i + 1].lb
+    }
+
+    param.PLAN.port_rotation.push(tmpJSON)
+  }
+  console.log(param)
+
+  // const url = 'https://tmax.seapln-osr.pt-aws.wni.com/T-Max/TonnageAllocation/api/okamaw-test.cgi'
+  const url = 'https://tmax-b01.weathernews.com/T-Max/TonnageAllocation/api/reborn_get_result_analysis_for_tonnageAllocation.cgi'
   const simType = 'plan'
-  const lad = ladSpeed.value
-  const bal = balSpeed.value
-  let spd = ''
-  if (lorb.value === 'L') {
-    if (selectedKey.value.id === 'speed') {
-      spd = lad + 'kts'
-    } else if (selectedKey.value.id === 'rpm') {
-      spd = lad + 'rpm'
-    } else if (selectedKey.value.id === 'mcr') {
-      spd = lad + '%'
-    }
-  } else if (lorb.value === 'B') {
-    if (selectedKey.value.id === 'speed') {
-      spd = bal + 'kts'
-    } else if (selectedKey.value.id === 'rpm') {
-      spd = bal + 'rpm'
-    } else if (selectedKey.value.id === 'mcr') {
-      spd = bal + '%'
-    }
-  }
-  console.log(spd)
-
-  const param = {
-    'plan-c': {
-      name: 'Plan C',
-      ship_info: {
-        wnishipnum: '28607',
-        shipname: 'BAK',
-        callsign: 'WNIDEMO28',
-        imo_num: '28028028028',
-        shiptype: 'TANKER',
-        dwt: {
-          min: '156929',
-          max: '156929'
-        }
-      },
-      etd: '2022/06/27 21:45', // ETD
-      routeing_condition: {
-        type: selectedKey.value.item,
-        laden: String(ladSpeed.value),
-        ballast: String(balSpeed.value)
-      },
-      cost: {
-        hire: parseFloat(hireCost.value),
-        ifo: parseFloat(ifoCost.value),
-        lsdogo: parseFloat(lsdogoCost.value)
-      },
-      port_rotation: [
-        {
-          portcode: dep,
-          portname: vesSimLayer.depPort,
-          country: 'JP',
-          point: {
-            lat: depLat,
-            lon: depLon,
-            name: vesSimLayer.depPort,
-            timezone: 'Asia/Tokyo',
-            country: 'JP'
-          },
-          loading_condition: lorb.value, // LADEN/BALLAST
-          port_days: '0',
-          passage_days: '',
-          time_window: true,
-          target_eta: {
-            from: '',
-            to: ''
-          },
-          timezone: 'Asia/Tokyo',
-          passage_portcode: ''
-        },
-        {
-          portcode: arr,
-          portname: vesSimLayer.arrPort,
-          country: 'CA',
-          point: {
-            lat: arrLat,
-            lon: arrLon,
-            name: vesSimLayer.arrPort,
-            timezone: 'America/Vancouver',
-            country: 'CA'
-          },
-          passage_days: '',
-          time_window: true,
-          target_eta: {
-            from: '',
-            to: ''
-          },
-          timezone: 'America/Vancouver',
-          passage_portcode: ''
-        }
-      ]
-    }
-  }
-
-  const body1 = [simType, JSON.stringify(param)]
-
+  const body1 = [simType, client.value, JSON.stringify(param)]
   const simJson = await fetch(url, {
     mode: 'cors',
     method: 'POST',
@@ -608,6 +515,12 @@ const simulateLeg = async () => {
     .catch(console.error)
 
   console.log(simJson)
+  if (simJson.result === 'OK') {
+    simDatas.value = simJson.data.PLAN.leg_infos
+  }
+
+  console.log(simDatas.value)
+  return false
 }
 
 const simClearEventHandler = (item) => {
@@ -677,6 +590,9 @@ const tableRowsClearEventHandler = () => {
 </script>
 
 <style scoped>
+.dtp {
+  width: 200px;
+}
 .allpane {
   display: grid;
   height: 100%;
@@ -693,6 +609,11 @@ const tableRowsClearEventHandler = () => {
   line-height: 15px;
   font-size: 14px;
   overflow: scroll;
+}
+
+.head{
+  font-size: 20px;
+  font-family: Arial;
 }
 
 .basic-info{
@@ -818,4 +739,5 @@ body {
   .simple-typeahead-list-item.simple-typeahead-list-item-active {
   background-color: #e1e1e1;
   z-index: 9;
-}</style>
+}
+</style>

@@ -1,7 +1,4 @@
 <template>
-  <font size="5">
-    <b> COST SHEET </b>
-  </font>
   <table
     id="comparison"
     border="1"
