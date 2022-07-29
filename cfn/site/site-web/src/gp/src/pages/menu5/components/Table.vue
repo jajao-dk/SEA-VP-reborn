@@ -53,7 +53,7 @@
 import { ref, reactive, defineProps, watch, toRefs } from 'vue'
 import EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
-import getApiResult from './getApiResult.js'
+import calcCII from './calcCII.js'
 import calcCO2 from './calcCO2.js'
 
 // Props
@@ -117,7 +117,7 @@ const createTable = async (legData) => {
     // arrObjのindex=0はfrom_dep_to_latestでの値の為含めない
     legData.plans[i].co2 = arrObj[i + 1].co2
   }
-  const apiResult = await getApiResult(arrObj)
+  const apiResult = await calcCII(arrObj)
   for (let i = 0; i < legData.plans.length; i++) {
     legData.plans[i].cii_rank = apiResult[i + 1].cii_rank
   }

@@ -2,13 +2,12 @@ export default async function calCO2 (obj) {
   console.log('calCO2')
   const paramArr = []
 
-  const calcTotalCO2 = function (targetObj, flag) {
+  const calcTotalCO2 = function (targetObj, imoNumber, flag) {
     const addObj = {}
     const sfoConvFactor = 3.114
     const ulsConvFactor = 3.151
     const dogoConvFactor = 3.206
     let totalCO2 = 0.0
-    const imoNumber = '9705158'
     if (typeof targetObj.cons_fo_over_0_1 === 'number') {
       totalCO2 += targetObj.cons_fo_over_0_1 * sfoConvFactor
     }
@@ -32,13 +31,14 @@ export default async function calCO2 (obj) {
     paramArr.push(addObj)
   }
 
+  const imoNumber = obj.imo_number
   const latestInfo = obj.from_dep_to_latest
-  await calcTotalCO2(latestInfo)
+  await calcTotalCO2(latestInfo, imoNumber)
   const latestData = paramArr[0]
   const futurePlans = obj.plans
   const futureFlag = true
   for (const plan of futurePlans) {
-    await calcTotalCO2(plan, futureFlag)
+    await calcTotalCO2(plan, imoNumber, futureFlag)
   }
   return paramArr
 }
