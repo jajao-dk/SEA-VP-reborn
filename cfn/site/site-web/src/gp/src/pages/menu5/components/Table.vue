@@ -53,6 +53,8 @@
 import { ref, reactive, defineProps, watch, toRefs } from 'vue'
 import EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
+import calcCII from './calcCII.js'
+import calcCO2 from './calcCO2.js'
 
 // Props
 const props = defineProps({
@@ -101,13 +103,25 @@ const submitEdit = () => {
   item.weight = editingItem.weight
 }
 
-const createTable = (legData) => {
+const createTable = async (legData) => {
   console.log('create table')
   console.log(legData)
   items.value.length = 0
   if (legData === undefined) {
     return false
   }
+
+  // CO2, CII rank追加処理
+  const arrObj = await calcCO2(legData)
+  for (let i = 0; i < legData.plans.length; i++) {
+    // arrObjのindex=0はfrom_dep_to_latestでの値の為含めない
+    legData.plans[i].co2 = arrObj[i + 1].co2
+  }
+  const apiResult = await calcCII(arrObj)
+  for (let i = 0; i < legData.plans.length; i++) {
+    legData.plans[i].cii_rank = apiResult[i + 1].cii_rank
+  }
+
   const plans = legData.plans
 
   plans.sort(function (a, b) {
@@ -131,8 +145,8 @@ const createTable = (legData) => {
       setting: plan.setting,
       route: plan.route_name,
       eta: plan.eta_lt,
-      co2: '',
-      cii: '',
+      co2: plan.co2,
+      cii: plan.cii_rank,
       remain_dist: plan.distance.remain,
       entire_dist: plan.distance.entire,
       ocean_days: (Math.round(Number(plan.sailing_area.OpenOcean.sailing_days) * 10) / 10).toFixed(1),
