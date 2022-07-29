@@ -1,0 +1,157 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  It is a cfn that receives and processes TagID-411024694
+
+Parameters:
+  Region:
+    Type: String
+
+  EnvironmentPrefix:
+    Type: String
+
+  EnvironmentName:
+    Type: String
+
+  CategoryName:
+    Type: String
+
+  AppName:
+    Type: String
+
+  LogLevel:
+    Type: String
+
+  Timeout:
+    Type: Number
+    Default: 600
+
+  RetentionInDays:
+    Type: Number
+    Default: 90
+  
+  TagID:
+    Type: Number
+    Default: 411024694
+
+Globals:
+  Function:
+    Runtime: python3.8
+    Handler: app/lambda_function.lambda_handler
+    Timeout: !Ref Timeout
+    Layers:
+      - "arn:aws:lambda:ap-northeast-1:475582256308:layer:env-infra-lib-layer-wni:3"
+      - "arn:aws:lambda:ap-northeast-1:475582256308:layer:env-infra-lib-layer-common:4"
+      - "arn:aws:lambda:ap-northeast-1:475582256308:layer:env-infra-lib-layer-aws-wrangler:3"
+    VpcConfig:
+      SecurityGroupIds:
+        - {
+            "Fn::ImportValue": !Sub "${EnvironmentName}-infra-security-SecurityGroup",
+          }
+      SubnetIds:
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private0
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private1
+        - !ImportValue ibaws-az-ibaws-system-vpc-Private2
+    Environment:
+      Variables:
+        LOG_LEVEL: !Ref LogLevel
+        POWERTOOLS_SERVICE_NAME: !Sub ${EnvironmentName}-${AppName}
+        POWERTOOLS_LOGGER_LOG_EVENT: true
+        BUCKET: !Sub wni-${EnvironmentName}-hosting-cloudfront-${Region}
+
+Resources:
+  StrikeProbabilitySubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Sub arn:aws:sns:${AWS::Region}:928225274854:TagID-${TagID}
+      Protocol: sqs
+      Endpoint: !GetAtt StrikeProbabilityQueue.Arn
+
+
+  StrikeProbabilityQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${EnvironmentName}-${AppName}
+      ReceiveMessageWaitTimeSeconds: 1
+      VisibilityTimeout: !Ref Timeout
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt StrikeProbabilityDeadLetterQueue.Arn
+        maxReceiveCount: 2
+
+  StrikeProbabilityDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${EnvironmentName}-${AppName}-dlq
+      ReceiveMessageWaitTimeSeconds: 1
+      MessageRetentionPeriod: 1209600
+
+  StrikeProbabilityQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: sqs:SendMessage
+            Resource: !GetAtt StrikeProbabilityQueue.Arn
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Sub arn:aws:sns:${AWS::Region}:928225274854:TagID-${TagID}
+          - Effect: Allow
+            Principal: "*"
+            Action: sqs:SendMessage
+            Resource: !GetAtt StrikeProbabilityQueue.Arn
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Sub arn:aws:sns:${AWS::Region}:928225274854:TagID-${TagID}
+      Queues:
+        - !Ref StrikeProbabilityQueue
+
+  StrikeProbabilityFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: { "Fn::ImportValue": !Sub "${EnvironmentName}-infra-security-LambdaRole" }
+      MemorySize: 1024
+      CodeUri: src/strike-probability
+      Events:
+        Sqs:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt StrikeProbabilityQueue.Arn
+
+  StrikeProbabilityFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${StrikeProbabilityFunction}
+      RetentionInDays: !Ref RetentionInDays
+
+  StrikeProbabilityFunctionSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: {"Fn::ImportValue": !Sub "${EnvironmentName}-alert-slack-Function"}
+      FilterPattern: '?ERROR ?"\"level\":\"CRITICAL\"" ?"\"level\":\"ERROR\"" ?"\"level\":\"WARNING\""'
+      LogGroupName: !Ref StrikeProbabilityFunctionLogGroup
+
+  FunctionErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref StrikeProbabilityFunction
+      Statistic: Sum
+      Period: 60
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      DatapointsToAlarm: 1
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - {
+            "Fn::ImportValue": !Sub "${EnvironmentName}-alert-topic-Topic"
+          }
+
+        
