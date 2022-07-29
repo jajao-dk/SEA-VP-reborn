@@ -314,80 +314,116 @@
   </table>
 </template>
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, defineProps, watch, toRefs, onMounted } from 'vue'
+
+const props = defineProps({
+  customerId: { type: String, default: '' },
+  voyageData: { type: Object, default: () => {} }
+})
+
+// Events, new data
+const { voyageData } = toRefs(props)
+watch(voyageData, (newValue) => {
+  console.log('Voyage Data update')
+  console.log(newValue)
+  createVTable(newValue)
+}, { deep: true })
 
 const items = ref([])
-items.value = [
-  {
-    id: 1,
-    plan_name: 'plan A',
-    revenue: 0,
-    cargo: '',
-    freight: 0,
-    quantity: 0,
-    commision: 0,
-    income: 0,
-    expense: 0,
-    days: 20.1,
-    fo: 246.3,
-    dogo: 9,
-    hire: 0,
-    foc: 0,
-    dogoc: 0,
-    total_hire: 0,
-    total_foc: 0,
-    total_dogoc: 0,
-    inport_days: 0,
-    inport_foc: 0,
-    port_charge: 0,
-    passage: 0,
-    profit: 0,
-    tc_equiv: 0,
-    co2: 0,
-    cii: 0
-  },
-  {
-    id: 2,
-    plan_name: 'plan B',
-    revenue: 0,
-    cargo: '',
-    freight: 0,
-    quantity: 0,
-    commision: 0,
-    income: 0,
-    expense: 0,
-    days: 13.1,
-    fo: 440.3,
-    dogo: 20.7,
-    hire: 0,
-    foc: 0,
-    dogoc: 0,
-    total_hire: 0,
-    total_foc: 0,
-    total_dogoc: 0,
-    inport_days: 0,
-    inport_foc: 0,
-    port_charge: 0,
-    passage: 0,
-    profit: 0,
-    tc_equiv: 0,
-    co2: 0,
-    cii: 0
+// items.value = [
+
+const initVoyageData = () => {
+  for (let i = 0; i < 3; i++) {
+    const tmpData = {
+      id: i,
+      used: false, // true: real-data, false, dummy-data
+      plan_name: 'plan-' + String(i + 1),
+      revenue: 0,
+      cargo: '',
+      freight: 0,
+      quantity: 0,
+      commision: 0,
+      income: 0,
+      expense: 0,
+      days: 0,
+      fo: 0,
+      dogo: 0,
+      hire: 0,
+      foc: 0,
+      dogoc: 0,
+      total_hire: 0,
+      total_foc: 0,
+      total_dogoc: 0,
+      inport_days: 0,
+      inport_foc: 0,
+      port_charge: 0,
+      passage: 0,
+      profit: 0,
+      tc_equiv: 0,
+      co2: 0,
+      cii: 0
+    }
+    items.value.push(tmpData)
+  }
+}
+
+onMounted(() => {
+  initVoyageData()
+})
+
+const createVTable = (newValue) => {
+  console.log('CREATE TABLE')
+  console.log(newValue)
+
+  let allUsed = true
+  for (let i = 0; i < items.value.length; i++) {
+    if (items.value[i].used === true) {
+      continue
+    } else {
+      allUsed = false
+      items.value[i].days = Math.round(newValue.total_days * 10) / 10
+      items.value[i].fo = Math.round(newValue.total_ifo * 10) / 10
+      items.value[i].dogo = Math.round(newValue.total_lsdogo * 10) / 10
+      items.value[i].inport_days = Math.round(newValue.total_inport_days * 10) / 10
+      items.value[i].co2 = Math.round(newValue.total_co2 * 10) / 10
+      items.value[i].used = true
+      break
+    }
   }
 
-]
-
-const calcIncome = (val) => {
-  console.log(val)
-  // val.number = val.tmp
-  const item = items.value.find((item) => item.id === val.id)
-  item.freight = val.freight
-  item.quantity = val.quantity
-  item.commision = val.commision
-  item.revenue = item.freight * item.quantity
-  item.income = item.freight * item.quantity * (1 - item.commision / 100)
-  console.log(item.id)
-  console.log(item.commision / 100)
+  if (allUsed) {
+    const newItem = {
+      id: items.value.length + 1,
+      used: true, // true: real-data, false, dummy-data
+      plan_name: 'plan-' + String(items.value.length + 1),
+      revenue: 0,
+      cargo: '',
+      freight: 0,
+      quantity: 0,
+      commision: 0,
+      income: 0,
+      expense: 0,
+      days: newValue.total_days,
+      fo: newValue.total_ifo,
+      dogo: newValue.total_lsdogo,
+      hire: 0,
+      foc: 0,
+      dogoc: 0,
+      total_hire: 0,
+      total_foc: 0,
+      total_dogoc: 0,
+      inport_days: newValue.total_inport_days,
+      inport_foc: 0,
+      port_charge: 0,
+      passage: 0,
+      profit: 0,
+      tc_equiv: 0,
+      co2: newValue.total_co2,
+      cii: 0
+    }
+    items.value.push(newItem)
+  }
+  console.log(items.value)
 }
 
 const calcCost = (val) => {
@@ -415,37 +451,6 @@ const calcCost = (val) => {
   item.profit = Math.round(item.income - item.expense)
   item.tc_equiv = Math.round(item.profit / (item.days + item.inport_days))
   console.log(item.id)
-}
-
-const editHire = (val) => {
-  console.log(val)
-  console.log(val.hire)
-  // val.number = val.tmp
-  const item = items.value.find((item) => item.id === val.id)
-  item.hire = parseInt(val.hire)
-  item.total = parseInt(item.hire) + item.fo + item.go
-  console.log(item.id)
-  console.log(item.hire)
-}
-const editFo = (val) => {
-  console.log(val)
-  console.log(val.fo)
-  // val.number = val.tmp
-  const item = items.value.find((item) => item.id === val.id)
-  item.fo = parseInt(val.fo)
-  item.total = item.hire + parseInt(item.fo) + item.go
-  console.log(item.id)
-  console.log(item.fo)
-}
-const editGo = (val) => {
-  console.log(val)
-  console.log(val.go)
-  // val.number = val.tmp
-  const item = items.value.find((item) => item.id === val.id)
-  item.go = parseInt(val.go)
-  item.total = item.hire + item.fo + parseInt(item.go)
-  console.log(item.id)
-  console.log(item.go)
 }
 </script>
 <style scoped>

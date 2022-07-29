@@ -44,12 +44,16 @@ export class VesselTAPLayer extends Layer {
         id: `${this.layer}TAP`,
         source: `${this.source}TAP`,
         type: 'line',
+        /*
         layout: {
           visibility: this.visibility,
-          'line-sort-key': ['match', ['get', 'legid'], 'dummy', 10, 0]
+          'line-sort-key': ['match', ['get', 'legid'], 'dummy', 1, 0]
         },
+        */
+
         paint: {
-          'line-color': ['match', ['get', 'legid'], 'dummy', '#fff', '#fff'], // 種別(GeoJSON の property値)によって色を分けている
+          // 'line-color': ['match', ['get', 'legid'], 'dummy', '#fff', '#fff'], // 種別(GeoJSON の property値)によって色を分けている
+          'line-color': '#fff',
           'line-opacity': 0.8,
           'line-width': [
             'interpolate',
@@ -145,15 +149,16 @@ export class VesselTAPLayer extends Layer {
     for (let i = 0; i < focusRoutes.length; i++) {
       routes.push(focusRoutes[i].id)
     }
-    const routeExpressions = ['match', ['get', 'legid'], 'dummy', '#fff']
+    const routeExpressions = ['match', ['get', 'legid'], 'dummy', '#00f']
     const zindexExpressions = ['match', ['get', 'legid'], 'dummy', 0]
     routes.forEach((id) => {
       routeExpressions.push(id, '#00f')
-      zindexExpressions.push(id, 10)
+      zindexExpressions.push(id, -5)
     })
     routeExpressions.push('#fff')
     zindexExpressions.push(0)
     console.log(routeExpressions)
+    console.log(zindexExpressions)
     this.map.setPaintProperty(
       `${this.layer}TAP`,
       'line-color',

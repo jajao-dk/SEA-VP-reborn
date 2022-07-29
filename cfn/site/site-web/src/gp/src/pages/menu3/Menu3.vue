@@ -88,9 +88,9 @@
           <div class="dtp">
             <Datepicker
               v-model="date"
-              :utc="true"
+              :utc="false"
             />
-          </div>{{ date }}
+          </div>
         </div><br>
         <table>
           <thead>
@@ -228,6 +228,7 @@
         :customer-id="customerId"
         :sim-datas="simDatas"
         @table-route-selected="tableRouteSelected"
+        @new-voyage-data="newVoyageData"
       />
     </div>
 
@@ -246,13 +247,13 @@
     <div class="tablepane">
       <div class="head">
         <b>
-          COST SHEET
+          VOYAGE ESTIMATE
         </b>
       </div>
       <VTable
         v-if="authorized"
         :customer-id="customerId"
-        :sim-datas="simDatas"
+        :voyage-data="voyageData"
       />
     </div>
   </div>
@@ -318,9 +319,25 @@ const delRaw = (index) => {
   plans.value.splice(index, 1)
 }
 
-// Simulation result
+// Simulation result (Table)
 const simDatas = ref([])
 // const simData = ref({})
+
+// Voyage evaluation sheet (VTable)
+const voyageData = ref({})
+
+// Emit
+const tableRouteSelected = selectedRoutes => {
+  console.log('emit! table route selected')
+  console.log(selectedRoutes)
+  mapFocusRoute.value = selectedRoutes
+}
+
+const newVoyageData = newData => {
+  console.log('emit! new voyage data')
+  console.log(newData)
+  voyageData.value = newData
+}
 
 onMounted(async () => {
   token.value = await getToken()
@@ -339,13 +356,6 @@ onMounted(async () => {
   // getVesselList()
   getPortList()
 })
-
-// Emit
-const tableRouteSelected = selectedRoutes => {
-  console.log('emit! table route selected')
-  console.log(selectedRoutes)
-  mapFocusRoute.value = selectedRoutes
-}
 
 // Get vessel list
 const getVesselList = async () => {
@@ -397,6 +407,27 @@ const simStartEventHandler = async (item) => {
   console.log(ladSpeed.value)
   console.log(balSpeed.value)
   console.log(selectedVessel.value)
+  console.log(date.value)
+
+  const dt = new Date(date.value)
+  console.log(dt.toISOString())
+  const Y = dt.getFullYear()
+  const M = dt.getMonth()
+  const D = dt.getDate()
+  const h = dt.getHours()
+  const m = dt.getMinutes()
+
+  /*
+  dt.setUTCFullYear(Y)
+  dt.setUTCMonth(M)
+  dt.setUTCDate(D)
+  dt.setUTCHours(h)
+  dt.setUTCMinutes(m)
+  console.log(dt.toISOString())
+  */
+
+  const ETD = String(Y) + '/' + String(M + 1) + '/' + String(D) + ' ' + String(h) + ':' + String(m)
+  console.log(ETD)
 
   simDatas.value.length = 0
 
@@ -427,7 +458,7 @@ const simStartEventHandler = async (item) => {
         max: selectedVessel.value.dwt
       }
     },
-    etd: '2022/03/27 21:45', // ETD
+    etd: ETD, // '2022/03/27 21:45', // ETD
     routeing_condition: {
       type: selectedKey.value,
       laden: String(ladSpeed.value),
