@@ -34,6 +34,10 @@ Parameters:
     Type: Number
     Default: 411024694
 
+  ReceiveBucket:
+    Type: String
+    Default: 'sea-dev-mapwidget'
+
 Globals:
   Function:
     Runtime: python3.8
@@ -57,7 +61,7 @@ Globals:
         LOG_LEVEL: !Ref LogLevel
         POWERTOOLS_SERVICE_NAME: !Sub ${EnvironmentName}-${AppName}
         POWERTOOLS_LOGGER_LOG_EVENT: true
-        BUCKET: !Sub wni-${EnvironmentName}-hosting-cloudfront-${Region}
+        # BUCKET: !Sub wni-${EnvironmentName}-hosting-cloudfront-${Region}
 
 Resources:
   StrikeProbabilitySubscription:
@@ -114,6 +118,9 @@ Resources:
       Role: { "Fn::ImportValue": !Sub "${EnvironmentName}-infra-security-LambdaRole" }
       MemorySize: 1024
       CodeUri: src/strike-probability
+      Environment:
+        Variables:
+          RECEIVE_BUCKET: !Ref ReceiveBucket
       Events:
         Sqs:
           Type: SQS

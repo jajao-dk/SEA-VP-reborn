@@ -144,7 +144,7 @@ def create_mock_s3():
     '''Create mock s3 to store test data.
     '''
     region_name = 'ap-northeast-1'
-    bucket_name = env.BUCKET
+    bucket_name = env.RECEIVE_BUCKET
 
     with mock_s3():
         s3 = boto3.resource('s3')

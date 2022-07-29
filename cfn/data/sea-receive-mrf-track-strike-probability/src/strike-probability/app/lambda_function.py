@@ -95,9 +95,9 @@ def record_handler(record: SQSRecord):
     history_file = create_history_file_name(headers) + '.geojson'
 
     # 表示用ファイル(valid_file)保存
-    upload_to_s3(env.BUCKET, const.KEY + '/valid/' + valid_file, dictdata)
+    upload_to_s3(env.RECEIVE_BUCKET, const.KEY + '/valid/' + valid_file, dictdata)
     # historyファイル保存
-    upload_to_s3(env.BUCKET, const.KEY + '/history/' + history_file, dictdata)
+    upload_to_s3(env.RECEIVE_BUCKET, const.KEY + '/history/' + history_file, dictdata)
 
 
 @logger.inject_lambda_context

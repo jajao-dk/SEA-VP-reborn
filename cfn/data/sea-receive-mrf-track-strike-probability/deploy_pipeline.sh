@@ -7,5 +7,5 @@ APP_BASE=`git rev-parse --show-toplevel`
 echo "deploy pipeline $1"
 
 check_and_set_env $*
-deploy_pipeline ${APP_BASE}/template/pipeline_lambda.yaml
+deploy_pipeline ${APP_BASE}/template/architectures/x86_64/pipeline_lambda.yaml
 add_tag_to_log_group
