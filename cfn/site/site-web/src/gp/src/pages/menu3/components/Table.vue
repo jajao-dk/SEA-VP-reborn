@@ -7,7 +7,13 @@
       :items="items"
       table-class-name="customize-table"
     />
-    <div>{{ itemsSelected }}</div>
+    <!--div>{{ itemsSelected }}</div-->
+    <button
+      class="simbtn"
+      @click="addVoyageEstimate"
+    >
+      Add Voyage Estimate
+    </button>
   </div>
 </template>
 
@@ -31,7 +37,7 @@ watch(simDatas, (newValue) => {
 }, { deep: true })
 
 // Emits
-const emits = defineEmits(['tableRouteSelected'])
+const emits = defineEmits(['tableRouteSelected', 'newVoyageData'])
 /*
 const clickRow = (item) => {
   console.log(item.id)
@@ -122,6 +128,38 @@ headers.value = [
   // { text: 'EDIT', value: 'operation', width: 50 }
 ]
 
+const addVoyageEstimate = () => {
+  // Validation
+  if (itemsSelected.value.length === 0) { return false }
+
+  // Add all columns
+  let totalDays = 0
+  let totalIFO = 0
+  let totalLSDOGO = 0
+  let totalInportDays = 0
+  let totalCO2 = 0
+
+  for (let i = 0; i < itemsSelected.value.length; i++) {
+    totalDays = itemsSelected.value[i].days + totalDays
+    totalIFO = itemsSelected.value[i].hsfo + totalIFO
+    totalLSDOGO = itemsSelected.value[i].dogo + totalLSDOGO
+    totalInportDays = itemsSelected.value[i].inport + totalInportDays
+    totalCO2 = itemsSelected.value[i].co2 + totalCO2
+  }
+
+  const voyageData = {
+    total_days: totalDays,
+    total_ifo: totalIFO,
+    total_lsdogo: totalLSDOGO,
+    total_inport_days: totalInportDays,
+    total_co2: totalCO2
+  }
+
+  console.log('EMIT to MENU3')
+  console.log(voyageData)
+  emits('newVoyageData', voyageData)
+}
+
 </script>
 
 <style>
@@ -151,5 +189,17 @@ headers.value = [
   border-radius: 50%;
   object-fit: cover;
   box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 10%);
+}
+</style>
+<style scoped>
+button {
+  background-color: #4CAF50;
+  font-size: 12px;
+  color: white;
+  padding: 2px 5px;
+  /* margin: 3px 0; */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>
