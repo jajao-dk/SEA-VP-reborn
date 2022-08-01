@@ -4,43 +4,47 @@
     class="allpane"
   >
     <div class="inputpane">
-      Client code:
-      <input
-        v-model="client"
-        class="perfin"
-        type="text"
-        placeholder=""
-      >&nbsp;
-      <button
-        class="perfbtn"
-        type="submit"
-        @click="getVesselList"
-      >
-        Submit
-      </button><br>
-      Vessel name: &nbsp;
-      <select v-model="selectedVessel">
-        <option
-          disalbled
-          value=""
+      <!--div>
+        Client code:
+        <input
+          v-model="client"
+          class="perfin"
+          type="text"
+          placeholder=""
+        >&nbsp;
+        <button
+          class="perfbtn"
+          type="submit"
+          @click="getVesselList"
         >
-          SELECT
-        </option>
-        <option
-          v-for="vsl in vesselList"
-          :key="vsl.ship_num"
-          :value="vsl"
+          Submit
+        </button><br>
+      </div-->
+      <div>
+        Vessel name: &nbsp;
+        <select v-model="selectedVessel">
+          <option
+            disalbled
+            value=""
+          >
+            SELECT
+          </option>
+          <option
+            v-for="vsl in vesselList"
+            :key="vsl.ship_num"
+            :value="vsl"
+          >
+            {{ vsl.ship_name }}
+          </option>
+        </select>&nbsp;
+        <button
+          class="perfbtn"
+          type="submit"
+          @click="getVoyComData"
         >
-          {{ vsl.ship_name }}
-        </option>
-      </select>&nbsp;
-      <button
-        class="perfbtn"
-        type="submit"
-        @click="getVoyComData"
-      >
-        Comparison
-      </button><br><br><br>
+          Comparison
+        </button><br><br><br>
+      </div>
 
       <table>
         <tbody>
@@ -144,7 +148,7 @@ onMounted(async () => {
   */
   // QuickSightEmbedding.embedDashboard(options)
 
-  // getVesselList()
+  getVesselList()
 })
 
 // Emit
@@ -157,6 +161,7 @@ const tableVesselSelected = selectedVessel => {
 const getVesselList = async () => {
   console.log('getVesselList')
   console.log('Client code: ', client.value)
+  client.value = customerId.value
 
   if (client.value === '') {
     return false

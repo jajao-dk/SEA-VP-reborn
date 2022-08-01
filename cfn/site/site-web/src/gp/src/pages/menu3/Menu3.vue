@@ -10,7 +10,7 @@
 
       <b>Vessel info</b>
       <div class="basic-info">
-        <div class="basic-info-box">
+        <!--div class="basic-info-box">
           Client code:&nbsp;
           <input
             v-model="client"
@@ -23,7 +23,7 @@
           >
             Submit
           </button>
-        </div>
+        </div-->
         <div class="basic-info-box">
           &nbsp; Vessel name: &nbsp;
           <select v-model="selectedVessel">
@@ -353,7 +353,7 @@ onMounted(async () => {
   pathParams.value.application = 'ssm'
   authorized.value = true
 
-  // getVesselList()
+  getVesselList()
   getPortList()
 })
 
@@ -361,6 +361,7 @@ onMounted(async () => {
 const getVesselList = async () => {
   console.log('getVesselList')
   console.log('Client code: ', client.value)
+  client.value = customerId.value
 
   if (client.value === '') {
     return false

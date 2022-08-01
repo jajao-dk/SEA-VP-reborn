@@ -23,45 +23,9 @@ const props = defineProps({
   mapFocusVessel: { type: String, default: '' }
 })
 
-// const container = ref(null)
+// initialize
 const ready = ref(false)
 const layerList = createLayerList(props.config, props.customerId, null, null, props.pathParams, props.errmGeoJson)
-// const isLegendDisplay = ref(false)
-/*
-watch(() => token.value, (newValue) => {
-  for (const layer of Object.values(layerList)) {
-    layer.content.updateToken(token)
-  }
-})
-*/
-
-// const test = ref(props.customerId)
-const { errmVessels, mapFocusVessel } = toRefs(props)
-
-/*
-watch(customerId, (newValue) => {
-  console.log('ERRM Handler')
-  console.log(newValue)
-  console.log(props.customerId)
-})
-*/
-
-// Event: new errmVessels is provided by Menu4.vue
-watch(errmVessels, (newValue) => {
-  console.log('ERRM Handler 2')
-  console.log(newValue)
-  console.log(props.errmVessels)
-  layerList.ERRM.content.updateMapHandler(props.errmVessels)
-})
-
-// Event: map focus order from Menu4.vue
-watch(mapFocusVessel, (newValue) => {
-  console.log('FOCUS VESSEL on MAP')
-  console.log(newValue)
-  // layerList.ERRM.content.updateMapHandler(props.errmVessels)
-  layerList.ERRM.content.onClickTable(newValue)
-})
-
 const mapMenuLayerList = computed(() => {
   const filteredList = {}
   for (const layerName in layerList) {
@@ -71,6 +35,25 @@ const mapMenuLayerList = computed(() => {
   }
   return filteredList
 })
+
+// watch props to check the eventfrom Menu4.vue
+const { errmVessels, mapFocusVessel } = toRefs(props)
+// new data event
+watch(errmVessels, (newValue) => {
+  console.log('ERRM Handler 2')
+  console.log(newValue)
+  console.log(props.errmVessels)
+  layerList.ERRM.content.updateMapHandler(props.errmVessels)
+}, { deep: true })
+// map focus event
+watch(mapFocusVessel, (newValue) => {
+  console.log('FOCUS VESSEL on MAP')
+  console.log(newValue)
+  layerList.ERRM.content.onClickTable(newValue)
+})
+
+// Emits to trigger event to Menu4.vue
+const emits = defineEmits(['mapVesselSelected'])
 
 onMounted(async () => {
   console.log(props.config.map)
@@ -105,6 +88,7 @@ onMounted(async () => {
     console.log(e)
     const imo = e.detail.data
     console.log(imo)
+    emits('mapVesselSelected', imo)
   })
 
   ready.value = true

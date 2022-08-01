@@ -10,35 +10,38 @@ const store = useStore()
     :class="{ 'left-0': store.drawerOpen, '-left-72': !store.drawerOpen }"
   >
     <div class="flex flex-col text-lg text-gray-700">
-      <router-link
-        class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-        to="/menu1"
-      >
-        1. LegXML Dashboard
-      </router-link>
+      <b>Planning</b>
       <router-link
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
         to="/menu2"
       >
-        2. CIM simulator
+        CIM simulator
       </router-link>
       <router-link
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
         to="/menu3"
       >
-        3. TAP with CII
+        TAP with CII
       </router-link>
+      <b>Underway</b>
       <router-link
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
         to="/menu4"
       >
-        4. ERRM with CII
+        ERRM with CII
       </router-link>
       <router-link
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
         to="/menu5"
       >
-        5. Voyage Comparison
+        Voyage Comparison
+      </router-link>
+      <b>Analysis/Statistics</b>
+      <router-link
+        class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+        to="/menu1"
+      >
+        LegXML Dashboard
       </router-link>
     </div>
   </div>
