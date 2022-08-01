@@ -53,7 +53,7 @@
 import { ref, reactive, defineProps, watch, toRefs } from 'vue'
 import EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
-import calcCII from './calcCII.js'
+import calcCII from '../../calcCII.js'
 import calcCO2 from './calcCO2.js'
 
 // Props
