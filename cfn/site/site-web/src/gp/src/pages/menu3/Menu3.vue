@@ -549,6 +549,7 @@ const simStartEventHandler = async (item) => {
   console.log(simJson)
   if (simJson.result === 'OK') {
     simDatas.value = simJson.data.PLAN.leg_infos
+    simDatas.value.imo_no = param.PLAN.ship_info.imo_num
   }
 
   console.log(simDatas.value)

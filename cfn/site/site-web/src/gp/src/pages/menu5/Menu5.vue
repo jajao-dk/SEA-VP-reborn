@@ -295,6 +295,17 @@ const getVoyComData = async () => {
   legData.value = legDatas[0]
   console.log(legData.value)
 
+  // vesselListからIMO Numberを取得する
+  let imoNumber = ''
+  const wnishipnum = selectedVessel.value.ship_num
+  for (let i = 0; i < vesselList.value.length; i++) {
+    if (vesselList.value[i].ship_num === wnishipnum) {
+      imoNumber = vesselList.value[i].imo_num
+      break
+    }
+  }
+  legData.value.imo_number = imoNumber
+
   infos.value.length = 0
   if (legData.value !== undefined) {
     infos.value = legData.value.voyage_information
