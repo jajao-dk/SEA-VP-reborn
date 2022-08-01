@@ -60,6 +60,10 @@
 import { ref, reactive, onMounted, defineProps, watch, toRefs } from 'vue'
 import EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
+import { point } from '@turf/helpers'
+import distance from '@turf/distance'
+import calcCO2 from './calcCO2_errm.js'
+import calcCII from '../../calcCII.js'
 
 // Props
 const props = defineProps({
@@ -110,7 +114,7 @@ const submitEdit = () => {
   item.weight = editingItem.weight
 }
 
-const createTable = (errmVessels) => {
+const createTable = async (errmVessels) => {
   console.log('create table')
   console.log(errmVessels)
 
@@ -119,6 +123,33 @@ const createTable = (errmVessels) => {
     // console.log(latest.vessel_name)
     const riskLevel = checkAlert(errmVessels[i])
     console.log(riskLevel)
+
+    const imoNumber = errmVessels[i].imo_num
+
+    // ERRMデータからCO2排出量を算出(graph_data)
+    const graphData = errmVessels[i].graph_data
+    const arrObj = await calcCO2(graphData, imoNumber)
+
+    console.log(errmVessels[i])
+
+    // 距離計算 turf
+    const wayPoints = errmVessels[i].past_waypoint
+    let totalDistance = 0.0
+    for (let i = 0; i < wayPoints.length - 1; i++) {
+      const from = point([parseFloat(wayPoints[i].lon), parseFloat(wayPoints[i].lat)])
+      const to = point([parseFloat(wayPoints[i + 1].lon), parseFloat(wayPoints[i + 1].lat)])
+      const options = { units: 'kilometers' }
+      totalDistance += distance(from, to, options)
+      totalDistance = totalDistance / 1.852
+    }
+    arrObj[0].distance = totalDistance
+
+    // CII計算
+    let apiResult = []
+    console.log(arrObj[0])
+    if (arrObj[0].distance > 1 && arrObj[0].co2 > 0) {
+      apiResult = await calcCII(arrObj)
+    }
 
     // emits('tableVesselSelected', errmVessels[i].imo_num)
 
@@ -143,8 +174,8 @@ const createTable = (errmVessels) => {
       ordered_foc: (Math.round(Number(latest.ordered_foc) * 10) / 10).toFixed(1),
       total_dogo: (Math.round(Number(latest.total_dogo) * 10) / 10).toFixed(1),
       ordered_dogo: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
-      cii: '',
-      co2: ''
+      cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
+      co2: apiResult.length > 0 ? apiResult[0].co2 : ''
     }
     items.value.push(tmpRaw)
   }
