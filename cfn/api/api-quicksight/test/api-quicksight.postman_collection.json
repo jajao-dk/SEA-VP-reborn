@@ -440,7 +440,7 @@
 							"pm.test('EmbedUrl is filled', function () {",
 							"  var jsonData = pm.response.json();",
 							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
-							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-ssm-PPB\");",
+							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-ssm-\");",
 							"});"
 						],
 						"type": "text/javascript"
@@ -461,7 +461,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=ssm",
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&content_id=ssm",
 					"host": [
 						"{{ENDPOINT}}"
 					],
@@ -479,7 +479,7 @@
 							"value": "{{PARAM_GP_user_name}}"
 						},
 						{
-							"key": "contents_id",
+							"key": "content_id",
 							"value": "ssm"
 						}
 					]
@@ -501,7 +501,7 @@
 							"pm.test('EmbedUrl is filled', function () {",
 							"  var jsonData = pm.response.json();",
 							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
-							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-gperrm-PPB\");",
+							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-gperrm-\");",
 							"});"
 						],
 						"type": "text/javascript"
@@ -522,7 +522,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=gperrm",
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&content_id=gperrm",
 					"host": [
 						"{{ENDPOINT}}"
 					],
@@ -540,7 +540,7 @@
 							"value": "{{PARAM_GP_user_name}}"
 						},
 						{
-							"key": "contents_id",
+							"key": "content_id",
 							"value": "gperrm"
 						}
 					]
@@ -562,7 +562,7 @@
 							"pm.test('EmbedUrl is filled', function () {",
 							"  var jsonData = pm.response.json();",
 							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
-							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-gpvcs-client_v1_0\");",
+							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-gpvcs-client-v1\");",
 							"});"
 						],
 						"type": "text/javascript"
@@ -583,7 +583,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=gpvcs",
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&content_id=gpvcs",
 					"host": [
 						"{{ENDPOINT}}"
 					],
@@ -601,7 +601,7 @@
 							"value": "{{PARAM_GP_user_name}}"
 						},
 						{
-							"key": "contents_id",
+							"key": "content_id",
 							"value": "gpvcs"
 						}
 					]
@@ -623,7 +623,7 @@
 							"pm.test('EmbedUrl is filled', function () {",
 							"  var jsonData = pm.response.json();",
 							"  pm.expect(jsonData.EmbedUrl).to.match(/^https:/);",
-							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-emd-client_v1_3\");",
+							"  pm.expect(jsonData.EmbedUrl).to.include(\"quicksight-dashboard-sea-vp-emd-client-v1_3\");",
 							"});"
 						],
 						"type": "text/javascript"
@@ -644,7 +644,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=emd",
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&content_id=emd",
 					"host": [
 						"{{ENDPOINT}}"
 					],
@@ -662,7 +662,7 @@
 							"value": "{{PARAM_GP_user_name}}"
 						},
 						{
-							"key": "contents_id",
+							"key": "content_id",
 							"value": "emd"
 						}
 					]
@@ -692,7 +692,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=emd",
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&content_id=emd",
 					"host": [
 						"{{ENDPOINT}}"
 					],
@@ -710,7 +710,7 @@
 							"value": "{{PARAM_GP_user_name}}"
 						},
 						{
-							"key": "contents_id",
+							"key": "content_id",
 							"value": "emd"
 						}
 					]
@@ -747,7 +747,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=emd",
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&content_id=emd",
 					"host": [
 						"{{ENDPOINT}}"
 					],
@@ -765,7 +765,7 @@
 							"value": "{{PARAM_GP_user_name}}"
 						},
 						{
-							"key": "contents_id",
+							"key": "content_id",
 							"value": "emd"
 						}
 					]
@@ -802,7 +802,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ENDPOINT}}?customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&contents_id=emd",
+					"raw": "{{ENDPOINT}}?customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&content_id=emd",
 					"host": [
 						"{{ENDPOINT}}"
 					],
@@ -821,7 +821,7 @@
 							"value": "{{PARAM_GP_user_name}}"
 						},
 						{
-							"key": "contents_id",
+							"key": "content_id",
 							"value": "emd"
 						}
 					]
@@ -858,7 +858,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ENDPOINT}}?application=GP&user_name={{PARAM_GP_user_name}}&contents_id=emd",
+					"raw": "{{ENDPOINT}}?application=GP&user_name={{PARAM_GP_user_name}}&content_id=emd",
 					"host": [
 						"{{ENDPOINT}}"
 					],
@@ -877,7 +877,7 @@
 							"value": "{{PARAM_GP_user_name}}"
 						},
 						{
-							"key": "contents_id",
+							"key": "content_id",
 							"value": "emd"
 						}
 					]
@@ -919,7 +919,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&contents_id=emd",
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&content_id=emd",
 					"host": [
 						"{{ENDPOINT}}"
 					],
@@ -938,7 +938,7 @@
 							"disabled": true
 						},
 						{
-							"key": "contents_id",
+							"key": "content_id",
 							"value": "emd"
 						}
 					]
@@ -993,7 +993,7 @@
 							"value": "{{PARAM_GP_user_name}}"
 						},
 						{
-							"key": "contents_id",
+							"key": "content_id",
 							"value": "emd",
 							"disabled": true
 						}
@@ -1052,9 +1052,64 @@
 							"disabled": true
 						},
 						{
-							"key": "countents_id",
+							"key": "countent_id",
 							"value": "emd",
 							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR-no-qs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response status must be 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN_FOR_NO_QS}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENDPOINT}}?application=GP&customer_id={{PARAM_GP_customer_id}}&user_name={{PARAM_GP_user_name}}&content_id=ssm",
+					"host": [
+						"{{ENDPOINT}}"
+					],
+					"query": [
+						{
+							"key": "application",
+							"value": "GP"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{PARAM_GP_customer_id}}"
+						},
+						{
+							"key": "user_name",
+							"value": "{{PARAM_GP_user_name}}"
+						},
+						{
+							"key": "content_id",
+							"value": "ssm"
 						}
 					]
 				}
