@@ -175,7 +175,7 @@ const createTable = async (errmVessels) => {
       total_dogo: (Math.round(Number(latest.total_dogo) * 10) / 10).toFixed(1),
       ordered_dogo: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
       cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
-      co2: arrObj[0].co2
+      co2: apiResult.length > 0 ? apiResult[0].co2 : ''
     }
     items.value.push(tmpRaw)
   }

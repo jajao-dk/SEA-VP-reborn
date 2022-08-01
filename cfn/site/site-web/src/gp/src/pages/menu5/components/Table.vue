@@ -113,12 +113,14 @@ const createTable = async (legData) => {
 
   // CO2, CII rank追加処理
   const arrObj = await calcCO2(legData)
-  for (let i = 0; i < legData.plans.length; i++) {
-    // arrObjのindex=0はfrom_dep_to_latestでの値の為含めない
-    legData.plans[i].co2 = arrObj[i + 1].co2
-  }
+  // for (let i = 0; i < legData.plans.length; i++) {
+  //   // arrObjのindex=0はfrom_dep_to_latestでの値の為含めない
+  //   legData.plans[i].co2 = arrObj[i + 1].co2
+  // }
   const apiResult = await calcCII(arrObj)
   for (let i = 0; i < legData.plans.length; i++) {
+    // arrObjのindex=0はfrom_dep_to_latestでの値の為含めない
+    legData.plans[i].co2 = apiResult[i + 1].co2
     legData.plans[i].cii_rank = apiResult[i + 1].cii_rank
   }
 
