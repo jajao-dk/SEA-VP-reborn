@@ -8,15 +8,15 @@ const { login } = useAuth()
   <div>
     <div class="logoBox">
       <!-- Lite Version -->
-      <div class="tagIcon">
+      <!--div class="tagIcon">
         Lite version
-      </div>
+      </div-->
       <img
-        src="/sailingship.svg"
+        src="/green-sailing-ship.svg"
         class="logoMark"
       >
       <!-- SSM text -->
-      <svg
+      <!--svg
         class="logoTxt"
         xmlns="http://www.w3.org/2000/svg"
         x="0px"
@@ -47,10 +47,10 @@ const { login } = useAuth()
           <path d="M268.57,1.36h2.83l4.51,10c0.59,1.32,1.32,3.14,1.79,4.31l0.08-0.06c-0.22-1.93-0.39-4.87-0.39-6.61V1.36h2.8v19.6h-2.83l-4.37-9.6c-0.59-1.46-1.4-3.5-1.88-4.76l-0.08,0.06c0.2,1.96,0.34,4.9,0.34,6.75v7.56h-2.8V1.36z" />
           <path d="M283.55,15.14V7.16c0-3.98,2.18-6.11,5.74-6.11c3.47,0,5.57,2.1,5.71,5.96h-2.8c-0.11-2.27-1.12-3.25-2.91-3.25s-2.86,1.04-2.86,3.42v7.95c0,2.38,1.12,3.42,2.94,3.42c1.88,0,3-1.04,3-3.28v-2.46h-3.11v-2.52h5.88v4.98c-0.06,3.84-2.27,5.99-5.8,5.99C285.81,21.27,283.55,19.12,283.55,15.14z" />
         </g>
-      </svg>
+      </svg-->
       <!-- weathernews text -->
       <div class="weathernews">
-        powered by weathernews
+        GREEN-Dashboard
       </div>
       <div
         class="enterBtn"
@@ -113,7 +113,7 @@ const { login } = useAuth()
     width : 100% ;
     height : 12px ;
     color : #69848c ;
-    font-size : 12px ;
+    font-size : 30px ;
     line-height : 1em ;
     text-align : center ;
     margin-bottom : 56px ;
