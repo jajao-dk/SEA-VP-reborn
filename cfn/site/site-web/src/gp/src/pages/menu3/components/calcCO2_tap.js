@@ -11,7 +11,8 @@ export default async function calCO2 (obj, imoNumber) {
   const dogoConvFactor = 3.206
   let totalCO2 = 0.0
 
-  totalCO2 += hsfoCons * sfoConvFactor
+  // FOCは油種区別ができない為悪い値をとる3.151を使用
+  totalCO2 += hsfoCons * ulsConvFactor
   totalCO2 += dogoCons * dogoConvFactor
 
   addObj.co2 = totalCO2
