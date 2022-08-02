@@ -34,6 +34,12 @@ export class VesselERRMLayer extends Layer {
     console.log('ERRM layer add started!!!')
     console.log(this.options.data)
 
+    await Promise.all([
+      this.loadIconImage('./images/ship_white.svg', 'vesselSymbol'),
+      this.loadIconImage('./images/ship_red.svg', 'vesselSymbolRed'),
+      this.loadIconImage('./images/ship_yellow.svg', 'vesselSymbolYellow')
+    ])
+
     this.map.addSource(this.source, {
       type: 'geojson',
       data: featureCollection([]),
@@ -52,7 +58,6 @@ export class VesselERRMLayer extends Layer {
         'icon-pitch-alignment': 'map', // 3D表示や回転をしたときにも、地図に対して角度が保たれるように
         'icon-rotation-alignment': 'map', // 3D表示や回転をしたときにも、地図に対して角度が保たれるように
         'icon-ignore-placement': true, // 他のアイコンを間引いてしまわないように
-        // 'text-field': ['get', 'vessel_name'],
         'text-field': [
           'format',
           ['get', 'vessel_name'],
@@ -265,12 +270,14 @@ export class VesselERRMLayer extends Layer {
 
   async init() {
     super.init()
-
+    console.log('INITIALIZE')
+    /*
     await Promise.all([
       this.loadIconImage('./images/ship_white.svg', 'vesselSymbol'),
       this.loadIconImage('./images/ship_red.svg', 'vesselSymbolRed'),
       this.loadIconImage('./images/ship_yellow.svg', 'vesselSymbolYellow')
     ])
+    */
 
     // initialize data list
     // if (this.options.data.latest !== undefined) {
@@ -279,6 +286,33 @@ export class VesselERRMLayer extends Layer {
     console.log(this.options.data.latest)
     this.map.getSource(this.source).setData(this.options.data.latest)
     */
+    //if (this.selectedVessel) {
+    // this.selectedVessel = this.errmGeoJSON.latest.features[0]
+    /*
+    this.map.setPaintProperty(this.layer, 'icon-opacity', 0.5)
+    this.map.setPaintProperty(this.layer, 'icon-opacity', 1.0)
+    this.map.setFeatureState(
+      {
+        source: this.source,
+        id: this.selectedVessel.properties.imo
+      },
+      { selected: true }
+    )
+    */
+    // this.map.getSource(`${this.source}Highlight`).setData(this.selectedVessel)
+    /*
+    const tmpRoute = this.errmGeoJSON[this.selectedVessel.properties.imo]
+    tmpRoute.features.forEach((feature) => {
+      convertCross180Coordinates(feature.geometry.coordinates)
+    })
+    this.map.getSource(`${this.source}Route`).setData(tmpRoute)
+    */
+    /*
+      this.map
+        .getSource(`${this.source}Highlight`)
+        .setData(featureCollection([]))
+        */
+    //}
 
     this.initialized = true
   }
@@ -515,6 +549,8 @@ export class VesselERRMLayer extends Layer {
     console.log(errmVessels)
     this.errmVessels = errmVessels
     this.errmGeoJSON = {}
+    this.redVessels.length = 0
+    this.yellowVessels.length = 0
 
     this.latestJSON = { type: 'FeatureCollection', features: [] }
     this.makeGeoJSON(this.errmVessels)
@@ -549,12 +585,25 @@ export class VesselERRMLayer extends Layer {
       // console.log(vesselName)
 
       // Check alert
+      const riskSpdLevel = this.checkSpdAlert(errmVessels[i])
+      const riskRpmLevel = this.checkRpmAlert(errmVessels[i])
+      const riskFocLevel = this.checkFocAlert(errmVessels[i])
+
+      const alertLevel = riskSpdLevel + riskRpmLevel + riskFocLevel
+      if (alertLevel >= 10) {
+        this.redVessels.push(imoNum)
+      } else if (alertLevel > 0) {
+        this.yellowVessels.push(imoNum)
+      }
+
+      /*
       const alert = this.checkAlert(errmVessels[i])
       if (alert === 'red') {
         this.redVessels.push(imoNum)
       } else if (alert === 'yellow') {
         this.yellowVessels.push(imoNum)
       }
+      */
       this.paintVessels()
 
       // Latest positions
@@ -773,6 +822,7 @@ export class VesselERRMLayer extends Layer {
     return Date.parse(value) / 1000
   }
 
+  /*
   checkAlert(vessel) {
     const spd = Number(vessel.latest.average_speed)
     const targetSpd = Number(vessel.latest.ordered_speed)
@@ -786,6 +836,73 @@ export class VesselERRMLayer extends Layer {
       return 'yellow'
     } else {
       return 'white'
+    }
+  }
+  */
+
+  checkSpdAlert = (vessel) => {
+    // Check Speed alert
+    const spd = Number(vessel.latest.average_speed)
+    const orderSpd = Number(vessel.latest.ordered_speed)
+    const toleSpd = Number(vessel.tolerance_range.speed)
+    // console.log(spd)
+    // console.log(orderSpd)
+    // console.log(toleSpd)
+    if (orderSpd > 0 && toleSpd > 0) {
+      if (spd < orderSpd - toleSpd) {
+        return 10
+      } else if (spd < orderSpd && spd >= orderSpd - toleSpd) {
+        return 1
+      } else {
+        return 0
+      }
+    } else {
+      return 0
+    }
+  }
+
+  checkFocAlert = (vessel) => {
+    // Check FOC alert
+    const foc = Number(vessel.latest.total_foc)
+    const orderFoc = Number(vessel.latest.ordered_foc)
+    const toleFoc = Number(vessel.tolerance_range.consumption)
+    // console.log(foc)
+    // console.log(orderFoc)
+    // console.log(toleFoc)
+    if (orderFoc > 0 && toleFoc > 0) {
+      if (foc > orderFoc + toleFoc) {
+        return 10
+      } else if (foc > orderFoc && foc <= orderFoc + toleFoc) {
+        return 1
+      } else {
+        return 0
+      }
+    } else {
+      return 0
+    }
+  }
+
+  checkRpmAlert = (vessel) => {
+    // Check RPM alert
+    const rpm = Number(vessel.latest.average_rpm)
+    const orderRpm = Number(vessel.latest.suggested_rpm)
+    const toleRpm = Number(vessel.tolerance_range.rpm)
+    // console.log(rpm)
+    // console.log(orderRpm)
+    // console.log(toleRpm)
+    if (orderRpm > 0 && toleRpm > 0) {
+      if (rpm > orderRpm + toleRpm || rpm < orderRpm - toleRpm) {
+        return 10
+      } else if (
+        (rpm > orderRpm && rpm <= orderRpm + toleRpm) ||
+        (rpm < orderRpm && rpm >= orderRpm - toleRpm)
+      ) {
+        return 1
+      } else {
+        return 0
+      }
+    } else {
+      return 0
     }
   }
 
@@ -827,7 +944,7 @@ export class VesselERRMLayer extends Layer {
     )
     */
     console.log('Red: ' + JSON.stringify(this.redVessels))
-    console.log('Yellow: ' + this.yellowVessels)
+    console.log('Yellow: ' + JSON.stringify(this.yellowVessels))
 
     // Modefy vessel layer properties
     const vesseltypeExpressions = [
