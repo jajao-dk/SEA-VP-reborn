@@ -73,6 +73,18 @@ def add_user(auth0, email, app_file):
     except Exception as error:
         print(error)
 
+def update_user(auth0, user_id, file):
+    print("update")
+    userdata={}
+    with open(file, 'r') as f:
+        userdata=json.load(f)
+
+    try:
+        user = auth0.users.update(user_id, userdata)
+        print(json.dumps(user))
+    except Exception as error:
+        print(error)
+
 def send_verification_mail(auth0, user_id, client_id):
     print('mail')
     maildata = {
@@ -102,8 +114,8 @@ def generate_password():
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument("command",     choices=["list","get","add","send_verification_mail"])
-    parser.add_argument("--file",      help="user json file: necessary for add and update")
+    parser.add_argument("command",     choices=["list","get","add","upd","send_verification_mail"])
+    parser.add_argument("--file",      help="user json file: necessary for update")
     parser.add_argument("--user_id",   help="user_id : necessary for get and update")
     parser.add_argument("--client_id", help="client_id : necessary for send verification mail")
     parser.add_argument("--email",     help="email : necessary for add")
@@ -119,6 +131,8 @@ def main():
         get_user(auth0, args.user_id)
     elif(args.command == 'add'):
         add_user(auth0, args.email, args.app_file)
+    elif(args.command == 'upd'):
+        update_user(auth0, args.user_id, args.file)
     elif(args.command == 'send_verification_mail'):
         send_verification_mail(auth0, args.user_id, args.client_id)
     else:
