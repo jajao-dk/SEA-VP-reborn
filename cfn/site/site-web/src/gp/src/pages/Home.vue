@@ -8,7 +8,7 @@ import {
   pageview as gtagPageview,
   optIn as gtagOptin,
   event as gtagEvent,
-  customMap as gtagCustomMap,
+  customMap as gtagCustomMap
 } from 'vue-gtag'
 
 const container = ref(null)
@@ -30,11 +30,12 @@ window.addEventListener('message', onMessage, false)
 onMounted(async () => {
   const token = await getToken()
   const user = await getUser()
-  let dashboard;
-  const res = await axios.get('/api/v1/quicksight',{
+  let dashboard
+  const res = await axios.get('/api/v1/quicksight', {
     headers: { Authorization: `Bearer ${token}` },
     params: {
-      application: 'SSM',
+      application: 'GP',
+      content_id: 'ssm',
       customer_id: user.customer_ids?.[0],
       user_name: user.email
     }
@@ -70,7 +71,7 @@ onMounted(async () => {
 
   // GA4用の記述
   gtagSet('user_id', user.email)
-  gtagSet('user_properties', {login_id: user.email, customer_id: user.customer_ids?.[0]})
+  gtagSet('user_properties', { login_id: user.email, customer_id: user.customer_ids?.[0] })
   // UA用の記述
   gtagCustomMap('dimension1', 'login_id')
   gtagCustomMap('dimension2', 'customer_id')
@@ -78,7 +79,6 @@ onMounted(async () => {
 
   // pageview送信
   gtagPageview(location.href)
-  
 })
 </script>
 

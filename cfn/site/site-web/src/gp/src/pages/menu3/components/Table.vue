@@ -3,6 +3,8 @@
     <EasyDataTable
       v-model:items-selected="itemsSelected"
       header-background-color="#ddd"
+      :fixed-header="true"
+      table-height="100"
       :headers="headers"
       :items="items"
       table-class-name="customize-table"
@@ -21,6 +23,8 @@
 import { ref, defineProps, watch, toRefs } from 'vue'
 import EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
+import calcCO2 from './calcCO2_tap.js'
+import calcCII from '../../calcCII.js'
 
 // Props
 const props = defineProps({
@@ -80,11 +84,12 @@ const submitEdit = () => {
 }
 */
 
-const createTable = (simDatas) => {
+const createTable = async (simDatas) => {
   console.log('create table')
   console.log(simDatas)
   items.value.length = 0
   itemsSelected.value.length = 0
+  const imoNumber = simDatas.imo_no
 
   for (let i = 0; i < simDatas.length; i++) {
     console.log(i)
@@ -93,6 +98,18 @@ const createTable = (simDatas) => {
     const routeInfos = simDatas[i].route_infos
 
     for (let j = 0; j < routeInfos.length; j++) {
+      // CO2計算
+      const simResult = routeInfos[j].simulation_result
+      const arrObj = await calcCO2(simResult, imoNumber)
+
+      // CII計算
+      let apiResult = []
+      console.log(arrObj[0])
+      if (arrObj[0].distance > 1 && arrObj[0].co2 > 0) {
+        apiResult = await calcCII(arrObj)
+      }
+      console.log(apiResult)
+
       const tmpRaw = {
         leg: i + 1,
         id: legInfo.leg_id + '-' + routeInfos[j].route_id,
@@ -101,8 +118,8 @@ const createTable = (simDatas) => {
         eta: routeInfos[j].simulation_result.eta,
         days: Math.round(parseFloat(routeInfos[j].simulation_result.at_sea_days) * 10) / 10,
         dist: Math.round(parseFloat(routeInfos[j].simulation_result.distance) * 10) / 10,
-        co2: '',
-        cii: '',
+        co2: apiResult.length > 0 ? apiResult[0].co2 : '',
+        cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
         hsfo: Math.round(parseFloat(routeInfos[j].simulation_result.hsfo) * 10) / 10,
         dogo: Math.round(parseFloat(routeInfos[j].simulation_result.lsdogo) * 10) / 10,
         inport: Math.round(parseFloat(routeInfos[j].simulation_result.in_port_days) * 10) / 10

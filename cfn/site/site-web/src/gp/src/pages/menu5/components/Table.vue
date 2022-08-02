@@ -3,6 +3,8 @@
     <EasyDataTable
       show-index
       header-background-color="#ddd"
+      :fixed-header="true"
+      table-height="200"
       :headers="headers"
       :items="items"
       table-class-name="customize-table"
@@ -53,7 +55,7 @@
 import { ref, reactive, defineProps, watch, toRefs } from 'vue'
 import EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
-import calcCII from './calcCII.js'
+import calcCII from '../../calcCII.js'
 import calcCO2 from './calcCO2.js'
 
 // Props
@@ -113,12 +115,14 @@ const createTable = async (legData) => {
 
   // CO2, CII rank追加処理
   const arrObj = await calcCO2(legData)
-  for (let i = 0; i < legData.plans.length; i++) {
-    // arrObjのindex=0はfrom_dep_to_latestでの値の為含めない
-    legData.plans[i].co2 = arrObj[i + 1].co2
-  }
+  // for (let i = 0; i < legData.plans.length; i++) {
+  //   // arrObjのindex=0はfrom_dep_to_latestでの値の為含めない
+  //   legData.plans[i].co2 = arrObj[i + 1].co2
+  // }
   const apiResult = await calcCII(arrObj)
   for (let i = 0; i < legData.plans.length; i++) {
+    // arrObjのindex=0はfrom_dep_to_latestでの値の為含めない
+    legData.plans[i].co2 = apiResult[i + 1].co2
     legData.plans[i].cii_rank = apiResult[i + 1].cii_rank
   }
 
@@ -189,7 +193,7 @@ const checkAlert = (vessel) => {
 
 // Table headers
 headers.value = [
-  { text: 'Select', value: 'select', width: 60 },
+  { text: 'Select', value: 'select', fixed: true, width: 60 },
   { text: 'Setting', value: 'setting', width: 150 },
   { text: 'Route', value: 'route', width: 120 },
   { text: 'ETA (LT)', value: 'eta', width: 100 },
