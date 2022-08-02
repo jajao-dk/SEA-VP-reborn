@@ -34,29 +34,12 @@ const props = defineProps({
   token: { type: String, default: '' }
 })
 
-// const container = ref(null)
 const ready = ref(false)
-// const layerList = createLayerList(props.config, props.customerId, getToken, token.value, props.pathParams, props.errmGeoJson)
 const layerList = createLayerList(props.config, props.customerId, getToken, props.token, props.pathParams, props.legData)
 const isLegendDisplay = ref(false)
-/*
-watch(() => token.value, (newValue) => {
-  for (const layer of Object.values(layerList)) {
-    layer.content.updateToken(token)
-  }
-})
-*/
 
 // const test = ref(props.customerId)
-const { legData, mapFocusVessel } = toRefs(props)
-
-/*
-watch(customerId, (newValue) => {
-  console.log('ERRM Handler')
-  console.log(newValue)
-  console.log(props.customerId)
-})
-*/
+const { legData } = toRefs(props)
 
 watch(legData, (newValue) => {
   console.log('voycom Handler 2')
@@ -64,15 +47,6 @@ watch(legData, (newValue) => {
   console.log(props.legData)
   layerList.VoyCom.content.updateRouteHandler(props.legData)
 })
-
-/*
-watch(mapFocusVessel, (newValue) => {
-  console.log('FOCUS VESSEL on MAP')
-  console.log(newValue)
-  // layerList.ERRM.content.updateMapHandler(props.errmVessels)
-  layerList.ERRM.content.onClickTable(newValue)
-})
-*/
 
 const mapMenuLayerList = computed(() => {
   const filteredList = {}
@@ -151,11 +125,6 @@ onMounted(async () => {
     :layer-list="layerList"
     :is-legend-display="isLegendDisplay"
   />
-  <!--template v-if="layerList.Vessel">
-    <VesselSectionList :vessel-layer="layerList.Vessel" />
-    <VesselAlertList :vessel-layer="layerList.Vessel" />
-    <VesselSearchVessel :vessel-layer="layerList.Vessel" />
-  </template-->
 </template>
 
 <!-- style src="/src/assets/styles/app.css" scoped-->

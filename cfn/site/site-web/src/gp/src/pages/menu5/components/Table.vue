@@ -3,6 +3,8 @@
     <EasyDataTable
       show-index
       header-background-color="#ddd"
+      :fixed-header="true"
+      table-height="200"
       :headers="headers"
       :items="items"
       table-class-name="customize-table"
@@ -191,7 +193,7 @@ const checkAlert = (vessel) => {
 
 // Table headers
 headers.value = [
-  { text: 'Select', value: 'select', width: 60 },
+  { text: 'Select', value: 'select', fixed: true, width: 60 },
   { text: 'Setting', value: 'setting', width: 150 },
   { text: 'Route', value: 'route', width: 120 },
   { text: 'ETA (LT)', value: 'eta', width: 100 },

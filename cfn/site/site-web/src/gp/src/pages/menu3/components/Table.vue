@@ -3,6 +3,8 @@
     <EasyDataTable
       v-model:items-selected="itemsSelected"
       header-background-color="#ddd"
+      :fixed-header="true"
+      table-height="100"
       :headers="headers"
       :items="items"
       table-class-name="customize-table"

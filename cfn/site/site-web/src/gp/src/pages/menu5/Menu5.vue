@@ -134,20 +134,6 @@ onMounted(async () => {
   authorized.value = true
   // console.log(authorized.value)
 
-  /*
-  const options = {
-    url: 'https://ap-northeast-1.quicksight.aws.amazon.com/sn/embed/share/accounts/716990209761/dashboards/1cca6f7c-2ee4-4c0d-91d1-42cbe40d995c?directory_alias=sea-analytics',
-    container: container.value,
-    iframeResizeOnSheetChange: true,
-    printEnabled: true,
-    scrolling: 'auto',
-    width: '100%',
-    height: '100%',
-    locale: 'en-US'
-  }
-  */
-  // QuickSightEmbedding.embedDashboard(options)
-
   getVesselList()
 })
 
@@ -211,68 +197,13 @@ const getVesselList = async () => {
   // console.log(allIMOs)
 }
 
-/*
-const checkVesselList = async (list) => {
-  const tmpList = []
-  const promises = []
-  for (let i = 0; i < list.length; i++) {
-    const wni = list[i].wnishipnum
-    const urlVoyCom = 'https://tmax-b01.weathernews.com/T-Max/VoyageComparison/api/reborn_get_voy_comparison_data.cgi?wnishipnum=' + wni + '&client=' + client.value
-    promises.push(
-      axios.get(urlVoyCom)
-        .then(function (resp) {
-          console.log(urlVoyCom)
-          console.log(i)
-          console.log(resp.data.leg_infos)
-          const legs = resp.data
-          if (legs.result === 'OK') {
-            if (legs.data.leg_infos.length >= 0) {
-              console.log(wni)
-              tmpList.push({
-                vessel_name: list[i].vessel_name,
-                wnishipnum: wni
-              })
-            }
-          }
-        })
-    )
-  }
-  Promise.all(promises).then(() => {
-    console.log(tmpList)
-    return tmpList
-  })
-  // return tmpList
-}
-*/
-
-/*
-const checkVesselList = async (list) => {
-  const tmpList = []
-  for (let i = 0; i < list.length; i++) {
-    const wni = list[i].wnishipnum
-    const urlVoyCom = 'https://tmax-b01.weathernews.com/T-Max/VoyageComparison/api/reborn_get_voy_comparison_data.cgi?wnishipnum=' + wni + '&client=' + client.value
-    const resp = await fetch(urlVoyCom)
-    const data = await resp.json()
-    if (data.result === 'OK') {
-      console.log(data.data.leg_infos)
-      if (data.data.leg_infos.length > 0) {
-        console.log(wni)
-        tmpList.push({
-          vessel_name: list[i].vessel_name,
-          wnishipnum: wni
-        })
-      }
-    }
-  }
-  console.log(tmpList)
-  // return tmpList
-}
-*/
-
 // Get LEG data
 const getVoyComData = async () => {
-  // console.log(selectedVessel.value.wnishipnum)
+  // initialize
   console.log(selectedVessel.value.ship_num)
+  legData.value = undefined
+  infos.value.length = 0
+
   // const urlVoyCom = 'https://tmax-b01.weathernews.com/T-Max/VoyageComparison/api/reborn_get_voy_comparison_data.cgi?wnishipnum=' + selectedVessel.value.wnishipnum + '&client=' + client.value
   const urlVoyCom = 'https://tmax-b01.weathernews.com/T-Max/VoyageComparison/api/reborn_get_voy_comparison_data.cgi?wnishipnum=' + selectedVessel.value.ship_num + '&client=' + client.value
   // const urlLatest = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_latest_enrouterisk.cgi'
@@ -291,24 +222,25 @@ const getVoyComData = async () => {
     })
   }
 
-  console.log(legDatas)
-  legData.value = legDatas[0]
-  console.log(legData.value)
+  if (legDatas.length > 0) {
+    console.log(legDatas)
+    legData.value = legDatas[0]
+    console.log(legData.value)
 
-  // vesselListからIMO Numberを取得する
-  let imoNumber = ''
-  const wnishipnum = selectedVessel.value.ship_num
-  for (let i = 0; i < vesselList.value.length; i++) {
-    if (vesselList.value[i].ship_num === wnishipnum) {
-      imoNumber = vesselList.value[i].imo_num
-      break
+    // vesselListからIMO Numberを取得する
+    let imoNumber = ''
+    const wnishipnum = selectedVessel.value.ship_num
+    for (let i = 0; i < vesselList.value.length; i++) {
+      if (vesselList.value[i].ship_num === wnishipnum) {
+        imoNumber = vesselList.value[i].imo_num
+        break
+      }
     }
-  }
-  legData.value.imo_number = imoNumber
+    legData.value.imo_number = imoNumber
 
-  infos.value.length = 0
-  if (legData.value !== undefined) {
-    infos.value = legData.value.voyage_information
+    if (legData.value !== undefined) {
+      infos.value = legData.value.voyage_information
+    }
   }
 }
 

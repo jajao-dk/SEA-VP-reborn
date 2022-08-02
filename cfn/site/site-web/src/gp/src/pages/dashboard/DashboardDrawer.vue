@@ -41,7 +41,7 @@ const store = useStore()
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
         to="/menu1"
       >
-        LegXML Dashboard
+        Emission Dashboard
       </router-link>
     </div>
   </div>

@@ -5,6 +5,7 @@
       height="100%"
       header-background-color="#ddd"
       :fixed-header="true"
+      table-height="250"
       :headers="headers"
       :items="items"
       table-class-name="customize-table"
@@ -335,13 +336,6 @@ headers.value = [
   width: 100%;
   height: 300px;
   /* overflow: scroll; */
-}
-
-.customize-table .th{
-  position: sticky;
-  top: 0;
-  left: 0;
-  font-size: 20px;
 }
 
 .operation-wrapper .operation-icon {
