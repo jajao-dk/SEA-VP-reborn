@@ -1,100 +1,91 @@
 <script setup>
-// import { useData } from './data'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useAuth } from '../../plugins/auth'
+import * as QuickSightEmbedding from 'amazon-quicksight-embedding-sdk'
+import {
+  set as gtagSet,
+  pageview as gtagPageview,
+  optIn as gtagOptin,
+  event as gtagEvent,
+  customMap as gtagCustomMap,
+} from 'vue-gtag'
+
+const container = ref(null)
 
 const { getToken, getUser } = useAuth()
+
+const onMessage = (event) => {
+  if (event.origin === location.origin && event.data) {
+    switch (event.data.messageType) {
+      case 'openWindow':
+        window.open(event.data.url, event.data.windowName)
+        break
+    }
+  }
+}
+
+window.addEventListener('message', onMessage, false)
 
 onMounted(async () => {
   const token = await getToken()
   const user = await getUser()
-  console.log(token)
-  console.log(user.customer_ids[0])
-  const res = await axios.get(`/customer/${user.customer_ids[0]}/ssm/data/vessel/section-alert.json`, { headers: { Authorization: `Bearer ${token}` } })
-  console.log(res.data)
+  let dashboard;
+  const res = await axios.get('/api/v1/quicksight',{
+    headers: { Authorization: `Bearer ${token}` },
+    params: {
+      application: 'GP',
+      content_id: 'emd',
+      customer_id: user.customer_ids?.[0],
+      user_name: user.email
+    }
+  })
+
+  const options = {
+    url: res.data.EmbedUrl,
+    container: container.value,
+    iframeResizeOnSheetChange: true,
+    printEnabled: true,
+    scrolling: 'auto',
+    width: '100%',
+    height: '100%',
+    locale: 'en-US'
+  }
+
+  dashboard = QuickSightEmbedding.embedDashboard(options)
+  // const reload = () => {
+  //     let dashboardVesselParameters = '';
+  //     dashboard.getActiveParameterValues(function(value){
+  //       dashboardVesselParameters = value['parameters'][1]['value']
+  //       if (dashboardVesselParameters == ['All']){
+  //         dashboard.setParameters({VesselName:[' ']});
+  //       }else{
+  //         dashboard.setParameters({VesselName:['All']});
+  //       }
+  //       dashboard.setParameters({VesselName: dashboardVesselParameters});
+  //     });
+  // }
+  // setInterval(reload, 3600000);
+
+  gtagOptin() // gtag.js にて、プラグイン登録時にプラグイン無効化しているので、ここで有効化する
+
+  // GA4用の記述
+  gtagSet('user_id', user.email)
+  gtagSet('user_properties', {login_id: user.email, customer_id: user.customer_ids?.[0]})
+  // UA用の記述
+  gtagCustomMap('dimension1', 'login_id')
+  gtagCustomMap('dimension2', 'customer_id')
+  gtagEvent('custom_dimension', { login_id: user.email, customer_id: user.customer_ids?.[0] })
+
+  // pageview送信
+  gtagPageview(location.href)
+  
 })
-
-// const { data } = useData()
-const legid1 = ref('sid20220430_000311')
-const legid2 = ref('sid20220430_000349')
-
-const rpmEventHandler = async () => {
-  console.log('RPM event')
-  console.log('legid1: ', legid1.value)
-  console.log('legid2: ', legid2.value)
-  const url = 'https://yx479pb6pk.execute-api.ap-northeast-1.amazonaws.com/Prod/import_leg/'
-  // const tmp_post = {source: "sid20220430_000311", target: "sid20220430_000349"}
-  const tmp_post = { source: legid1.value, target: legid2.value }
-  const post_msg = JSON.stringify(tmp_post)
-  fetch(url, { mode: 'cors', method: 'POST', body: post_msg })
-    .then(response => {
-      if (!response.ok) { throw new Error() }
-      return response.text()
-    })
-    .then(text => { console.log(text) })
-  return false
-}
-
 </script>
 
 <template>
-  EMISSION DASHBOARD
-  <!-- div>{{ data }}</div-->
-  <!--div class="rpm">
-    VUE-TEST-TAKAO:<br><br>
-    <form
-      novalidate
-      @submit.prevent="onSubmit"
-    >
-      Input LEG-ID1
-      <input
-        v-model="legid1"
-        class="simbtn"
-        type="text"
-        placeholder="sid20220430_000311"
-      >
-      Input LEG-ID2
-      <input
-        v-model="legid2"
-        class="simbtn"
-        type="text"
-        placeholder="sid20220430_000349"
-      ><br><br>
-      <button
-        class="simbtn"
-        type="submit"
-        @click="rpmEventHandler"
-      >
-        Submit
-      </button>
-    </form>
-  </div-->
+  <div
+    ref="container"
+    class="h-full"
+  />
 </template>
-
-<style>
-.rpm {
-  /* position: relative; */
-  position: absolute;
-  top: 50px;
-  left: 80px;
-  width: 170px;
-  height: 30px;
-  display: inline-block;
-  z-index: 5;
-}
-.simbtn {
-  background-color: #ddd;
-  color: #333;
-  padding: 5px;
-  font-size: 16px;
-  min-width: 170px;
-  border: solid 1px;
-  border-color: #888;
-  cursor: pointer;
-  z-index: 5;
-}
-.simbtn:hover {
-  background-color: #bbb;
-}
-</style>

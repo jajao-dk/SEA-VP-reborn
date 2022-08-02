@@ -15,7 +15,7 @@ const store = useStore()
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
         to="/menu2"
       >
-        CIM simulator
+        Vessel CII simulator
       </router-link>
       <router-link
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
