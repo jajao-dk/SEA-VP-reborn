@@ -113,17 +113,37 @@ const createTable = async (legData) => {
     return false
   }
 
-  // CO2, CII rank追加処理
+  // CO2計算
   const arrObj = await calcCO2(legData)
-  // for (let i = 0; i < legData.plans.length; i++) {
-  //   // arrObjのindex=0はfrom_dep_to_latestでの値の為含めない
-  //   legData.plans[i].co2 = arrObj[i + 1].co2
-  // }
-  const apiResult = await calcCII(arrObj)
+
+  // CII計算
+  const apiResultArr = []
+  // latest, planで一つずつCIIを計算する
+  for (let i = 0; i < arrObj.length; i++) {
+    let apiResult = []
+    const targetArr = []
+    // APIに渡すパラメータが定義されているかチェック
+    if (arrObj[i].distance && arrObj[i].co2 && arrObj[i].imoNumber) {
+      // APIには配列で渡す
+      targetArr.push(arrObj[i])
+      apiResult = await calcCII(targetArr)
+    }
+    // 元データとマージさせる為、APIのレスポンスを配列に追加する
+    apiResultArr.push(apiResult)
+  }
+  console.log(apiResultArr)
+
+  // 元データにCII計算結果を追加する
   for (let i = 0; i < legData.plans.length; i++) {
-    // arrObjのindex=0はfrom_dep_to_latestでの値の為含めない
-    legData.plans[i].co2 = apiResult[i + 1].co2
-    legData.plans[i].cii_rank = apiResult[i + 1].cii_rank
+    // index=0はfrom_dep_to_latestでの値の為含めない
+    if (apiResultArr[i + 1].length > 0) {
+      // CIIの計算が実行されなければ、配列は空
+      legData.plans[i].co2 = apiResultArr[i + 1][0].co2
+      legData.plans[i].cii_rank = apiResultArr[i + 1][0].cii_rank
+    } else {
+      legData.plans[i].co2 = ''
+      legData.plans[i].cii_rank = ''
+    }
   }
 
   const plans = legData.plans

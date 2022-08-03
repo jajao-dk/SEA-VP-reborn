@@ -105,7 +105,7 @@ const createTable = async (simDatas) => {
       // CII計算
       let apiResult = []
       console.log(arrObj[0])
-      if (arrObj[0].distance > 1 && arrObj[0].co2 > 0) {
+      if (arrObj[0].distance && arrObj[0].co2 && arrObj[0].imoNumber) {
         apiResult = await calcCII(arrObj)
       }
       console.log(apiResult)
