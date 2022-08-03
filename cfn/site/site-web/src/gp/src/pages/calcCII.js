@@ -10,5 +10,14 @@ export default async function calcCII (arrObj) {
     method: 'POST',
     body: JSON.stringify(body)
   })
-  return perfJson.json()
+    .then((response) => {
+      return response.json()
+    })
+    .then((data) => {
+      return data
+    })
+    .catch(() => {
+      return [{}]
+    })
+  return perfJson
 }
