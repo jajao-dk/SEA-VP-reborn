@@ -95,6 +95,7 @@ import { loadMapConfig } from '../../scripts/mapConfig.js'
 import Map from './components/Map.vue'
 import Table from './components/Table.vue'
 import { useAuth } from '../../plugins/auth'
+import values from '../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/scripts/values'
 // import axios from 'axios'
 // import * as QuickSightEmbedding from 'amazon-quicksight-embedding-sdk'
 
@@ -153,6 +154,22 @@ const getVesselList = async () => {
     return false
   }
 
+  const osrVessels = await fetch(
+      `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/osr_vessels.json`,
+      { headers: { Authorization: `Bearer ${token.value}` } }
+  ).then((res) => res.json())
+  console.log(osrVessels)
+
+  const list = osrVessels
+  list.sort(function (a, b) {
+    if (a.ship_name < b.ship_name) return -1
+    if (a.ship_name > b.ship_name) return 1
+    return 0
+  })
+
+  vesselList.value = list
+
+  /*
   // client.value = 'RIO'
   // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value
   // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=menu_id&val=Tonnage'
@@ -163,14 +180,12 @@ const getVesselList = async () => {
   if (data.result === 'OK') {
     // vesselList.value = data.data
 
-    /*
-    const list = data.data.vessel_list
-    list.sort(function (a, b) {
-      if (a.vessel_name < b.vessel_name) return -1
-      if (a.vessel_name > b.vessel_name) return 1
-      return 0
-    })
-    */
+    // const list = data.data.vessel_list
+    // list.sort(function (a, b) {
+    //  if (a.vessel_name < b.vessel_name) return -1
+    //  if (a.vessel_name > b.vessel_name) return 1
+    //  return 0
+    // })
 
     const list = data.data
     list.sort(function (a, b) {
@@ -184,17 +199,17 @@ const getVesselList = async () => {
     vesselList.value = list
   }
 
-  /*
-  const allVessels = []
-  const allIMOs = []
-  vesselList.value.map(ship => {
-    allVessels.push(ship.ship_name)
-    allIMOs.push(ship.imo_num)
-    return false
-  }) */
+  // const allVessels = []
+  // const allIMOs = []
+  // vesselList.value.map(ship => {
+  //  allVessels.push(ship.ship_name)
+  //  allIMOs.push(ship.imo_num)
+  //  return false
+  // })
   console.log(vesselList.value)
   // console.log(allVessels)
   // console.log(allIMOs)
+  */
 }
 
 // Get LEG data

@@ -6,6 +6,8 @@
       header-background-color="#ddd"
       :fixed-header="true"
       table-height="250"
+      rows-per-page="500"
+      :rows-items="[500,1000,1500]"
       :headers="headers"
       :items="items"
       table-class-name="customize-table"
