@@ -8,8 +8,8 @@ export default async function calCO2 (obj, imoNumber) {
     const ulsConvFactor = 3.151
     const dogoConvFactor = 3.206
     let totalCO2 = 0.0
-    // FOCは3.114を換算係数として使用する
-    totalCO2 += consObj.total_fo_cons * sfoConvFactor
+    // FOCは油種区別ができない為悪い値をとる3.151を使用
+    totalCO2 += consObj.total_fo_cons * ulsConvFactor
     totalCO2 += consObj.total_godo_cons * dogoConvFactor
     addObj.co2 = totalCO2
     addObj.imoNumber = imoNumber
