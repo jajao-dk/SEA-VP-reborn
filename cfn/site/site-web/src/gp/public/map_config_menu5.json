@@ -34,13 +34,21 @@
       "title": "Wave"
     },
     {
-      "name": "EcaArea",
-      "title": "EcaArea"
+      "name": "RestrictionArea",
+      "title": "ECA / Loadline"
+    },
+    {
+      "name": "Ice",
+      "title": "Iceberg Concentration"
     },
     {
       "name": "VoyCom",
       "title": "Voyage Comparison",
       "zIndex": 1000
+    },
+    {
+      "name": "OC",
+      "title": "Ocean/Coastal Storm"
     }
   ],
   "alert": {

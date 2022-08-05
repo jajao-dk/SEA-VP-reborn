@@ -12,6 +12,8 @@ import LayerListPanel from './LayerListPanel.vue'
 // import LegendPanel from './Modules/LegendPanel.vue'
 import TimeSlider from './TimeSlider.vue'
 // import SidePanel from './Modules/SidePanel/index.vue'
+import LegendButton from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Modules/Control/LegendButton'
+import LegendPanel from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Modules/LegendPanel.vue'
 
 // const { getToken, token } = useAuth()
 // console.log(token)
@@ -29,6 +31,8 @@ const props = defineProps({
 // initialize
 const ready = ref(false)
 const layerList = createLayerList(props.config, props.customerId, null, null, props.pathParams, props.errmGeoJson)
+const isLegendDisplay = ref(false)
+
 const mapMenuLayerList = computed(() => {
   const filteredList = {}
   for (const layerName in layerList) {
@@ -67,14 +71,13 @@ onMounted(async () => {
   const map = new Map({
     ...props.config.map,
     container: 'map',
-    // container: container.value,
     dragRotate: false,
     pitchWithRotate: false,
     touchZoomRotate: false
   })
 
   map.addControl(new NavigationControl({ showCompass: false }))
-  // map.addControl(new LegendButton(isLegendDisplay), 'top-right')
+  map.addControl(new LegendButton(isLegendDisplay), 'top-right')
 
   await map.onPromise('load')
   registLayer(map, layerList, { colorMode: props.config.theme })
@@ -98,7 +101,7 @@ onMounted(async () => {
 
   layerList.ERRM.content.event.addEventListener('cancelRoute', (e) => {
     console.log('cancel route')
-    vesselRouteOn.value = false
+    vesselRouteOn.value = true
   })
 
   ready.value = true
@@ -130,11 +133,11 @@ onMounted(async () => {
     :show="sidePanel.show"
     :type="sidePanel.type"
     :content="sidePanel.content"
-  />
+  /-->
   <LegendPanel
     :layer-list="layerList"
     :is-legend-display="isLegendDisplay"
-  /-->
+  />
 </template>
 
 <style scoped>

@@ -134,10 +134,10 @@ const hideTooltip = (text) => {
 #layers li input#togglePiracy ~ label {
   background-image: url("/images/btns_svg/btn_piracy_off.svg");
 }
-#layers li input#toggleEcaArea:checked ~ label {
+#layers li input#toggleRestrictionArea:checked ~ label {
   background-image: url("/images/btns_svg/btn_ecaArea_on.svg");
 }
-#layers li input#toggleEcaArea ~ label {
+#layers li input#toggleRestrictionArea ~ label {
   background-image: url("/images/btns_svg/btn_ecaArea_off.svg");
 }
 #layers li input#toggleRadar:checked ~ label {
@@ -205,6 +205,12 @@ const hideTooltip = (text) => {
 }
 #layers li input#toggleIce ~ label {
   background-image: url('/images/btns_svg/btn_ice_off.svg');
+}
+#layers li input#toggleOC:checked ~ label {
+  background-image: url("/images/btns_svg/btn_ecaArea_on.svg");
+}
+#layers li input#toggleOC ~ label {
+  background-image: url("/images/btns_svg/btn_ecaArea_off.svg");
 }
 #layers li input#toggleERRM ~ label {
   background-image: url("/images/btns_svg/btn_ship_off.svg");

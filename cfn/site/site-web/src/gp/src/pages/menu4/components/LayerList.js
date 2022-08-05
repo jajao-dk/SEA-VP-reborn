@@ -5,12 +5,13 @@ import { CurrentGridLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/s
 import { WxChartLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/WxChartLayer'
 import { WaveHeightLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/WaveHeightLayer'
 import { EcaAreaLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/EcaAreaLayer'
+import { LoadLineLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/LoadLineLayer'
+import { OCLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/OCLayer'
+import { IcebergLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/IcebergLayer'
+import { IceconcentrationLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/IceconcentrationLayer'
 import { VesselERRMLayer } from './VesselERRMLayer'
 // import { NauticalChartLayer } from '../components/Layers/NauticalChartLayer'
-// import { VesselRouteLayer } from '../components/Layers/VesselRouteLayer'
 // import { PortLayer } from '../components/Layers/PortLayer'
-// import { IcebergLayer } from '../components/Layers/IcebergLayer'
-// import { IceconcentrationLayer } from '../components/Layers/IceconcentrationLayer'
 // import { SeaVisibilityLayer } from '../components/Layers/SeaVisibilityLayer'
 // import { SurfaceTemperatureLayer } from '../components/Layers/SurfaceTemperatureLayer'
 // import { SprayIcingLayer } from '../components/Layers/SprayIcingLayer'
@@ -28,15 +29,15 @@ const modules = {
   Current: CurrentGridLayer,
   WxChart: WxChartLayer,
   Wave: WaveHeightLayer,
-  EcaArea: EcaAreaLayer,
-  ERRM: VesselERRMLayer
+  ERRM: VesselERRMLayer,
   // NauticalChart: NauticalChartLayer,
-  // Vessel: VesselRouteLayer,
   // Port: PortLayer,
   // SeaVisibility: SeaVisibilityLayer,
   // SurfaceTemperature: SurfaceTemperatureLayer,
   // SprayIcing: SprayIcingLayer,
-  // Ice: { Iceconcentration: IceconcentrationLayer, Iceberg: IcebergLayer },
+  OC: OCLayer,
+  Ice: { Iceconcentration: IceconcentrationLayer, Iceberg: IcebergLayer },
+  RestrictionArea: { EcaArea: EcaAreaLayer, LoadLine: LoadLineLayer }
 }
 
 const hideMenuItem = {
@@ -60,15 +61,13 @@ const sidePanelEvents = {
 */
 
 // 凡例の有無を定義
-/*
 const hasLegend = {
   Wave: true,
   Current: true,
-  Liden: true,
-  Entln: true,
+  Liden: false,
+  Entln: false,
   Cyclone: true
 }
-*/
 
 /**
  * 設定ファイル情報からレイヤーリストを生成する
@@ -163,7 +162,13 @@ export function registLayer(map, layerList, commonOptions) {
   // レイヤー表示ON/OFFの切り替えを、全レイヤーに登録
   for (const layer of Object.values(layerList)) {
     console.log(layer)
-    if (layer.name === "EcaArea" || layer.name === "Cyclone" || layer.name === "Wave" || layer.name === "ERRM"){
+    if (
+      layer.name === 'EcaArea' ||
+      layer.name === 'Cyclone' ||
+      layer.name === 'Wave' ||
+      layer.name === 'ERRM' ||
+      layer.name === 'LoadLine'
+    ) {
       layer.visible = true
     }
     watch(

@@ -34,12 +34,20 @@
       "title": "Wave"
     },
     {
-      "name": "EcaArea",
-      "title": "EcaArea"
+      "name": "RestrictionArea",
+      "title": "ECA / Loadline"
+    },
+    {
+      "name": "Ice",
+      "title": "Iceberg Concentration"
     },
     {
       "name": "ERRM",
       "title": "Enroute Risk Monitoring"
+    },
+    {
+      "name": "OC",
+      "title": "Ocean/Coastal Storm"
     }
   ]
 }
