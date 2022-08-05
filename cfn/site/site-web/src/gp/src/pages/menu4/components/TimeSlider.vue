@@ -17,7 +17,7 @@ const props = defineProps({
   colorMode: { type: String, default: 'dark', required: false }
 })
 
-const intervalHour = ref(3)
+const intervalHour = ref(12)
 const index = ref(360)
 const totalHour = props.backHour + props.futureHour
 const now = ref(dayjs().startOf('hour'))
@@ -153,7 +153,7 @@ if (props.updateIntervalSecond) {
           name=""
           class="timeSlider__select"
         >
-          <option
+          <!--option
             value="1"
             class="timeSlider__option"
           >1h</option>
@@ -164,7 +164,7 @@ if (props.updateIntervalSecond) {
           <option
             value="6"
             class="timeSlider__option"
-          >6h</option>
+          >6h</option-->
           <option
             value="12"
             class="timeSlider__option"
@@ -221,8 +221,8 @@ if (props.updateIntervalSecond) {
   position: fixed;
   /* bottom: 15px; */
   bottom: 39%;
-  left: 70%;
-  width: 330px; /* 480px; */
+  left: 32.5%;
+  width: 370px; /* 480px; */
   overflow: hidden;
   transform: translateX(-50%);
   border-radius: 8px;

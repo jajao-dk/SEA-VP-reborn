@@ -10,10 +10,13 @@ import LayerListPanel from './LayerListPanel.vue'
 // import { sidePanel, registSidePanel } from '../composables/SidePanel'
 // import LegendButton from './Modules/Control/LegendButton.js'
 // import LegendPanel from './Modules/LegendPanel.vue'
+import TimeSlider from './TimeSlider.vue'
 // import SidePanel from './Modules/SidePanel/index.vue'
 
 // const { getToken, token } = useAuth()
 // console.log(token)
+
+const vesselRouteOn = ref(false)
 
 const props = defineProps({
   customerId: { type: String, default: '' },
@@ -50,6 +53,7 @@ watch(mapFocusVessel, (newValue) => {
   console.log('FOCUS VESSEL on MAP')
   console.log(newValue)
   layerList.ERRM.content.onClickTable(newValue)
+  vesselRouteOn.value = true
 })
 
 // Emits to trigger event to Menu4.vue
@@ -89,6 +93,12 @@ onMounted(async () => {
     const imo = e.detail.data
     console.log(imo)
     emits('mapVesselSelected', imo)
+    vesselRouteOn.value = true
+  })
+
+  layerList.ERRM.content.event.addEventListener('cancelRoute', (e) => {
+    console.log('cancel route')
+    vesselRouteOn.value = false
   })
 
   ready.value = true
@@ -105,13 +115,23 @@ onMounted(async () => {
     v-if="ready"
     :layer-list="mapMenuLayerList"
   />
+  <template v-if="vesselRouteOn">
+    <TimeSlider
+      v-if="ready"
+      :layer-list="layerList"
+      :back-hour="360"
+      :futuer-hour="360"
+      :color-mode="props.config.theme"
+      :update-interval-second="0"
+    />
+  </template>
   <!--SidePanel
     v-if="ready"
     :show="sidePanel.show"
     :type="sidePanel.type"
     :content="sidePanel.content"
-  /-->
-  <!--LegendPanel
+  />
+  <LegendPanel
     :layer-list="layerList"
     :is-legend-display="isLegendDisplay"
   /-->
