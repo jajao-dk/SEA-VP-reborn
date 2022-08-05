@@ -3,7 +3,7 @@ export default async function calcCII (arrObj) {
   console.log(arrObj)
   const d = new Date()
   const year = d.getUTCFullYear()
-  const url = 'https://7hxb43ua0j.execute-api.ap-northeast-1.amazonaws.com/dev/cii-calc/' + year
+  const url = 'https://0jk1v8bief.execute-api.ap-northeast-1.amazonaws.com/v1/cii-calc/' + year
   const body = arrObj
   const perfJson = await fetch(url, {
     mode: 'cors',
