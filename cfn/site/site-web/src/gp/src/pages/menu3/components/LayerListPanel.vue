@@ -54,7 +54,7 @@ const hideTooltip = (text) => {
 #layers {
   position: absolute;
   top: 10px; /* 30px */
-  left: 56%; /* 20px */
+  left: 21%; /* 20px */
   background-color: rgba(200, 200, 200, 0.8);
   z-index: 1;
 }
@@ -228,7 +228,7 @@ const hideTooltip = (text) => {
   /* ツールチップのスタイル */
   position: absolute;
   padding: 2px 10px;
-  left: 59%; /* 60px */
+  left: 24%; /* 60px */
   border-radius: 10px; /* 角の丸み */
   transform: translate(0px, 6px);
   background-color: rgba(255, 255, 255, 0.75);

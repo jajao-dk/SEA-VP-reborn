@@ -175,6 +175,19 @@ export class VesselTAPLayer extends Layer {
     console.log('TAP route display handler!!!')
     console.log(simDatas)
 
+    const routeExpressions = ['match', ['get', 'legid'], 'dummy', '#00f', '#fff']
+    const zindexExpressions = ['match', ['get', 'legid'], 'dummy', 0, 0]
+    this.map.setPaintProperty(
+      `${this.layer}TAP`,
+      'line-color',
+      routeExpressions
+    )
+    this.map.setLayoutProperty(
+      `${this.layer}TAP`,
+      'line-sort-key',
+      zindexExpressions
+    )
+
     this.tapGeoJSON.features.length = 0 // reset geojson
     for (let i = 0; i < simDatas.length; i++) {
       console.log(i)

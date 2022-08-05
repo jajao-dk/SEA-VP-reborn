@@ -24,29 +24,10 @@ const props = defineProps({
   token: { type: String, default: '' }
 })
 
-// const container = ref(null)
 const ready = ref(false)
 // const layerList = createLayerList(props.config, props.customerId, getToken, token.value, props.pathParams, props.errmGeoJson)
 const layerList = createLayerList(props.config, props.customerId, getToken, props.token, props.pathParams, props.legData)
-// const isLegendDisplay = ref(false)
-/*
-watch(() => token.value, (newValue) => {
-  for (const layer of Object.values(layerList)) {
-    layer.content.updateToken(token)
-  }
-})
-*/
-
-// const test = ref(props.customerId)
 const { simDatas, /* simUpdate, */ mapFocusRoute } = toRefs(props)
-
-/*
-watch(customerId, (newValue) => {
-  console.log('ERRM Handler')
-  console.log(newValue)
-  console.log(props.customerId)
-})
-*/
 
 watch(simDatas, (newValue) => {
   console.log('map TAP Handler 3')
@@ -58,7 +39,6 @@ watch(mapFocusRoute, (newValue) => {
   console.log('FOCUS ROUTE on MAP')
   console.log(newValue)
   layerList.TAP.content.routeColoring(newValue)
-  // layerList.ERRM.content.onClickTable(newValue)
 }, { deep: true })
 
 const mapMenuLayerList = computed(() => {
@@ -83,7 +63,6 @@ onMounted(async () => {
   const map = new Map({
     ...props.config.map,
     container: 'map',
-    // container: container.value,
     dragRotate: false,
     pitchWithRotate: false,
     touchZoomRotate: false,
@@ -100,11 +79,8 @@ onMounted(async () => {
   })
 
   map.addControl(new NavigationControl({ showCompass: false }))
-  // map.addControl(new LegendButton(isLegendDisplay), 'top-right')
-
   await map.onPromise('load')
   registLayer(map, layerList, { colorMode: props.config.theme })
-  // registSidePanel(map, layerList, sidePanel)
 
   ready.value = true
 })

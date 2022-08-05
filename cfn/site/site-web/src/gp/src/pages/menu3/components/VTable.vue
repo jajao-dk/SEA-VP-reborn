@@ -1,4 +1,5 @@
 <template>
+<div class="vtableplane">
   <table
     id="comparison"
     border="1"
@@ -27,7 +28,7 @@
         </td>
       </tr>
       <tr>
-        <th>Cargo Name</th>
+        <th>Cargo type</th>
         <td
           v-for="item in items"
           :key="item.id"
@@ -68,7 +69,7 @@
         </td>
       </tr>
       <tr>
-        <th>Commision [%]</th>
+        <th>Commission [%]</th>
         <td
           v-for="item in items"
           :key="item.id"
@@ -89,18 +90,18 @@
           style="text-align:right"
         >
           {{ item.income }}
-          <button
+          <!--button
             type="submit"
             class="perfbtn"
             @click="calcCost(item)"
           >
             CALC
-          </button>
+          </button-->
         </td>
       </tr>
       <tr />
       <tr>
-        <th>Days</th>
+        <th>SEA days</th>
         <td
           v-for="item in items"
           :key="item.id"
@@ -158,7 +159,7 @@
         </td>
       </tr>
       <tr>
-        <th>DOGO cost [USD/MT]</th>
+        <th>DO/GO cost [USD/MT]</th>
         <td
           v-for="item in items"
           :key="item.id"
@@ -192,7 +193,7 @@
         </td>
       </tr>
       <tr>
-        <th>Total DOGOC [USD]</th>
+        <th>Total DO/GO [USD]</th>
         <td
           v-for="item in items"
           :key="item.id"
@@ -202,7 +203,7 @@
         </td>
       </tr>
       <tr>
-        <th>Inport days</th>
+        <th>In port days</th>
         <td
           v-for="item in items"
           :key="item.id"
@@ -212,7 +213,7 @@
         </td>
       </tr>
       <tr>
-        <th>Inport FOC [MT/day]</th>
+        <th>In port FOC [MT/day]</th>
         <td
           v-for="item in items"
           :key="item.id"
@@ -226,7 +227,7 @@
         </td>
       </tr>
       <tr>
-        <th>Port charge [USD]</th>
+        <th>Port charges [USD]</th>
         <td
           v-for="item in items"
           :key="item.id"
@@ -240,7 +241,7 @@
         </td>
       </tr>
       <tr>
-        <th>Passage cost [USD]</th>
+        <th>Passage costs [USD]</th>
         <td
           v-for="item in items"
           :key="item.id"
@@ -254,20 +255,20 @@
         </td>
       </tr>
       <tr>
-        <th>EXPENSE [USD]</th>
+        <th>TOTAL COSTS [USD]</th>
         <td
           v-for="item in items"
           :key="item.id"
           style="text-align:right"
         >
           {{ item.expense }}
-          <button
+          <!--button
             type="submit"
             class="perfbtn"
             @click="calcCost(item)"
           >
             CALC
-          </button>
+          </button-->
         </td>
       </tr>
       <tr>
@@ -281,7 +282,7 @@
         </td>
       </tr>
       <tr>
-        <th>TC equivalent</th>
+        <th>TCE</th>
         <td
           v-for="item in items"
           :key="item.id"
@@ -310,8 +311,41 @@
           {{ item.cii }}
         </td>
       </tr>
+      <tr>
+        <th>Calculation</th>
+        <td
+          v-for="item in items"
+          :key="item.id"
+          style="text-align:center"
+        >
+          <button
+            type="submit"
+            class="perfbtn"
+            @click="calcCost(item)"
+          >
+            CALC
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <th>Delete</th>
+        <td
+          v-for="item in items"
+          :key="item.id"
+          style="text-align:center"
+        >
+          <button
+            type="submit"
+            class="perfbtn"
+            @click="deleteColumn(item)"
+          >
+            DEL
+          </button>
+        </td>
+      </tr>
     </tbody>
   </table>
+  </div>
 </template>
 <script setup>
 import { ref, reactive, defineProps, watch, toRefs, onMounted } from 'vue'
@@ -330,14 +364,15 @@ watch(voyageData, (newValue) => {
 }, { deep: true })
 
 const items = ref([])
+let uniqId = -1
 // items.value = [
 
 const initVoyageData = () => {
   for (let i = 0; i < 3; i++) {
     const tmpData = {
-      id: i,
+      id: uniqId++,
       used: false, // true: real-data, false, dummy-data
-      plan_name: 'plan-' + String(i + 1),
+      plan_name: 'plan-' + String(uniqId+1),
       revenue: 0,
       cargo: '',
       freight: 0,
@@ -393,9 +428,10 @@ const createVTable = (newValue) => {
 
   if (allUsed) {
     const newItem = {
-      id: items.value.length + 1,
+      // id: items.value.length + 1,
+      id: uniqId++,
       used: true, // true: real-data, false, dummy-data
-      plan_name: 'plan-' + String(items.value.length + 1),
+      plan_name: 'plan-' + String(uniqId+1),
       revenue: 0,
       cargo: '',
       freight: 0,
@@ -403,22 +439,22 @@ const createVTable = (newValue) => {
       commision: 0,
       income: 0,
       expense: 0,
-      days: newValue.total_days,
-      fo: newValue.total_ifo,
-      dogo: newValue.total_lsdogo,
+      days: Math.round(newValue.total_days * 10) / 10,
+      fo: Math.round(newValue.total_ifo * 10) / 10,
+      dogo: Math.round(newValue.total_lsdogo * 10) / 10,
       hire: 0,
       foc: 0,
       dogoc: 0,
       total_hire: 0,
       total_foc: 0,
       total_dogoc: 0,
-      inport_days: newValue.total_inport_days,
+      inport_days: Math.round(newValue.total_inport_days * 10) / 10,
       inport_foc: 0,
       port_charge: 0,
       passage: 0,
       profit: 0,
       tc_equiv: 0,
-      co2: newValue.total_co2,
+      co2: Math.round(newValue.total_co2 * 10) / 10,
       cii: 0
     }
     items.value.push(newItem)
@@ -434,26 +470,53 @@ const calcCost = (val) => {
   item.freight = val.freight
   item.quantity = val.quantity
   item.commision = val.commision
-  item.revenue = item.freight * item.quantity
-  item.income = item.freight * item.quantity * (1 - item.commision / 100)
+  const tmpRevenue = val.freight * val.quantity
+  item.revenue = tmpRevenue.toLocaleString()
+  const tmpIncome = val.freight * val.quantity * (1 - val.commision / 100)
+  item.income = (tmpIncome).toLocaleString()
   // calculate expense
   item.hire = val.hire
   item.fo = val.fo
   item.dogo = val.dogo
-  item.import_foc = val.import_foc
+  item.inport_foc = val.inport_foc
   item.port_charge = val.port_charge
   item.passage = val.passage
-  item.total_hire = Math.round(item.hire * item.days)
-  item.total_foc = Math.round(item.fo * item.foc)
-  item.total_dogoc = Math.round(item.dogo * item.dogoc)
-  item.expense = Math.round(item.total_hire + item.total_foc + item.total_dogoc + item.inport_days * item.inport_foc + item.port_charge + item.passage)
+  const tmpTotalHire = val.hire * val.days
+  item.total_hire = Math.round(tmpTotalHire).toLocaleString()
+  const tmpTotalFoc = val.fo * val.foc
+  item.total_foc = Math.round(tmpTotalFoc).toLocaleString()
+  const tmpTotalDogoc = val.dogo * val.dogoc
+  item.total_dogoc = Math.round(tmpTotalDogoc).toLocaleString()
+  const tmpExpense = tmpTotalHire + tmpTotalFoc + tmpTotalDogoc + val.inport_days*val.inport_foc*val.dogoc + val.port_charge + val.passage
+  item.expense = Math.round(tmpExpense).toLocaleString()
   // others
-  item.profit = Math.round(item.income - item.expense)
-  item.tc_equiv = Math.round(item.profit / (item.days + item.inport_days))
+  const tmpProfit = tmpIncome - tmpExpense
+  item.profit = Math.round(tmpProfit).toLocaleString()
+  const tmpTcEquiv = tmpProfit / (val.days + val.inport_days)
+  item.tc_equiv = Math.round(tmpTcEquiv).toLocaleString()
   console.log(item.id)
+}
+
+const deleteColumn = (val) => {
+  console.log(val)
+  console.log('delete column')
+  for (let i=0; i<items.value.length; i++){
+    const item = items.value[i]
+    if (item.id === val.id){
+      items.value.splice(i, 1)
+      break
+    }
+  }
+  console.log(items)
 }
 </script>
 <style scoped>
+.vtableplane{
+  height: 80vh;
+  font-size: 12px;
+  /* overflow: auto; */
+}
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -462,7 +525,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 input {
   border: 2px solid blue;
-  width: 100px;
+  width: 80px;
   margin-bottom: 2px;
 }
 
@@ -480,11 +543,12 @@ button {
   border-radius: 4px;
   cursor: pointer;
 }
-
+/*
 table {
-  font-size: 10px;
+  font-size: 12px;
+  overflow: scroll; 
 }
-
+*/
 th,td {
   border: solid 1px;
   padding: 1px;

@@ -191,7 +191,7 @@ const getLatestERRM = async () => {
   display: grid;
   height: 100%;
   grid-template-rows: 8% 52% 40%;
-  grid-template-columns: 70% 30%;
+  grid-template-columns: 65% 35%;
 }
 
 /*

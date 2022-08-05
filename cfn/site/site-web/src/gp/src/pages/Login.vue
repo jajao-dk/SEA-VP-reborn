@@ -12,7 +12,7 @@ const { login } = useAuth()
         Lite version
       </div-->
       <img
-        src="/green-sailing-ship.svg"
+        src="/Weathernews_logo.svg"
         class="logoMark"
       >
       <!-- SSM text -->

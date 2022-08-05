@@ -253,10 +253,15 @@ const getVoyComData = async () => {
     }
     legData.value.imo_number = imoNumber
 
+    console
+
     if (legData.value !== undefined) {
       infos.value = legData.value.voyage_information
     }
+  } else {
+    infos.value.push({ label: 'Voyage No', value: 'CANNOT FIND VOYAGE COMPARISON DATA' })
   }
+  console.log(infos.value)
 }
 
 </script>

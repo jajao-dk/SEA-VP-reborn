@@ -10,15 +10,11 @@
       table-class-name="customize-table"
       @click-row="clickRow"
     >
-      <!--template #item-risk="{risk, riskLevel}">
-        <div class="risk-wrapper">
-          <img
-            class="risk"
-            :src="riskLevel"
-            alt=""
-          >{{ risk }}
+      <template #item-select="{select, bgcolor}">
+        <div :style="bgcolor">
+          <b>{{ select }}</b>
         </div>
-      </template-->
+      </template>
       <template #item-operation="item">
         <div class="operation-wrapper">
           <img
@@ -71,15 +67,6 @@ watch(legData, (newValue) => {
   console.log(newValue)
   createTable(newValue)
 })
-
-// Emits
-/*
-const emits = defineEmits(['tableVesselSelected'])
-const clickRow = (item) => {
-  console.log(item.id)
-  emits('tableVesselSelected', item.imo)
-}
-*/
 
 // Create Table
 const headers = ref([])
@@ -156,20 +143,18 @@ const createTable = async (legData) => {
 
   for (let i = 0; i < plans.length; i++) {
     const plan = plans[i]
-    // const riskLevel = checkAlert(errmVessels[i])
-    // console.log(riskLevel)
-
-    // emits('tableVesselSelected', errmVessels[i].imo_num)
-
-    console.log(plans)
-
+    let color = 'background-color: transparent'
+    if (plan.selected === true) {
+      color = 'background-color: #0ff'
+    }
     const tmpRaw = {
       id: i,
       select: plan.selected,
+      bgcolor: color,
       setting: plan.setting,
       route: plan.route_name,
       eta: plan.eta_lt,
-      co2: plan.co2,
+      co2: Math.round(Number(plan.co2)),
       cii: plan.cii_rank,
       remain_dist: plan.distance.remain,
       entire_dist: plan.distance.entire,
@@ -183,7 +168,7 @@ const createTable = async (legData) => {
       hsfo: plan.cons_fo_over_0_1,
       lsfo: plan.cons_fo_max_0_1,
       dogo: plan.cons_dogo_max_0_1,
-      est_foc: plan.wni_estimated_foc,
+      est_foc: (Math.round(Number(plan.wni_estimated_foc) * 10) / 10).toFixed(1),
       bunker_cost: plan.cost_bunker,
       hire_cost: plan.cost_hire,
       total_cost: plan.cost_total,
@@ -195,29 +180,13 @@ const createTable = async (legData) => {
   }
 }
 
-const checkAlert = (vessel) => {
-  const spd = Number(vessel.latest.average_speed)
-  const targetSpd = Number(vessel.latest.ordered_speed)
-  const spdWarn = 2
-  const spdCaut = 1
-  if (targetSpd === 0) {
-    return './images/white.png'
-  } else if (spd < targetSpd - spdWarn || spd > targetSpd + spdWarn) {
-    return './images/red.png'
-  } else if (spd < targetSpd - spdCaut || spd > targetSpd + spdCaut) {
-    return './images/yellow.png'
-  } else {
-    return './images/white.png'
-  }
-}
-
 // Table headers
 headers.value = [
   { text: 'Select', value: 'select', fixed: true, width: 60 },
   { text: 'Setting', value: 'setting', width: 150 },
   { text: 'Route', value: 'route', width: 120 },
-  { text: 'ETA (LT)', value: 'eta', width: 100 },
-  { text: 'CO2', value: 'co2', width: 50 },
+  { text: 'ETA (LT)', value: 'eta', sortable: true, width: 100 },
+  { text: 'CO2', value: 'co2', sortable: true, width: 50 },
   { text: 'CII', value: 'cii', width: 50 },
   { text: 'Remain dist.', value: 'remain_dist', width: 50 },
   { text: 'Entire dist.', value: 'entire_dist', width: 50 },
@@ -229,7 +198,7 @@ headers.value = [
   { text: 'Cur Factor', value: 'cur_factor', width: 50 },
   { text: 'O.G', value: 'og', width: 50 },
   { text: 'HSFO', value: 'hsfo', width: 50 },
-  { text: 'LSFO', value: 'lsfo', sortable: true, width: 50 },
+  { text: 'LSFO', value: 'lsfo', width: 50 },
   { text: 'DOGO', value: 'dogo', width: 50 },
   { text: 'Est. FOC', value: 'est_foc', sortable: true, width: 50 },
   { text: 'Bunker cost', value: 'bunker_cost', width: 50 },
@@ -242,7 +211,7 @@ headers.value = [
 
 </script>
 
-<style>
+<style scoped>
 .tableplane {
   width: 100%;
   height: 300px;
@@ -269,5 +238,11 @@ headers.value = [
   border-radius: 50%;
   object-fit: cover;
   box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 10%);
+}
+
+.customize-table {
+  --easy-table-header-font-size: 12px;
+  --easy-table-header-height: 14px;
+  --easy-table-header-background-color: #ccc;
 }
 </style>

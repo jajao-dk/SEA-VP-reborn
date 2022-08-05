@@ -4,87 +4,149 @@
     class="allpane"
   >
     <div class="inputpane">
-      <div class="head">
-        <b>SIMULATION INPUT</b>
-      </div><br><br>
+      <div class="inputplane">
 
-      <b>Vessel info</b>
-      <div class="basic-info">
-        <!--div class="basic-info-box">
-          Client code:&nbsp;
-          <input
-            v-model="client"
-            type="text"
-            placeholder=""
-          >&nbsp;
-          <button
-            type="submit"
-            @click="getVesselList"
-          >
-            Submit
-          </button>
-        </div-->
-        <div class="basic-info-box">
-          &nbsp; Vessel name: &nbsp;
-          <select v-model="selectedVessel">
-            <option
-              disalbled
-              value=""
-            >
-              SELECT
-            </option>
-            <option
-              v-for="vsl in vesselList"
-              :key="vsl.wnishipnum"
-              :value="vsl"
-            >
-              {{ vsl.ship_name }}
-            </option>
-          </select>
+        <div class="head">
+          <b>SIMULATION INPUT</b>
         </div>
-      </div><br>
 
-      <b>Speed info</b>
-      <div class="spd-info">
-        <!-- form novalidate @submit.prevent="onSubmit"-->
-        <div class="spd-info-box">
-          Speed/rpm/%MCR
-          <select
-            v-model="selectedKey"
-            class="spdinput"
-            @change="selected"
-          >
-            <option
-              v-for="speed in speeds"
-              :key="speed.key"
-              :value="speed.key"
+        <b>Vessel info</b>
+        <div class="basic-info">
+          <div class="basic-info-box">
+            &nbsp; Vessel name: &nbsp;
+            <select v-model="selectedVessel">
+              <option
+                disalbled
+                value=""
+              >
+                SELECT
+              </option>
+              <option
+                v-for="vsl in vesselList"
+                :key="vsl.wnishipnum"
+                :value="vsl"
+              >
+                {{ vsl.ship_name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <b>Speed info</b>
+        <div class="spd-info">
+          <!-- form novalidate @submit.prevent="onSubmit"-->
+          <div class="spd-info-box">
+            &nbsp; Speed/rpm/%MCR
+            <select
+              v-model="selectedKey"
+              class="spdinput"
+              @change="selected"
             >
-              {{ speed.item }}
-            </option>
-          </select>
+              <option
+                v-for="speed in speeds"
+                :key="speed.key"
+                :value="speed.key"
+              >
+                {{ speed.item }}
+              </option>
+            </select>
+          </div>
+          <div class="spd-info-box">
+            &nbsp; Laden:
+            <input
+              v-model="ladSpeed"
+              class="spdinput"
+              style="text-align:right"
+              type="number"
+            >
+          <!--/div>
+          <div class="spd-info-box"-->
+            &nbsp; Ballast:
+            <input
+              v-model="balSpeed"
+              class="spdinput"
+              style="text-align:right"
+              type="number"
+            >
+          </div>
         </div>
-        <div class="spd-info-box">
-          &nbsp; Laden:
-          <input
-            v-model="ladSpeed"
-            class="spdinput"
-            type="text"
-          >
-        </div>
-        <div class="spd-info-box">
-          &nbsp; Ballast:
-          <input
-            v-model="balSpeed"
-            class="spdinput"
-            type="text"
-          ><br><br>
-        </div>
+
       </div>
+    </div>
 
+    <div class ="voyplanpane">
       <b>Voyage plan</b>
       <div class="voy-plan">
-        <div>
-          ETD(UTC):&nbsp;
+        <div class="voy-plan-box">
+          <table>
+            <thead>
+              <tr>
+                <th>Port</th>
+                <!--th>Arrival</th-->
+                <th>Laden/Ballast</th>
+                <!--th>Target ETA</th-->
+                <th>In port days</th>
+                <th>Add/Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for=" (plan, index) in plans"
+                :key="plan.dep"
+              >
+                <td>
+                  <select v-model="plan.port">
+                    <option
+                      disalbled
+                      value=""
+                    >
+                    </option>
+                    <option
+                      v-for="port in portList"
+                      :key="port"
+                      :value="port"
+                    >
+                      {{ port }}
+                    </option>
+                  </select>
+                </td>
+                <td>
+                  <select
+                    v-model="plan.lb"
+                    class="spdinput"
+                  >
+                    <option
+                      v-for="option in options"
+                      :key="option.id"
+                      :value="option.value"
+                    >
+                      {{ option.text }}
+                    </option>
+                  </select>
+                </td>
+                <!--td><input v-model="plan.eta"></td-->
+                <td><input v-model="plan.port_days" style="text-align:right" type="number"></td>
+                <td>
+                  <button
+                    type="submit"
+                    @click="addRaw(index)"
+                  >
+                    Add
+                  </button>&nbsp;
+                  <button
+                    type="submit"
+                    @click="delRaw(index)"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="voy-plan-box">
+          ETD (UTC):&nbsp;
           <div class="dtp">
             <Datepicker
               v-model="date"
@@ -92,90 +154,7 @@
             />
           </div>
         </div><br>
-        <table>
-          <thead>
-            <tr>
-              <th>Port</th>
-              <!--th>Arrival</th-->
-              <th>Laden/Ballast</th>
-              <!--th>Target ETA</th-->
-              <th>Port days</th>
-              <th>Add/Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for=" (plan, index) in plans"
-              :key="plan.dep"
-            >
-              <td>
-                <select v-model="plan.port">
-                  <option
-                    disalbled
-                    value=""
-                  >
-                    SELECT
-                  </option>
-                  <option
-                    v-for="port in portList"
-                    :key="port"
-                    :value="port"
-                  >
-                    {{ port }}
-                  </option>
-                </select>
-              </td>
-              <!--td>
-                <select v-model="plan.arr">
-                  <option
-                    disalbled
-                    value=""
-                  >
-                    SELECT
-                  </option>
-                  <option
-                    v-for="port in portList"
-                    :key="port"
-                    :value="port"
-                  >
-                    {{ port }}
-                  </option>
-                </select>
-              </td-->
-              <td>
-                <select
-                  v-model="plan.lb"
-                  class="spdinput"
-                >
-                  <option
-                    v-for="option in options"
-                    :key="option.id"
-                    :value="option.value"
-                  >
-                    {{ option.text }}
-                  </option>
-                </select>
-              </td>
-              <!--td><input v-model="plan.eta"></td-->
-              <td><input v-model="plan.port_days"></td>
-              <td>
-                <button
-                  type="submit"
-                  @click="addRaw(index)"
-                >
-                  Add
-                </button>&nbsp;
-                <button
-                  type="submit"
-                  @click="delRaw(index)"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div><br>
+      </div>
 
       <div class="simbtn-pane">
         <button
@@ -183,7 +162,7 @@
           @click="simStartEventHandler"
         >
           Simulation
-        </button>&nbsp;
+        </button>&nbsp; <b class="errmsg">{{ msg }}</b>
         <!--button
           class="simbtn"
           @click="simClearEventHandler"
@@ -201,8 +180,9 @@
           </button>
         </div-->
       </div>
+    </div>
 
-    <!--div class="vessellist">
+      <!--div class="vessellist">
         <simple-type-ahead
           placeholder="Search vessels"
           :items="vesselList"
@@ -210,27 +190,13 @@
           @selectItem="vesselSelectItemEventHandler"
         ></simple-type-ahead>
       </div-->
-    <!--button
+      <!--button
         class="perfbtn"
         type="submit"
         @click="getVoyComData"
       >
         Comparison
       </button-->
-    </div>
-
-    <div class="simpane">
-      <div class="head">
-        <b>SIMULATION RESULT</b><br>
-      </div>
-      <Table
-        v-if="authorized"
-        :customer-id="customerId"
-        :sim-datas="simDatas"
-        @table-route-selected="tableRouteSelected"
-        @new-voyage-data="newVoyageData"
-      />
-    </div>
 
     <div class="mappane">
       <Map
@@ -245,6 +211,19 @@
     </div>
 
     <div class="tablepane">
+      <div class="head">
+        <b>SIMULATION RESULT</b><br>
+      </div>
+      <Table
+        v-if="authorized"
+        :customer-id="customerId"
+        :sim-datas="simDatas"
+        @table-route-selected="tableRouteSelected"
+        @new-voyage-data="newVoyageData"
+      />
+    </div>
+
+    <div class="vtablepane">
       <div class="head">
         <b>
           VOYAGE ESTIMATE
@@ -279,6 +258,7 @@ const pathParams = ref({ shopName: 'vp' })
 const mapFocusRoute = ref('')
 const token = ref('')
 const date = ref()
+const msg = ref('')
 
 // Simulation input - basic info
 const client = ref('')
@@ -299,8 +279,8 @@ const balSpeed = ref(0)
 
 // Simulation input - voyage plans
 const plans = ref([
-  { port: '', port_days: 0, lb: '---', eta: '---' },
-  { port: '', port_days: 0, lb: 'L', eta: '' }
+  { port: '', port_days: 0, lb: 'L', eta: '' },
+  { port: '', port_days: 0, lb: '---', eta: '' }
 ])
 const options = reactive([
   { text: '---', value: '---', id: '---' },
@@ -312,11 +292,15 @@ const addRaw = (index) => {
   console.log(index)
   // plans.value.push({ dep: '', dep_days: '', arr: '', arr_days: '', lb: 'L', eta: '' })
   plans.value.splice(index + 1, 0, { dep: '', arr: '', port_days: 0, lb: 'L', eta: '' })
+  plans.value[plans.value.length-1].port_days = 0
+  plans.value[plans.value.length-1].lb = '---'
 }
 const delRaw = (index) => {
   console.log('del button')
   console.log('index')
   plans.value.splice(index, 1)
+  plans.value[plans.value.length-1].port_days = '---'
+  plans.value[plans.value.length-1].lb = '---'
 }
 
 // Simulation result (Table)
@@ -367,7 +351,6 @@ const getVesselList = async () => {
     return false
   }
 
-  // client.value = 'RIO'
   // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value
   // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=menu_id&val=Tonnage'
   const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=file_name&val=all'
@@ -409,6 +392,24 @@ const simStartEventHandler = async (item) => {
   console.log(balSpeed.value)
   console.log(selectedVessel.value)
   console.log(date.value)
+  msg.value = ''
+
+  // validation
+  if (selectedVessel.value === '') {
+    console.log('Vessel name is missing.')
+    msg.value = 'Input vessel name.'
+    return false
+  }
+  if (selectedKey.value === '' || ladSpeed.value === 0 || balSpeed.value === 0) {
+    console.log('Speed values are missing.')
+    msg.value = 'Input speed info.'
+    return false
+  }
+  if (date.value === undefined || date.value === null) {
+    console.log('ETD is missing.')
+    msg.value = 'Input ETD(UTC).'
+    return false
+  }
 
   const dt = new Date(date.value)
   console.log(dt.toISOString())
@@ -418,29 +419,10 @@ const simStartEventHandler = async (item) => {
   const h = dt.getHours()
   const m = dt.getMinutes()
 
-  /*
-  dt.setUTCFullYear(Y)
-  dt.setUTCMonth(M)
-  dt.setUTCDate(D)
-  dt.setUTCHours(h)
-  dt.setUTCMinutes(m)
-  console.log(dt.toISOString())
-  */
-
   const ETD = String(Y) + '/' + String(M + 1) + '/' + String(D) + ' ' + String(h) + ':' + String(m)
   console.log(ETD)
 
   simDatas.value.length = 0
-
-  // validation
-  if (selectedVessel.value === undefined) {
-    console.log('Vessel name is missing.')
-    return false
-  }
-  if (ladSpeed.value === 0 || balSpeed.value === 0) {
-    console.log('Speed values are missing.')
-    return false
-  }
 
   // Create post data
   const planName = 'plan'
@@ -459,7 +441,7 @@ const simStartEventHandler = async (item) => {
         max: selectedVessel.value.dwt
       }
     },
-    etd: ETD, // '2022/03/27 21:45', // ETD
+    etd: ETD,
     routeing_condition: {
       type: selectedKey.value,
       laden: String(ladSpeed.value),
@@ -478,14 +460,18 @@ const simStartEventHandler = async (item) => {
   let portDetail = {}
   for (let i = 0; i < plans.value.length; i++) {
     const tmpPort = plans.value[i].port
+    console.log(tmpPort)
+
+    // validation
+    if (tmpPort === '' || tmpPort === undefined) {
+      console.log('ports is missing.')
+      msg.value = ('Input port name.')
+      return false
+    }
+    
     const portCode = tmpPort.split(' / ')
     portCodes.push(portCode[2])
 
-    // validation
-    if (portCode === '' || portCode === undefined) {
-      console.log('ports is missing.')
-      return false
-    }
   }
 
   const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_port_info.cgi?client=' + client.value + '&port_codes=' + JSON.stringify(portCodes)
@@ -517,18 +503,34 @@ const simStartEventHandler = async (item) => {
         to: ''
       },
       timezone: tmpDetail.TZ,
-      passage_portcode: ''
+      passage_portcode: '',
     }
 
-    // Validation
-    if (plans.value[i].lb === '' || plans.value[i].lb === undefined) {
-      console.log('loading condition is missing.')
-      return false
-    }
-
+    // Insert loading condition and port days excluding the final port
     if (i < portCodes.length - 1) {
-      tmpJSON.loading_condition = plans.value[i + 1].lb
+
+      // Validation
+      console.log(plans.value[i].lb)
+      if (plans.value[i].lb !== 'L' && plans.value[i].lb !== 'B') {
+        console.log('loading condition is missing.')
+        msg.value = 'Input Laden or Ballast'
+        return false
+      }
+
+      console.log(plans.value[i].port_days)
+      if (plans.value[i].port_days === '' ) {
+        console.log('invalid port days.')
+        msg.value = 'Input correct port days'
+        return false
+      }
+
+      tmpJSON.loading_condition = plans.value[i].lb
+      tmpJSON.port_days = plans.value[i].port_days
     }
+
+    // Insert in port days excluding the final port
+
+
 
     param.PLAN.port_rotation.push(tmpJSON)
   }
@@ -556,85 +558,20 @@ const simStartEventHandler = async (item) => {
   return false
 }
 
-const simClearEventHandler = (item) => {
-  console.log('simulation clear')
-  /*
-  const vesSimLayer = props.vesselsimLayer.content
-  vesSimLayer.simRoutes = {
-    type: 'FeatureCollection',
-    features: []
-  }
-  table.rows = [{ id: 1, name: 'aaa' }, { id: 2, name: 'aaa' }]
-  tableCheckedRows = []
-  // props.vesselsimLayer.content.arrPort === ''
-  // props.vesselsimLayer.content.depPort === ''
-  vesSimLayer.map.getSource(`${vesSimLayer.source}simVoycom`).setData(vesSimLayer.simRoutes)
-  // props.vesselsimLayer.content.clearSimulationHandler()
-  */
-  return false
-}
-
-const tableRowsClearEventHandler = () => {
-  console.log('table raw clear')
-  /*
-  const tmpary = []
-  for (let i = 0; i < table.rows.length; i++) {
-    tmpary.push(String(table.rows[i].id))
-  }
-  console.log(tableCheckedRows)
-  const newary = tmpary.filter(i => tableCheckedRows.indexOf(i) == -1)
-  console.log(tmpary)
-  console.log(tableCheckedRows)
-  console.log(newary)
-  for (let i = 0; i < newary.length; i++) {
-    // remove rows from table
-    for (let j = 0; j < table.rows.length; j++) {
-      if (String(table.rows[j].id) === newary[i]) {
-        table.rows.splice(j, 1)
-        // delete table.rows[j]
-      }
-    }
-    // remover routes from map
-    const vesSimLayer = props.vesselsimLayer.content
-    const features = vesSimLayer.simRoutes.features
-    for (let j = 0; j < features.length; j++) {
-      if (String(features[j].properties.routeid) === newary[i]) {
-        features.splice(j, 1)
-      }
-    }
-    vesSimLayer.map.getSource(`${vesSimLayer.source}simVoycom`).setData(vesSimLayer.simRoutes)
-  }
-  // tableCheckedRows = []
-  // const newTableRows = _.cloneDeep(table.rows)
-  // table.rows = []
-  // table.rows = newTableRows
-
-  //for (let j=0; j<table.rows.length; j++){
-  //  table.rows[j].id = ++maxId
-  //}
-
-  updateCheckedRows(tableCheckedRows)
-  console.log(table.rows)
-  console.log(tableCheckedRows)
-  */
-  return false
-}
-
 </script>
 
 <style scoped>
-.dtp {
-  width: 200px;
-}
+
+/* page layout */
 .allpane {
   display: grid;
-  height: 100%;
-  grid-template-rows: 30% 20% 50%;
-  grid-template-columns: 55% 45%;
+  /* height: 30vh; */
+  grid-template-rows: 28% 32% 40%;
+  grid-template-columns: 20% 35% 45%;
 }
 
 .inputpane {
-  grid-row: 1/3;
+  grid-row: 1;
   grid-column: 1;
   border-radius: 5px;
   background-color: #f2f2f2;
@@ -644,25 +581,91 @@ const tableRowsClearEventHandler = () => {
   overflow: scroll;
 }
 
+.inputplane{
+  width: 100%;
+  height: 2vh;
+  /* overflow: scroll; */
+}
+
+.voyplanpane{
+  grid-row: 2;
+  grid-column: 1/3;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+  line-height: 15px;
+  font-size: 14px;
+  overflow: scroll;
+}
+
+.mappane {
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.tablepane {
+  grid-row: 3;
+  grid-column: 1/3;
+  background-color: #f0fff0;
+  padding: 20px;
+  overflow: scroll;
+}
+
+.vtablepane {
+  grid-row: 1/4;
+  grid-column: 3;
+  background-color: #fffaf0;
+  padding: 20px;
+  overflow: scroll;
+  /* overflow-x: scroll; */
+}
+
+/* component style */
+
+.dtp {
+  width: 200px;
+}
+
 .head{
   font-size: 20px;
   font-family: Arial;
+  margin-bottom: 10px;
+}
+
+.errmsg{
+  font-size: 18px;
+  color: red;
 }
 
 .basic-info{
-  display: flex;
+  /* display: flex; */
   font-size: 12px;
+  margin-bottom: 10px;
 }
 
 .spd-info{
-  display: flex;
+  /* display: flex; */
   font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.spd-info input{
+  border: 2px solid blue;
+  width: 55px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 input {
   border: 2px solid blue;
   width: 100px;
   margin-bottom: 10px;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 select {
@@ -680,39 +683,49 @@ button {
   cursor: pointer;
 }
 
+.voy-plan{
+  display: flex;
+}
+
+.voy-plan-box{
+  margin-left: 10px;
+}
+
 .voy-plan table{
   font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .voy-plan tr, td {
   border: solid 1px;
-  padding: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.voy-plan select{
+  border: 2px solid blue;
+  width: 100px;
+}
+
+.voy-plan input {
+  border: 2px solid blue;
+  width: 100px;
+}
+
+.voy-plan button {
+  background-color: #4CAF50;
+  color: white;
+  /* padding: 2px 5px; */
+  /* margin: 1px 0; */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .simbtn {
   font-size: 12px;
   border: none;
-}
-
-.mappane {
-  grid-row: 1;
-  grid-column: 2;
-}
-
-.tablepane {
-  grid-row: 2/4;
-  grid-column: 2;
-  background-color: #fffaf0;
-  padding: 20px;
-  overflow: scroll;
-  /* overflow-x: scroll; */
-}
-.simpane {
-  grid-row: 3;
-  grid-column: 1;
-  background-color: #f0fff0;
-  padding: 20px;
-  overflow: auto;
 }
 
 body {

@@ -235,7 +235,7 @@ const createTable = async (errmVessels) => {
       total_dogo: (Math.round(Number(latest.total_dogo) * 10) / 10).toFixed(1),
       ordered_dogo: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
       cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
-      co2: apiResult.length > 0 ? apiResult[0].co2 : '',
+      co2: apiResult.length > 0 ? Math.round(Number(apiResult[0].co2)) : '',
       bgcolor: 'background-color: transparent'
     }
     items.value.push(tmpRaw)
@@ -307,8 +307,8 @@ const checkRiskScore = (item) => {
 
 // Table headers
 headers.value = [
-  { text: 'Vessel name', value: 'vesselName', fixed: true, width: 100 },
-  { text: 'Service', value: 'service_type', fixed: true, width: 60 },
+  { text: 'Vessel name', value: 'vesselName', fixed: true, sortable: true, width: 100 },
+  { text: 'Service', value: 'service_type', fixed: true, sortable: true, width: 60 },
   { text: 'Spd', value: 'riskSpd', fixed: true, width: 50 },
   { text: 'RPM', value: 'riskRpm', fixed: true, width: 50 },
   { text: 'FOC', value: 'riskFoc', fixed: true, width: 50 },
@@ -319,7 +319,7 @@ headers.value = [
   { text: 'ETA', value: 'eta', width: 95 },
   { text: 'RTA', value: 'rta', width: 95 },
   { text: 'CO2', value: 'co2', width: 50 },
-  { text: 'CII', value: 'cii', width: 50 },
+  { text: 'CII', value: 'cii', sortable: true, width: 50 },
   { text: 'Speed', value: 'speed', width: 50 },
   { text: 'target', value: 'ordered_speed', sortable: true, width: 50 },
   { text: 'RPM', value: 'rpm', width: 50 },
@@ -327,8 +327,8 @@ headers.value = [
   { text: 'FOC', value: 'total_foc', width: 50 },
   { text: 'target', value: 'ordered_foc', sortable: true, width: 50 },
   { text: 'DO/GO', value: 'total_dogo', width: 50 },
-  { text: 'target', value: 'ordered_dogo', sortable: true, width: 50 },
-  { text: 'Edit', value: 'operation', width: 50 }
+  { text: 'target', value: 'ordered_dogo', sortable: true, width: 50 }// ,
+  // { text: 'Edit', value: 'operation', width: 50 }
 ]
 
 </script>
@@ -360,5 +360,11 @@ headers.value = [
   border-radius: 50%;
   object-fit: cover;
   box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 10%);
+}
+
+.customize-table {
+  --easy-table-header-font-size: 12px;
+  --easy-table-header-height: 14px;
+  --easy-table-header-background-color: #ccc;
 }
 </style>
