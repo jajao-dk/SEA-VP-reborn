@@ -5,5 +5,6 @@ export default {
   SECURE_DATA_URL: '/customer',
   TSUNAMI_WEBSOCKET_URL: 'wss://uhj0e7addi.execute-api.ap-northeast-1.amazonaws.com/prod',
   EXPO_RANDOM_POINT_URL: '/expo_random_point/random',
-  API_URL: '/api'
+  API_URL: '/api',
+  CII_CALC_URL: 'https://cii.seapln-osr.pt-aws.wni.com/v1/cii-calc'
 }
