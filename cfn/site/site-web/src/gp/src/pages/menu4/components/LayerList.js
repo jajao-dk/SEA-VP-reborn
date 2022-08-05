@@ -162,6 +162,10 @@ export function registLayer(map, layerList, commonOptions) {
 
   // レイヤー表示ON/OFFの切り替えを、全レイヤーに登録
   for (const layer of Object.values(layerList)) {
+    console.log(layer)
+    if (layer.name === "EcaArea" || layer.name === "Cyclone" || layer.name === "Wave" || layer.name === "ERRM"){
+      layer.visible = true
+    }
     watch(
       () => layer.visible,
       (newValue) => {

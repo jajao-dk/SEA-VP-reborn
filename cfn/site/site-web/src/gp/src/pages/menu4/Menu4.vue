@@ -3,22 +3,6 @@
     id="app"
     class="allpane"
   >
-    <!--div class="inputpane">
-      &nbsp; Client code:
-      <input
-        v-model="client"
-        class="perfin"
-        type="text"
-        placeholder=""
-      >
-      <button
-        class="perfbtn"
-        type="submit"
-        @click="getLatestERRM"
-      >
-        Submit
-      </button>
-    </div-->
 
     <div class="mappane">
       <Map
@@ -38,6 +22,7 @@
         :customer-id="customerId"
         :errm-vessels="errmVessels"
         :table-focus-vessel="tableFocusVessel"
+        :load="loading"
         @table-vessel-selected="tableVesselSelected"
       />
     </div>
@@ -75,6 +60,7 @@ const config = reactive({})
 const pathParams = ref({ shopName: 'vp' })
 const mapFocusVessel = ref('')
 const tableFocusVessel = ref('')
+const loading = ref(false)
 let dashboard
 
 // For Table & Map components
@@ -135,7 +121,9 @@ onMounted(async () => {
   }
   dashboard = QuickSightEmbedding.embedDashboard(options)
 
+
   getLatestERRM()
+  
 
   gtagOptin() // gtag.js にて、プラグイン登録時にプラグイン無効化しているので、ここで有効化する
   // GA4用の記述
@@ -177,6 +165,9 @@ const getLatestERRM = async () => {
     return false
   }
 
+  loading.value = true
+  console.log('ERRM start')
+
   // client.value = 'ZZZ'
   // const url = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?search_type=file_name&val=all&client=' + client.value
   const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value
@@ -213,6 +204,8 @@ const getLatestERRM = async () => {
     }
     errmVessels.value = vessels
   }
+  console.log('ERRM end')
+  loading.value = false
   console.log(errmVessels.value)
 }
 </script>
@@ -222,15 +215,8 @@ const getLatestERRM = async () => {
   display: grid;
   height: 100%;
   grid-template-rows: 8% 52% 40%;
-  grid-template-columns: 70% 30%;
+  grid-template-columns: 65% 35%;
 }
-
-/*
-.inputpane {
-  grid-row: 1;
-  grid-column: 2;
-}
-*/
 
 .mappane {
   grid-row: 1/3;

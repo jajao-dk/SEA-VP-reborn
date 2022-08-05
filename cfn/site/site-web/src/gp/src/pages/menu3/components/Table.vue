@@ -3,8 +3,10 @@
     <EasyDataTable
       v-model:items-selected="itemsSelected"
       header-background-color="#ddd"
+      :dense="true"
+      :loading="loadingState"
       :fixed-header="true"
-      table-height="100"
+      table-height="200"
       :headers="headers"
       :items="items"
       table-class-name="customize-table"
@@ -15,7 +17,7 @@
       @click="addVoyageEstimate"
     >
       Add Voyage Estimate
-    </button>
+    </button>&nbsp; <b class="errmsg">{{ msg }}</b>
   </div>
 </template>
 
@@ -26,19 +28,29 @@ import 'vue3-easy-data-table/dist/style.css'
 import calcCO2 from './calcCO2_tap.js'
 import calcCII from '../../calcCII.js'
 
+// Error message
+const msg = ref('')
+const loadingState = ref(false)
+
 // Props
 const props = defineProps({
   customerId: { type: String, default: '' },
-  simDatas: { type: Object, default: () => { } }
+  simDatas: { type: Object, default: () => {} },
+  loading: {type: Boolean, dafault: false}
 })
 
 // Events, new data
-const { simDatas } = toRefs(props)
+const { simDatas, loading } = toRefs(props)
 watch(simDatas, (newValue) => {
   console.log('Table create Handler')
   console.log(newValue)
   createTable(props.simDatas)
 }, { deep: true })
+
+watch(loading, (newValue) => {
+  console.log('LOADING CHANGE')
+  loadingState.value = newValue
+})
 
 // Emits
 const emits = defineEmits(['tableRouteSelected', 'newVoyageData'])
@@ -59,30 +71,6 @@ watch(itemsSelected, (newValue) => {
   console.log(newValue)
   emits('tableRouteSelected', newValue)
 }, { deep: true })
-
-// const isEditing = ref(false)
-/*
-const editingItem = reactive({
-  height: '',
-  weight: 0,
-  id: 0
-})
-*/
-/*
-const editItem = (val) => {
-  isEditing.value = true
-  const { height, weight, id } = val
-  editingItem.height = height
-  editingItem.weight = weight
-  editingItem.id = id
-}
-const submitEdit = () => {
-  isEditing.value = false
-  const item = items.value.find((item) => item.id === editingItem.id)
-  item.height = editingItem.height
-  item.weight = editingItem.weight
-}
-*/
 
 const createTable = async (simDatas) => {
   console.log('create table')
@@ -113,12 +101,14 @@ const createTable = async (simDatas) => {
       const tmpRaw = {
         leg: i + 1,
         id: legInfo.leg_id + '-' + routeInfos[j].route_id,
+        legId: legInfo.leg_id,
+        routeId: routeInfos[j].route_id,
         dep: legInfo.departure.portcode,
         arr: legInfo.arrival.portcode,
         eta: routeInfos[j].simulation_result.eta,
         days: Math.round(parseFloat(routeInfos[j].simulation_result.at_sea_days) * 10) / 10,
         dist: Math.round(parseFloat(routeInfos[j].simulation_result.distance) * 10) / 10,
-        co2: apiResult.length > 0 ? apiResult[0].co2 : '',
+        co2: apiResult.length > 0 ? Math.round(parseFloat(apiResult[0].co2) * 10) / 10 : '',
         cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
         hsfo: Math.round(parseFloat(routeInfos[j].simulation_result.hsfo) * 10) / 10,
         dogo: Math.round(parseFloat(routeInfos[j].simulation_result.lsdogo) * 10) / 10,
@@ -136,18 +126,52 @@ headers.value = [
   { text: 'DEP', value: 'dep', width: 60, fixed: true },
   { text: 'ARR', value: 'arr', width: 60, fixed: true },
   { text: 'ETA(UTC)', value: 'eta', width: 150 },
-  { text: 'Days', value: 'days', width: 50 },
-  { text: 'Dist[nm]', value: 'dist', width: 50 },
+  { text: 'Seadays', value: 'days', width: 60 },
+  { text: 'Portdays', value: 'inport', width: 60},
+  { text: 'Dist[nm]', value: 'dist', width: 60 },
   { text: 'CO2', value: 'co2', width: 50 },
   { text: 'CII', value: 'cii', width: 50 },
   { text: 'HSFO', value: 'hsfo', width: 50 },
-  { text: 'DOGO', value: 'dogo', width: 50 }//,
+  { text: 'DO/GO', value: 'dogo', width: 50 }//,
   // { text: 'EDIT', value: 'operation', width: 50 }
 ]
 
 const addVoyageEstimate = () => {
+  msg.value = ''
+  let voyageInfo = {}
+  console.log(props.simDatas)
+
+  for (let i = 0; i < props.simDatas.length; i++) {
+    console.log(i)
+    console.log(props.simDatas[i])
+    const legInfo = props.simDatas[i]
+    voyageInfo[legInfo.leg_id] = false
+  }
+  console.log(voyageInfo)
+
   // Validation
-  if (itemsSelected.value.length === 0) { return false }
+  // no legs selected
+  if (itemsSelected.value.length === 0) { 
+    msg.value = 'No leg is selected.'
+    return false
+  }
+  // duplicated legs
+  for (let i=0; i<itemsSelected.value.length; i++){
+    const legid = itemsSelected.value[i].legId
+    if (voyageInfo[legid] === false){
+      voyageInfo[legid] = true
+    } else {
+      msg.value = 'There is a duplicate leg.'
+      return false
+    }
+  }
+
+  for (let legid in voyageInfo){
+    if (voyageInfo[legid] === false){
+      msg.value = 'There is a missing leg.'
+      return false
+    }
+  }
 
   // Add all columns
   let totalDays = 0
@@ -179,11 +203,11 @@ const addVoyageEstimate = () => {
 
 </script>
 
-<style>
+<style scoped>
 .tableplane {
   width: 100%;
-  height: 300px;
-  overflow: scroll;
+  height: 30vh;
+  /* overflow: scroll; */
 }
 
 .operation-wrapper .operation-icon {
@@ -207,8 +231,13 @@ const addVoyageEstimate = () => {
   object-fit: cover;
   box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 10%);
 }
-</style>
-<style scoped>
+
+.customize-table {
+  --easy-table-header-font-size: 12px;
+  --easy-table-header-height: 14px;
+  --easy-table-header-background-color: #ccc;
+}
+
 button {
   background-color: #4CAF50;
   font-size: 12px;
@@ -218,5 +247,10 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.errmsg{
+  font-size: 18px;
+  color: red;
 }
 </style>
