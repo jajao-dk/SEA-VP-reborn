@@ -59,6 +59,13 @@ import Table from './components/Table.vue'
 import Map from './components/Map.vue'
 import { useAuth } from '../../plugins/auth'
 import * as QuickSightEmbedding from 'amazon-quicksight-embedding-sdk'
+import {
+  set as gtagSet,
+  pageview as gtagPageview,
+  optIn as gtagOptin,
+  event as gtagEvent,
+  customMap as gtagCustomMap,
+} from 'vue-gtag'
 
 // Common parameters
 const { getToken, getUser } = useAuth()
@@ -75,6 +82,18 @@ const errmVessels = ref({})
 
 // For QuickSight
 const container = ref(null)
+
+const onMessage = (event) => {
+  if (event.origin === location.origin && event.data) {
+    switch (event.data.messageType) {
+      case 'openWindow':
+        window.open(event.data.url, event.data.windowName)
+        break
+    }
+  }
+}
+
+window.addEventListener('message', onMessage, false)
 
 onMounted(async () => {
   const user = await getUser()
@@ -117,6 +136,18 @@ onMounted(async () => {
   dashboard = QuickSightEmbedding.embedDashboard(options)
 
   getLatestERRM()
+
+  gtagOptin() // gtag.js にて、プラグイン登録時にプラグイン無効化しているので、ここで有効化する
+  // GA4用の記述
+  gtagSet('user_id', user.email)
+  gtagSet('user_properties', {login_id: user.email, customer_id: user.customer_ids?.[0]})
+  // UA用の記述
+  gtagCustomMap('dimension1', 'login_id')
+  gtagCustomMap('dimension2', 'customer_id')
+  gtagEvent('custom_dimension', { login_id: user.email, customer_id: user.customer_ids?.[0] })
+  // pageview送信
+  gtagPageview(location.href)
+
 })
 
 // Emit
