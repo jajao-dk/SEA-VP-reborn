@@ -3,7 +3,8 @@
     <EasyDataTable
       v-model:items-selected="itemsSelected"
       header-background-color="#ddd"
-      dense
+      :dense="true"
+      :loading="loadingState"
       :fixed-header="true"
       table-height="200"
       :headers="headers"
@@ -29,20 +30,27 @@ import calcCII from '../../calcCII.js'
 
 // Error message
 const msg = ref('')
+const loadingState = ref(false)
 
 // Props
 const props = defineProps({
   customerId: { type: String, default: '' },
-  simDatas: { type: Object, default: () => { } }
+  simDatas: { type: Object, default: () => {} },
+  loading: {type: Boolean, dafault: false}
 })
 
 // Events, new data
-const { simDatas } = toRefs(props)
+const { simDatas, loading } = toRefs(props)
 watch(simDatas, (newValue) => {
   console.log('Table create Handler')
   console.log(newValue)
   createTable(props.simDatas)
 }, { deep: true })
+
+watch(loading, (newValue) => {
+  console.log('LOADING CHANGE')
+  loadingState.value = newValue
+})
 
 // Emits
 const emits = defineEmits(['tableRouteSelected', 'newVoyageData'])

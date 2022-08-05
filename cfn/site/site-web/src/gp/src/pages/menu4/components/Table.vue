@@ -8,6 +8,7 @@
       table-height="250"
       rows-per-page="500"
       :rows-items="[500,1000,1500]"
+      :loading="loadingState"
       :headers="headers"
       :items="items"
       table-class-name="customize-table"
@@ -92,14 +93,17 @@ import distance from '@turf/distance'
 import calcCO2 from './calcCO2_errm.js'
 import calcCII from '../../calcCII.js'
 
+const loadingState = ref(false)
+
 // Props
 const props = defineProps({
   customerId: { type: String, default: '' },
   errmVessels: { type: Object, default: () => { } },
-  tableFocusVessel: { type: String, default: '' }
+  tableFocusVessel: { type: String, default: '' },
+  load: {type: Boolean, dafault: false}
 })
 
-const { customerId, errmVessels, tableFocusVessel } = toRefs(props)
+const { customerId, errmVessels, tableFocusVessel, load } = toRefs(props)
 
 watch(errmVessels, (newValue) => {
   console.log('Table draw Handler')
@@ -121,6 +125,11 @@ watch(tableFocusVessel, (newValue) => {
       items.value[i].bgcolor = 'background-color: transparent'
     }
   }
+})
+
+watch(load, (newValue) => {
+  console.log('LOADING CHANGE')
+  loadingState.value = newValue
 })
 
 // Emits

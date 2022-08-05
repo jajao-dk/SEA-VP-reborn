@@ -163,22 +163,6 @@
         >
           Simulation
         </button>&nbsp; <b class="errmsg">{{ msg }}</b>
-        <!--button
-          class="simbtn"
-          @click="simClearEventHandler"
-        >
-          CLEAR ALL
-        </button><br><br-->
-      <!--div>
-          <button class="simbtn" @click="tableRowsClearEventHandler">
-            CLEAR Rows
-          </button>
-        </div>
-        <div>
-          <button class="simbtn" @click="perfEventHandler">
-            Performance
-          </button>
-        </div-->
       </div>
     </div>
 
@@ -218,6 +202,7 @@
         v-if="authorized"
         :customer-id="customerId"
         :sim-datas="simDatas"
+        :loading="loading"
         @table-route-selected="tableRouteSelected"
         @new-voyage-data="newVoyageData"
       />
@@ -266,6 +251,7 @@ const mapFocusRoute = ref('')
 const token = ref('')
 const date = ref()
 const msg = ref('')
+const loading = ref(false)
 
 const onMessage = (event) => {
   if (event.origin === location.origin && event.data) {
@@ -424,6 +410,7 @@ const simStartEventHandler = async (item) => {
   console.log(selectedVessel.value)
   console.log(date.value)
   msg.value = ''
+  loading.value = true
 
   // validation
   if (selectedVessel.value === '') {
@@ -585,6 +572,7 @@ const simStartEventHandler = async (item) => {
     simDatas.value.imo_no = param.PLAN.ship_info.imo_num
   }
 
+  loading.value = false
   console.log(simDatas.value)
   return false
 }
