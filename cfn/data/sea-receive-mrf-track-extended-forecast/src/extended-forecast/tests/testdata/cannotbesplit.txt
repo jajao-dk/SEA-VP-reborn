@@ -1,0 +1,33 @@
+WN
+announced=2022/04/06 18:00:00 GMT
+created=2022/04/07 00:06:36 GMT
+header_version=1.00
+revision=1
+data_name=WNI_MRF_TRACK_GEOJSN
+global_id=0200
+category=6000
+data_id=11024695
+data_size=13443
+format=GEOJSON:+INT8
+header_comment=exfcst_GPLC2022023SHSP_20220406.18_20220406.12.json
+{
+   "features" : [
+      {
+         "geometry" : {
+            "coordinates" : [
+               "163.9",
+               "-21.6"
+            ],
+            "type" : "Point"
+         },
+         "properties" : {
+            "FT" : "0",
+            "GPLC_ID" : "GPLC2022023SHSP",
+            "basetime" : "20220406.12",
+            "valid_tm" : 1649268000
+         },
+         "type" : "Feature"
+      }
+   ],
+   "type" : "FeatureCollection"
+}
