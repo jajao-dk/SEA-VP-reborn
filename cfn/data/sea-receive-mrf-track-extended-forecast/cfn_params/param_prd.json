@@ -1,8 +1,9 @@
 {
-    "Parameters": {
-        "LogLevel": "info"
-    },
-    "Tags": {
-        "map-migrated": "d-server-02de9edjh40k39"
-    }
+  "Parameters": {
+      "LogLevel": "info",
+      "ReceiveBucket": "wni-sea-mapwidget-ane1"
+  },
+  "Tags": {
+      "map-migrated": "d-server-038u5n84kol2jr"
+  }
 }

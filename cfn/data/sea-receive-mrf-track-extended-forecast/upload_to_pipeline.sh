@@ -7,4 +7,4 @@ APP_BASE=`git rev-parse --show-toplevel`
 echo "upload to pipeline $1"
 
 check_and_set_env $*
-upload_to_pipeline ${APP_BASE}/template/buildspec_lambda.yaml
+upload_to_pipeline ${APP_BASE}/template/runtimes/python3.8/buildspec_lambda.yaml

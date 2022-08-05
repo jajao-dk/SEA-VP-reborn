@@ -1,8 +1,9 @@
 {
-    "Parameters": {
-        "LogLevel": "DEBUG"
-    },
-    "Tags": {
-        "map-migrated": "d-server-02bmfzj0ub068a"
-    }
+  "Parameters": {
+      "LogLevel": "debug",
+      "ReceiveBucket": "sea-dev-mapwidget"
+  },
+  "Tags": {
+      "map-migrated": "d-server-00ofs92gm4wvoj"
+  }
 }

@@ -21,7 +21,7 @@ class Const(NamedTuple):
     Attributes:
     """
     STOCK_ON_S3_URI: str = 's3://wni-wfc-stock-ane1/{s3_path}'
-    KEY: str = 'data/typhoon_strike_probability'
+    KEY: str = 'data/typhoon/typhoon_strike_probability'
 
 
 class Env(NamedTuple):

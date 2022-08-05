@@ -21,7 +21,7 @@ class Const(NamedTuple):
     Attributes:
     """
     STOCK_ON_S3_URI: str = 's3://wni-wfc-stock-ane1/{s3_path}'
-    KEY: str = 'wxdata/typhoon/extended-forecast'
+    KEY: str = 'data/typhoon/typhoon_extended_forecast'
 
 
 class Env(NamedTuple):
@@ -30,7 +30,7 @@ class Env(NamedTuple):
     Attributes:
         BUCKET (str): Name of the S3 bucket.
     """
-    BUCKET: str = get_env('BUCKET', str)
+    RECEIVE_BUCKET: str = get_env('RECEIVE_BUCKET', str)
 
 
 
