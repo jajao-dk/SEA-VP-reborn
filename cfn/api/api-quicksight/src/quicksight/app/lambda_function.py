@@ -39,25 +39,30 @@ def get_embed_url(event: APIGatewayProxyEvent):
         customer_id=params.get('customer_id','')
         customer_ids=user.get('customer_ids',[])
         applications=claims.get('https://weathernews.com/app_metadata',{}).get('applications',[])
-        name_space=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-namespace-sea-vp-{customer_id}'
         user_name=params.get('user_name',
             claims.get('https://weathernews.com/email',None))
     if application == 'SSM':
         if ('SSM' not in  applications) \
             or (customer_id not in customer_ids) :
             return Response(403, 'text/plain', 'Forbidden')
+        name_space=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-namespace-sea-vp-{customer_id}'
         dashboard_id=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-dashboard-sea-vp-ssm-{customer_id}'
     elif application == 'GP':
         if ('GP' not in  applications) \
             or (customer_id not in customer_ids) :
             return Response(403, 'text/plain', 'Forbidden')
         content_id = params.get('content_id')
+        if Env.QUICKSIGHT_ENV_PREFIX == 'b01-' and content_id == 'ssm':
+            env_prefix = ''
+        else:
+            env_prefix = Env.QUICKSIGHT_ENV_PREFIX
+        name_space=f'{env_prefix}quicksight-namespace-sea-vp-{customer_id}'
         if content_id in ['ssm', 'gperrm']:
-            dashboard_id=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-dashboard-sea-vp-{content_id}-{customer_id}'
+            dashboard_id=f'{env_prefix}quicksight-dashboard-sea-vp-{content_id}-{customer_id}'
         elif content_id == 'gpvcs':
-            dashboard_id=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-dashboard-sea-vp-{content_id}-client-v1'
+            dashboard_id=f'{env_prefix}quicksight-dashboard-sea-vp-{content_id}-client-v1'
         elif content_id == 'emd':
-            dashboard_id=f'{Env.QUICKSIGHT_ENV_PREFIX}quicksight-dashboard-sea-vp-{content_id}-client-v1_3'
+            dashboard_id=f'{env_prefix}quicksight-dashboard-sea-vp-{content_id}-client-v1_3'
         else:
             return Response(403, 'text/plain', 'Forbidden')
     else:
