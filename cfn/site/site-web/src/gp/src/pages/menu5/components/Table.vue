@@ -156,8 +156,8 @@ const createTable = async (legData) => {
       eta: plan.eta_lt,
       co2: Math.round(Number(plan.co2)),
       cii: plan.cii_rank,
-      remain_dist: plan.distance.remain,
-      entire_dist: plan.distance.entire,
+      remain_dist: (plan.distance.remain).toLocaleString(),
+      entire_dist: (plan.distance.entire).toLocaleString(),
       ocean_days: (Math.round(Number(plan.sailing_area.OpenOcean.sailing_days) * 10) / 10).toFixed(1),
       remain_days: (Math.round(Number(plan.sailing_area.Remain.sailing_days) * 10) / 10).toFixed(1),
       entire_days: (Math.round(Number(plan.sailing_area.Entire.sailing_days) * 10) / 10).toFixed(1),
@@ -169,11 +169,11 @@ const createTable = async (legData) => {
       lsfo: plan.cons_fo_max_0_1,
       dogo: plan.cons_dogo_max_0_1,
       est_foc: (Math.round(Number(plan.wni_estimated_foc) * 10) / 10).toFixed(1),
-      bunker_cost: plan.cost_bunker,
-      hire_cost: plan.cost_hire,
-      total_cost: plan.cost_total,
-      daily_cost: plan.cost_daily,
-      entire_cost: plan.cost_entire
+      bunker_cost: (plan.cost_bunker).toLocaleString(),
+      hire_cost: (plan.cost_hire).toLocaleString(),
+      total_cost: (plan.cost_total).toLocaleString(),
+      daily_cost: (plan.cost_daily).toLocaleString(),
+      entire_cost: (plan.cost_entire).toLocaleString()
       // hire_cost: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
     }
     items.value.push(tmpRaw)
@@ -188,24 +188,24 @@ headers.value = [
   { text: 'ETA (LT)', value: 'eta', sortable: true, width: 100 },
   { text: 'CO2', value: 'co2', sortable: true, width: 50 },
   { text: 'CII', value: 'cii', width: 50 },
-  { text: 'Remain dist.', value: 'remain_dist', width: 50 },
-  { text: 'Entire dist.', value: 'entire_dist', width: 50 },
+  { text: 'Remain dist.', value: 'remain_dist', width: 60 },
+  { text: 'Entire dist.', value: 'entire_dist', width: 60 },
   { text: 'Ocean days', value: 'ocean_days', width: 50 },
   { text: 'Remain days', value: 'remain_days', width: 50 },
   { text: 'Entire days', value: 'entire_days', width: 50 },
-  { text: 'GoodWx SPD', value: 'goodwx_days', width: 50 },
+  { text: 'GoodWx SPD', value: 'goodwx_days', width: 60 },
   { text: 'Wx Factor', value: 'wx_factor', width: 50 },
   { text: 'Cur Factor', value: 'cur_factor', width: 50 },
   { text: 'O.G', value: 'og', width: 50 },
   { text: 'HSFO', value: 'hsfo', width: 50 },
   { text: 'LSFO', value: 'lsfo', width: 50 },
-  { text: 'DOGO', value: 'dogo', width: 50 },
-  { text: 'Est. FOC', value: 'est_foc', sortable: true, width: 50 },
-  { text: 'Bunker cost', value: 'bunker_cost', width: 50 },
-  { text: 'Hire cost', value: 'hire_cost', width: 50 },
-  { text: 'Total cost', value: 'total_cost', width: 50 },
-  { text: 'Daily cost', value: 'daily_cost', width: 50 },
-  { text: 'Entire cost', value: 'entire_cost', width: 50 }//,
+  { text: 'DO/GO', value: 'dogo', width: 50 },
+  { text: 'Est. FOC', value: 'est_foc', sortable: true, width: 60 },
+  { text: 'Bunker cost', value: 'bunker_cost', width: 60 },
+  { text: 'Hire cost', value: 'hire_cost', width: 60 },
+  { text: 'Total cost', value: 'total_cost', width: 60 },
+  { text: 'Daily cost', value: 'daily_cost', width: 60 },
+  { text: 'Entire cost', value: 'entire_cost', width: 60 }//,
   // { text: 'EDIT', value: 'operation', width: 50 }
 ]
 
@@ -244,5 +244,6 @@ headers.value = [
   --easy-table-header-font-size: 12px;
   --easy-table-header-height: 14px;
   --easy-table-header-background-color: #ccc;
+  --easy-table-body-row-height: 24px;
 }
 </style>

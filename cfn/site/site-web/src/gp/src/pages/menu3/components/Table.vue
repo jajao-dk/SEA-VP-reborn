@@ -36,7 +36,7 @@ const loadingState = ref(false)
 const props = defineProps({
   customerId: { type: String, default: '' },
   simDatas: { type: Object, default: () => {} },
-  loading: {type: Boolean, dafault: false}
+  loading: { type: Boolean, dafault: false }
 })
 
 // Events, new data
@@ -126,9 +126,9 @@ headers.value = [
   { text: 'DEP', value: 'dep', width: 60, fixed: true },
   { text: 'ARR', value: 'arr', width: 60, fixed: true },
   { text: 'ETA(UTC)', value: 'eta', width: 150 },
-  { text: 'Seadays', value: 'days', width: 60 },
-  { text: 'Portdays', value: 'inport', width: 60},
-  { text: 'Dist[nm]', value: 'dist', width: 60 },
+  { text: 'Ocean days', value: 'days', width: 60 },
+  { text: 'In port days', value: 'inport', width: 60 },
+  { text: 'Dist.[nm]', value: 'dist', width: 60 },
   { text: 'CO2', value: 'co2', width: 50 },
   { text: 'CII', value: 'cii', width: 50 },
   { text: 'HSFO', value: 'hsfo', width: 50 },
@@ -138,7 +138,7 @@ headers.value = [
 
 const addVoyageEstimate = () => {
   msg.value = ''
-  let voyageInfo = {}
+  const voyageInfo = {}
   console.log(props.simDatas)
 
   for (let i = 0; i < props.simDatas.length; i++) {
@@ -151,14 +151,14 @@ const addVoyageEstimate = () => {
 
   // Validation
   // no legs selected
-  if (itemsSelected.value.length === 0) { 
+  if (itemsSelected.value.length === 0) {
     msg.value = 'No leg is selected.'
     return false
   }
   // duplicated legs
-  for (let i=0; i<itemsSelected.value.length; i++){
+  for (let i = 0; i < itemsSelected.value.length; i++) {
     const legid = itemsSelected.value[i].legId
-    if (voyageInfo[legid] === false){
+    if (voyageInfo[legid] === false) {
       voyageInfo[legid] = true
     } else {
       msg.value = 'There is a duplicate leg.'
@@ -166,8 +166,8 @@ const addVoyageEstimate = () => {
     }
   }
 
-  for (let legid in voyageInfo){
-    if (voyageInfo[legid] === false){
+  for (const legid in voyageInfo) {
+    if (voyageInfo[legid] === false) {
       msg.value = 'There is a missing leg.'
       return false
     }
@@ -236,6 +236,7 @@ const addVoyageEstimate = () => {
   --easy-table-header-font-size: 12px;
   --easy-table-header-height: 14px;
   --easy-table-header-background-color: #ccc;
+  --easy-table-body-row-height: 24px;
 }
 
 button {

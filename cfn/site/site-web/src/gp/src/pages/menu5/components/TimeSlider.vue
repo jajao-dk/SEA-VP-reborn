@@ -153,10 +153,10 @@ if (props.updateIntervalSecond) {
           name=""
           class="timeSlider__select"
         >
-          <option
+          <!--option
             value="1"
             class="timeSlider__option"
-          >1h</option>
+          >1h</option-->
           <option
             value="3"
             class="timeSlider__option"

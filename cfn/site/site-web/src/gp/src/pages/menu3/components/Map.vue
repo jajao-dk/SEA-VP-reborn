@@ -92,10 +92,10 @@ onMounted(async () => {
     id="map"
     class="map"
   />
-  <LayerListPanel
+  <!--LayerListPanel
     v-if="ready"
     :layer-list="mapMenuLayerList"
-  />
+  /-->
 </template>
 
 <!-- style src="/src/assets/styles/app.css" scoped-->

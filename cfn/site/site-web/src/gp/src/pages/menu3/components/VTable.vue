@@ -1,95 +1,95 @@
 <template>
-<div class="vtableplane">
-  <table
-    id="comparison"
-    border="1"
-    style="border-collapse: collapse"
-  >
-    <tbody align="center">
-      <tr>
-        <th>PLAN</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          class="site-name"
-        >
-          {{ item.plan_name }}
-        </td>
-      </tr>
-      <tr>
-        <th>Revenue [USD]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          class="site-name"
-          style="text-align:right"
-        >
-          {{ item.revenue }}
-        </td>
-      </tr>
-      <tr>
-        <th>Cargo type</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-        >
-          <input
-            v-model="item.cargo"
-            type="text"
-            class="form-control"
+  <div class="vtableplane">
+    <table
+      id="comparison"
+      border="1"
+      style="border-collapse: collapse"
+    >
+      <tbody align="center">
+        <tr>
+          <th>PLAN</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            class="site-name"
           >
-        </td>
-      </tr>
-      <tr>
-        <th>Freight [USD/MT]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-        >
-          <input
-            v-model="item.freight"
-            type="number"
-            class="form-control"
+            {{ item.plan_name }}
+          </td>
+        </tr>
+        <tr>
+          <th>Revenue [USD]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            class="site-name"
             style="text-align:right"
           >
-        </td>
-      </tr>
-      <tr>
-        <th>Quantity [MT]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-        >
-          <input
-            v-model="item.quantity"
-            type="number"
-            class="form-control"
+            {{ item.revenue }}
+          </td>
+        </tr>
+        <tr>
+          <th>Cargo type</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+          >
+            <input
+              v-model="item.cargo"
+              type="text"
+              class="form-control"
+            >
+          </td>
+        </tr>
+        <tr>
+          <th>Freight [USD/MT]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+          >
+            <input
+              v-model="item.freight"
+              type="number"
+              class="form-control"
+              style="text-align:right"
+            >
+          </td>
+        </tr>
+        <tr>
+          <th>Quantity [MT]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+          >
+            <input
+              v-model="item.quantity"
+              type="number"
+              class="form-control"
+              style="text-align:right"
+            >
+          </td>
+        </tr>
+        <tr>
+          <th>Commission [%]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+          >
+            <input
+              v-model="item.commision"
+              type="number"
+              class="form-control"
+              style="text-align:right"
+            >
+          </td>
+        </tr>
+        <tr>
+          <th>INCOME [USD]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
             style="text-align:right"
           >
-        </td>
-      </tr>
-      <tr>
-        <th>Commission [%]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-        >
-          <input
-            v-model="item.commision"
-            type="number"
-            class="form-control"
-            style="text-align:right"
-          >
-        </td>
-      </tr>
-      <tr>
-        <th>INCOME [USD]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.income }}
+            {{ item.income }}
           <!--button
             type="submit"
             class="perfbtn"
@@ -97,171 +97,171 @@
           >
             CALC
           </button-->
-        </td>
-      </tr>
-      <tr />
-      <tr>
-        <th>SEA days</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.days }}
-        </td>
-      </tr>
-      <tr>
-        <th>IFO [MT]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.fo }}
-        </td>
-      </tr>
-      <tr>
-        <th>LSDO/GO [MT]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.dogo }}
-        </td>
-      </tr>
-      <tr>
-        <th>Hire cost [USD/day]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-        >
-          <input
-            v-model="item.hire"
-            type="number"
-            class="form-control"
+          </td>
+        </tr>
+        <tr />
+        <tr>
+          <th>Ocean days</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
             style="text-align:right"
           >
-        </td>
-      </tr>
-      <tr>
-        <th>FO cost [USD/MT]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-        >
-          <input
-            v-model="item.foc"
-            type="number"
-            class="form-control"
+            {{ item.days }}
+          </td>
+        </tr>
+        <tr>
+          <th>IFO [MT]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
             style="text-align:right"
           >
-        </td>
-      </tr>
-      <tr>
-        <th>DO/GO cost [USD/MT]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-        >
-          <input
-            v-model="item.dogoc"
-            type="number"
-            class="form-control"
+            {{ item.fo }}
+          </td>
+        </tr>
+        <tr>
+          <th>LSDO/GO [MT]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
             style="text-align:right"
           >
-        </td>
-      </tr>
-      <tr>
-        <th>Total hire [USD]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.total_hire }}
-        </td>
-      </tr>
-      <tr>
-        <th>Total FOC [USD]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.total_foc }}
-        </td>
-      </tr>
-      <tr>
-        <th>Total DO/GO [USD]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.total_dogoc }}
-        </td>
-      </tr>
-      <tr>
-        <th>In port days</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.inport_days }}
-        </td>
-      </tr>
-      <tr>
-        <th>In port FOC [MT/day]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-        >
-          <input
-            v-model="item.inport_foc"
-            type="number"
-            class="form-control"
+            {{ item.dogo }}
+          </td>
+        </tr>
+        <tr>
+          <th>Hire cost [USD/day]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+          >
+            <input
+              v-model="item.hire"
+              type="number"
+              class="form-control"
+              style="text-align:right"
+            >
+          </td>
+        </tr>
+        <tr>
+          <th>FO cost [USD/MT]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+          >
+            <input
+              v-model="item.foc"
+              type="number"
+              class="form-control"
+              style="text-align:right"
+            >
+          </td>
+        </tr>
+        <tr>
+          <th>DO/GO cost [USD/MT]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+          >
+            <input
+              v-model="item.dogoc"
+              type="number"
+              class="form-control"
+              style="text-align:right"
+            >
+          </td>
+        </tr>
+        <tr>
+          <th>Total hire [USD]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
             style="text-align:right"
           >
-        </td>
-      </tr>
-      <tr>
-        <th>Port charges [USD]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-        >
-          <input
-            v-model="item.port_charge"
-            type="number"
-            class="form-control"
+            {{ item.total_hire }}
+          </td>
+        </tr>
+        <tr>
+          <th>Total FOC [USD]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
             style="text-align:right"
           >
-        </td>
-      </tr>
-      <tr>
-        <th>Passage costs [USD]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-        >
-          <input
-            v-model="item.passage"
-            type="number"
-            class="form-control"
+            {{ item.total_foc }}
+          </td>
+        </tr>
+        <tr>
+          <th>Total DO/GO [USD]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
             style="text-align:right"
           >
-        </td>
-      </tr>
-      <tr>
-        <th>TOTAL COSTS [USD]</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.expense }}
+            {{ item.total_dogoc }}
+          </td>
+        </tr>
+        <tr>
+          <th>In port days</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.inport_days }}
+          </td>
+        </tr>
+        <tr>
+          <th>In port FOC [MT/day]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+          >
+            <input
+              v-model="item.inport_foc"
+              type="number"
+              class="form-control"
+              style="text-align:right"
+            >
+          </td>
+        </tr>
+        <tr>
+          <th>Port charges [USD]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+          >
+            <input
+              v-model="item.port_charge"
+              type="number"
+              class="form-control"
+              style="text-align:right"
+            >
+          </td>
+        </tr>
+        <tr>
+          <th>Passage costs [USD]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+          >
+            <input
+              v-model="item.passage"
+              type="number"
+              class="form-control"
+              style="text-align:right"
+            >
+          </td>
+        </tr>
+        <tr>
+          <th>TOTAL COSTS [USD]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.expense }}
           <!--button
             type="submit"
             class="perfbtn"
@@ -269,82 +269,82 @@
           >
             CALC
           </button-->
-        </td>
-      </tr>
-      <tr>
-        <th>PROFIT</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.profit }}
-        </td>
-      </tr>
-      <tr>
-        <th>TCE</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.tc_equiv }}
-        </td>
-      </tr>
-      <tr>
-        <th>CO2</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.co2 }}
-        </td>
-      </tr>
-      <tr>
-        <th>CII</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:right"
-        >
-          {{ item.cii }}
-        </td>
-      </tr>
-      <tr>
-        <th>Calculation</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:center"
-        >
-          <button
-            type="submit"
-            class="perfbtn"
-            @click="calcCost(item)"
+          </td>
+        </tr>
+        <tr>
+          <th>PROFIT</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
           >
-            CALC
-          </button>
-        </td>
-      </tr>
-      <tr>
-        <th>Delete</th>
-        <td
-          v-for="item in items"
-          :key="item.id"
-          style="text-align:center"
-        >
-          <button
-            type="submit"
-            class="perfbtn"
-            @click="deleteColumn(item)"
+            {{ item.profit }}
+          </td>
+        </tr>
+        <tr>
+          <th>TCE</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
           >
-            DEL
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            {{ item.tc_equiv }}
+          </td>
+        </tr>
+        <tr>
+          <th>CO2</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.co2 }}
+          </td>
+        </tr>
+        <tr>
+          <th>CII</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.cii }}
+          </td>
+        </tr>
+        <tr>
+          <th>Calculation</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:center"
+          >
+            <button
+              type="submit"
+              class="perfbtn"
+              @click="calcCost(item)"
+            >
+              CALC
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <th>Delete</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:center"
+          >
+            <button
+              type="submit"
+              class="perfbtn"
+              @click="deleteColumn(item)"
+            >
+              DEL
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 <script setup>
@@ -372,7 +372,7 @@ const initVoyageData = () => {
     const tmpData = {
       id: uniqId++,
       used: false, // true: real-data, false, dummy-data
-      plan_name: 'plan-' + String(uniqId+1),
+      plan_name: 'plan-' + String(uniqId + 1),
       revenue: 0,
       cargo: '',
       freight: 0,
@@ -431,7 +431,7 @@ const createVTable = (newValue) => {
       // id: items.value.length + 1,
       id: uniqId++,
       used: true, // true: real-data, false, dummy-data
-      plan_name: 'plan-' + String(uniqId+1),
+      plan_name: 'plan-' + String(uniqId + 1),
       revenue: 0,
       cargo: '',
       freight: 0,
@@ -487,7 +487,7 @@ const calcCost = (val) => {
   item.total_foc = Math.round(tmpTotalFoc).toLocaleString()
   const tmpTotalDogoc = val.dogo * val.dogoc
   item.total_dogoc = Math.round(tmpTotalDogoc).toLocaleString()
-  const tmpExpense = tmpTotalHire + tmpTotalFoc + tmpTotalDogoc + val.inport_days*val.inport_foc*val.dogoc + val.port_charge + val.passage
+  const tmpExpense = tmpTotalHire + tmpTotalFoc + tmpTotalDogoc + val.inport_days * val.inport_foc * val.dogoc + val.port_charge + val.passage
   item.expense = Math.round(tmpExpense).toLocaleString()
   // others
   const tmpProfit = tmpIncome - tmpExpense
@@ -500,9 +500,9 @@ const calcCost = (val) => {
 const deleteColumn = (val) => {
   console.log(val)
   console.log('delete column')
-  for (let i=0; i<items.value.length; i++){
+  for (let i = 0; i < items.value.length; i++) {
     const item = items.value[i]
-    if (item.id === val.id){
+    if (item.id === val.id) {
       items.value.splice(i, 1)
       break
     }
@@ -546,7 +546,7 @@ button {
 /*
 table {
   font-size: 12px;
-  overflow: scroll; 
+  overflow: scroll;
 }
 */
 th,td {
