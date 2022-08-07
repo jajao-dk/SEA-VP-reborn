@@ -1,19 +1,10 @@
-// import { CycloneLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/CycloneLayer'
 import { GraticuleLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/GraticuleLayer'
-// import { WindGridLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/WindGridLayer'
-// import { CurrentGridLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/CurrentGridLayer'
-// import { WxChartLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/WxChartLayer'
-// import { WaveHeightLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/WaveHeightLayer'
 import { EcaAreaLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/EcaAreaLayer'
-// import { VesselERRMLayer } from './VesselERRMLayer'
 // import { NauticalChartLayer } from '../components/Layers/NauticalChartLayer'
 import { VesselTAPLayer } from './VesselTAPLayer'
 // import { PortLayer } from '../components/Layers/PortLayer'
-// import { IcebergLayer } from '../components/Layers/IcebergLayer'
-// import { IceconcentrationLayer } from '../components/Layers/IceconcentrationLayer'
-// import { SeaVisibilityLayer } from '../components/Layers/SeaVisibilityLayer'
-// import { SurfaceTemperatureLayer } from '../components/Layers/SurfaceTemperatureLayer'
-// import { SprayIcingLayer } from '../components/Layers/SprayIcingLayer'
+import { LoadLineLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/LoadLineLayer'
+// import { OCLayer } from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/components/Layers/OCLayer'
 // import { event as gtagEvent } from 'vue-gtag'
 
 import { reactive, watch } from 'vue'
@@ -22,53 +13,17 @@ import values from '../../../scripts/values'
 
 // 設定ファイルとモジュールとの紐付け
 const modules = {
-  // Cyclone: CycloneLayer,
   Graticule: GraticuleLayer,
-  // Wind: WindGridLayer,
-  // Current: CurrentGridLayer,
-  // WxChart: WxChartLayer,
-  // Wave: WaveHeightLayer,
-  EcaArea: EcaAreaLayer,
-  // ERRM: VesselERRMLayer
+  // EcaArea: EcaAreaLayer,
+  RestrictionArea: { EcaArea: EcaAreaLayer, LoadLine: LoadLineLayer },
   // NauticalChart: NauticalChartLayer,
   TAP: VesselTAPLayer
   // Port: PortLayer,
-  // SeaVisibility: SeaVisibilityLayer,
-  // SurfaceTemperature: SurfaceTemperatureLayer,
-  // SprayIcing: SprayIcingLayer,
-  // Ice: { Iceconcentration: IceconcentrationLayer, Iceberg: IcebergLayer },
 }
 
 const hideMenuItem = {
   Tsunami: true
 }
-
-// サイドパネルイベントを定義
-/*
-const sidePanelEvents = {
-  Cyclone: [{ eventName: 'CycloneSymbolClick', panelType: 'cyclone' }],
-  DepictedItem: [
-    { eventName: 'depictedItemSymbolClick', panelType: 'depictedItem' }
-  ],
-  DepictedItemOE: [
-    { eventName: 'depictedItemSymbolClick', panelType: 'depictedItem' }
-  ],
-  Vessel: [{ eventName: 'vesselSymbolClick', panelType: 'vessel' }],
-  Port: [{ eventName: 'portSymbolClick', panelType: 'port' }],
-  Piracy: [{ eventName: 'piracySymbolClick', panelType: 'piracy' }]
-}
-*/
-
-// 凡例の有無を定義
-/*
-const hasLegend = {
-  Wave: true,
-  Current: true,
-  Liden: true,
-  Entln: true,
-  Cyclone: true
-}
-*/
 
 /**
  * 設定ファイル情報からレイヤーリストを生成する
@@ -163,7 +118,11 @@ export function registLayer(map, layerList, commonOptions) {
   // レイヤー表示ON/OFFの切り替えを、全レイヤーに登録
   for (const layer of Object.values(layerList)) {
     console.log(layer)
-    if (layer.name === "EcaArea" || layer.name === "TAP"){
+    if (
+      layer.name === 'EcaArea' ||
+      layer.name === 'TAP' ||
+      layer.name === 'LoadLine'
+    ) {
       layer.visible = true
     }
     watch(

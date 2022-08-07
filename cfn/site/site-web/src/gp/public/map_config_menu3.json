@@ -5,7 +5,7 @@
       "lng": 0,
       "lat": 0
     },
-    "zoom": 0.2,
+    "zoom": 0.05,
     "maxZoom": 10
   },
   "layer": [
@@ -14,8 +14,8 @@
       "title": "Gridlines"
     },
     {
-      "name": "EcaArea",
-      "title": "EcaArea"
+      "name": "RestrictionArea",
+      "title": "ECA / Loadline"
     },
     {
       "name": "TAP",

@@ -368,9 +368,12 @@ export class VesselVoyComLayer extends Layer {
     if (time in dict) {
       const tmpTime = dict[time]
       if (tmpTime.slice(4, 5) === '/') {
-        value = tmpTime.replace(/\//g, '-')
+        value = tmpTime.replace(/\//g, '-') + 'Z'
       } else if (tmpTime.slice(4, 5) === '-') {
         value = tmpTime
+      }
+      if (value.slice(-1) !== 'Z') {
+        value = tmpTime + 'Z'
       }
     }
     return Date.parse(value) / 1000

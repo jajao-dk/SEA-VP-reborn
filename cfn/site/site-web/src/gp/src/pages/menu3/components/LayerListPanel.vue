@@ -134,10 +134,10 @@ const hideTooltip = (text) => {
 #layers li input#togglePiracy ~ label {
   background-image: url("/images/btns_svg/btn_piracy_off.svg");
 }
-#layers li input#toggleEcaArea:checked ~ label {
+#layers li input#toggleRestrictionArea:checked ~ label {
   background-image: url("/images/btns_svg/btn_ecaArea_on.svg");
 }
-#layers li input#toggleEcaArea ~ label {
+#layers li input#toggleRestrictionArea ~ label {
   background-image: url("/images/btns_svg/btn_ecaArea_off.svg");
 }
 #layers li input#toggleRadar:checked ~ label {

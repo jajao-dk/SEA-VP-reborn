@@ -87,7 +87,7 @@ onMounted(async () => {
   })
 
   map.addControl(new NavigationControl({ showCompass: false }))
-  map.addControl(new LegendButton(isLegendDisplay), 'top-right')
+  // map.addControl(new LegendButton(isLegendDisplay), 'top-right')
 
   await map.onPromise('load')
   registLayer(map, layerList, { colorMode: props.config.theme })

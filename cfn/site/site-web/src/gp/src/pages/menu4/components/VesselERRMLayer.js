@@ -159,6 +159,68 @@ export class VesselERRMLayer extends Layer {
       this.layer
     )
 
+    const tm = this.timeSeries.globalTime
+    const posttime = Math.floor(tm / 3600000 / 12) * 3600 * 12
+    this.map.addLayer({
+      id: `${this.layer}Symbol`,
+      source: `${this.source}Route`,
+      type: 'circle',
+      /*
+      layout: {
+        'icon-image': 'vesselSymbol', // アイコンは、先に読み込んで置く
+        'icon-allow-overlap': true,
+        'icon-rotate': ['get', 'heading'],
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 2, 4, 4],
+        'icon-pitch-alignment': 'map', // 3D表示や回転をしたときにも、地図に対して角度が保たれるように
+        'icon-rotation-alignment': 'map', // 3D表示や回転をしたときにも、地図に対して角度が保たれるように
+        'icon-ignore-placement': true, // 他のアイコンを間引いてしまわないように
+        'text-field': [
+          'format',
+          ['get', 'vessel_name'],
+          { 'font-scale': 0.6 }
+          // '\n',
+          // {},
+          // ['downcase', ['get', 'imo']],
+          // { 'font-scale': 0.6 }
+        ],
+        'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+        // 'text-radial-offset': 0.9,
+        'text-radial-offset': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          1,
+          0.6,
+          3,
+          1.2
+        ],
+        'text-justify': 'auto',
+        visibility: this.visibility
+      },*/
+      paint: {
+        'circle-radius': {
+          base: 1,
+          stops: [
+            [2, 8],
+            [12, 16]
+          ]
+        },
+        'circle-color': [
+          'match',
+          ['get', 'routetype'],
+          'future_point',
+          '#00f',
+          'actual_point',
+          '#666',
+          '#fff'
+        ]
+      },
+      metadata: {
+        group: this.group
+      },
+      filter: ['in', 'posttime', posttime]
+    })
+
     this.map.addLayer(
       {
         id: `${this.layer}Ghost`,
@@ -322,12 +384,11 @@ export class VesselERRMLayer extends Layer {
     console.log(this.timeSeries.globalTime)
     if (this.visibility === 'visible' && this.timeSeries.globalTime) {
       console.log('TIME SERIES')
-      /*
+
       // Time slider update (including periodic update)
       const tm = this.timeSeries.globalTime
-      const posttime = Math.floor(tm / 3600000 / 3) * 3600 * 3
+      const posttime = Math.floor(tm / 3600000 / 12) * 3600 * 12
       console.log(posttime)
-      */
 
       if (this.errmGeoJSON !== undefined) {
         this.map.getSource(this.source).setData(this.errmGeoJSON.latest)
@@ -335,13 +396,7 @@ export class VesselERRMLayer extends Layer {
         // this.map.flyTo({ center: this.latestPos })
       }
 
-      /*
-      this.map.setFilter(`${this.layer}VoycomGhost`, [
-        'in',
-        'posttime',
-        posttime
-      ])
-      */
+      this.map.setFilter(`${this.layer}Symbol`, ['in', 'posttime', posttime])
     }
     console.log('vessel layer update by timeseries-index!!!')
   }
@@ -375,8 +430,8 @@ export class VesselERRMLayer extends Layer {
       0.5
     ])
 
-    this.map.getSource(`${this.source}Highlight`).setData(this.selectedVessel) // ハイライトするデータを設定
-    this.blinkHighlightLayer() // 点滅開始
+    // this.map.getSource(`${this.source}Highlight`).setData(this.selectedVessel) // ハイライトするデータを設定
+    // this.blinkHighlightLayer() // 点滅開始
 
     if (location.href.match(/3d/)) {
       this.map.flyTo({
@@ -450,8 +505,8 @@ export class VesselERRMLayer extends Layer {
     ])
 
     if (this.visibility === 'visible' && this.errmGeoJSON !== undefined) {
-      this.map.getSource(`${this.source}Highlight`).setData(this.selectedVessel) // ハイライトするデータを設定
-      this.blinkHighlightLayer() // 点滅開始
+      // this.map.getSource(`${this.source}Highlight`).setData(this.selectedVessel) // ハイライトするデータを設定
+      // this.blinkHighlightLayer() // 点滅開始
 
       if (location.href.match(/3d/)) {
         this.map.flyTo({
@@ -540,6 +595,13 @@ export class VesselERRMLayer extends Layer {
         .getSource(`${this.source}Highlight`)
         .setData(featureCollection([])) // ハイライトするデータを設定
       this.map.getSource(`${this.source}Route`).setData(featureCollection([]))
+
+      // event to Table/QS
+      this.event.dispatchEvent(
+        new CustomEvent('cancelRoute', {
+          detail: {}
+        })
+      )
     })
   }
 
@@ -814,11 +876,15 @@ export class VesselERRMLayer extends Layer {
     if (time in dict) {
       const tmpTime = dict[time]
       if (tmpTime.slice(4, 5) === '/') {
-        value = tmpTime.replace(/\//g, '-')
+        value = tmpTime.replace(/\//g, '-') + 'Z'
       } else if (tmpTime.slice(4, 5) === '-') {
         value = tmpTime
       }
+      if (value.slice(-1) !== 'Z') {
+        value = tmpTime + 'Z'
+      }
     }
+    console.log(value)
     return Date.parse(value) / 1000
   }
 
@@ -943,8 +1009,8 @@ export class VesselERRMLayer extends Layer {
       (value) => !displayYellowVessels.includes(value) || !both.includes(value)
     )
     */
-    console.log('Red: ' + JSON.stringify(this.redVessels))
-    console.log('Yellow: ' + JSON.stringify(this.yellowVessels))
+    // console.log('Red: ' + JSON.stringify(this.redVessels))f
+    // console.log('Yellow: ' + JSON.stringify(this.yellowVessels))
 
     // Modefy vessel layer properties
     const vesseltypeExpressions = [
@@ -966,8 +1032,8 @@ export class VesselERRMLayer extends Layer {
 
     vesseltypeExpressions.push('vesselSymbol')
     zindexExpressions.push(0)
-    console.log('VTE: ' + vesseltypeExpressions)
-    console.log('ZIE: ' + zindexExpressions)
+    // console.log('VTE: ' + vesseltypeExpressions)
+    // console.log('ZIE: ' + zindexExpressions)
 
     this.map.setLayoutProperty(this.layer, 'icon-image', vesseltypeExpressions)
     this.map.setLayoutProperty(this.layer, 'symbol-sort-key', zindexExpressions)
