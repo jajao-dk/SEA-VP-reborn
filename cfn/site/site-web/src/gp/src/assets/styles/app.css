@@ -1,0 +1,357 @@
+/*▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼
+▼ BASE
+▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼△▼*/
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/*====================================================================================
+Font
+====================================================================================*/
+/*
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+blockquote,
+pre,
+abbr,
+address,
+cite,
+code,
+dt,
+dd,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+figcaption,
+figure {
+  word-wrap: break-word;
+  color: #303030;
+  font-family: 'ヒラギノ角ゴシック', 'Hiragino Sans', 'ヒラギノ角ゴ ProN W3',
+    'HiraKakuProN-W3', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', sans-serif;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.5em;
+  list-style-type: none;
+}*/
+
+* {
+  font-family: 'HelveticaNeue-CondensedBold', 'Helvetica Neue', 'Helvetica',
+    Arial, 'M PLUS 1p', 'ヒラギノ角ゴ Pro W6', 'ヒラギノ角ゴ W6 JIS2004',
+    'ヒラギノ角ゴ ProN W6', 'HiraKakuProN-W6', 'Hiragino Kaku Gothic ProN W6',
+    'Hiragino Kaku Gothic W6 JIS2004', 'Noto Sans JP', 'メイリオ', Meiryo,
+    'ＭＳ Ｐゴシック', sans-serif;
+}
+
+
+html, body, #app, .mapboxgl-map {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+.mapboxgl-ctrl-attrib a { font-size: 12px; }
+.mapboxgl-ctrl-top-right {
+  top: 20px !important;
+  right: 20px !important;
+}
+
+/* 風ツールチップの見た目 */
+.wind.mapboxgl-popup {
+ font: 14px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  overflow-wrap: break-word;
+}
+.wind.mapboxgl-popup .mapboxgl-popup-content {
+ background: rgba(255, 255, 255, 0.8);
+ color: #333;
+ padding: 7px;
+ pointer-events: none;
+}
+.wind.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+ border-right-width: 12px;
+ border-right-color: rgba(255, 255, 255, 0.8);
+ pointer-events: none;
+}
+
+/* 港ツールチップの見た目 */
+.port .mapboxgl-popup-content {
+  padding: 5px 8px 5px 5px;
+  font-size:12px;
+}
+.port-popup-svg {
+  width: 31px;
+  height: 25px;
+}
+.port-popup-svg-part-anchor {
+  fill: #FFFFFF;
+}
+.port-popup-svg-part-circle {
+  fill: #909090;
+}
+.popup-caution .port-popup-svg-part-anchor {
+  fill: #303030;
+}
+.popup-caution .port-popup-svg-part-circle {
+  fill: #F2E700;
+}
+.popup-warning .port-popup-svg-part-anchor {
+  fill: #FFFFFF;
+}
+.popup-warning .port-popup-svg-part-circle {
+  fill: #FF2800;
+}
+
+/* tooltip for vessels */
+.vessel .mapboxgl-popup-content .vessel-popup {
+  font-family: 'Helvetica Neue', Helvetica, Arial, Verdana;
+  padding-top: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 2px;
+  line-height: 140%;
+  background: #eee;
+}
+
+.mapboxgl-ctrl-group.legend_button {
+  background-size: contain;
+  background-image: url('data:image/svg+xml;charset=utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%3Csvg%20width%3D%22512px%22%20height%3D%22512px%22%20viewBox%3D%220%200%20512%20512%22%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20%3E%20%3Ctitle%3E%E3%83%9E%E3%83%83%E3%83%97%E3%83%9C%E3%82%BF%E3%83%B3%2Ficon_info%3C%2Ftitle%3E%20%3Cg%20id%3D%22%E3%83%9E%E3%83%83%E3%83%97%E3%83%9C%E3%82%BF%E3%83%B3%2Ficon_info%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%20%3Cpath%20d%3D%22M203.856144%2C371.111782%20C204.4496%2C350.946294%20208.584267%2C332.942857%20213.454897%2C315.106182%20C218.12543%2C298.002868%20223.295716%2C281.037059%20228.015054%2C263.946423%20C229.16585%2C259.77738%20229.852033%2C255.36941%20229.964282%2C251.05116%20C230.124358%2C244.860497%20227.176603%2C241.723232%20221.091732%2C240.452527%20C213.091796%2C238.781009%20205.370042%2C240.604661%20197.660001%2C242.401006%20C195.652208%2C242.868134%20193.691267%2C243.542007%20191.714709%2C244.139814%20C185.735254%2C245.945911%20182.069105%2C242.788166%20183.206236%2C236.608231%20C184.217453%2C231.114847%20185.306756%2C225.617562%20186.774778%2C220.235353%20C187.25696%2C218.466314%20188.697652%2C216.255502%20190.268161%2C215.592356%20C212.159641%2C206.346346%20234.808557%2C200.021104%20258.750777%2C199.814677%20C264.3847%2C199.767548%20270.18358%2C200.815904%20275.645713%2C202.312859%20C295.266835%2C207.690192%20306.893877%2C222.572942%20308.125688%2C242.875935%20C309.047106%2C258.069779%20305.729416%2C272.4776%20301.315591%2C286.901024%20C295.209246%2C306.858791%20289.629984%2C326.994048%20284.50167%2C347.2239%20C282.766203%2C354.068931%20282.68226%2C361.428876%20282.578796%2C368.564521%20C282.472403%2C375.893259%20286.152218%2C379.331866%20293.508918%2C379.977458%20C302.668435%2C380.781035%20311.394574%2C378.660918%20320.021152%2C375.933243%20C320.94745%2C375.639703%20321.835681%2C375.208659%20322.774668%2C374.975582%20C327.658963%2C373.760465%20331.411007%2C377.298543%20330.135273%2C382.177542%20C328.539386%2C388.283361%20326.792206%2C394.3687%20324.689734%2C400.313609%20C324.085541%2C402.019259%20322.287605%2C403.861439%20320.595086%2C404.539213%20C303.313623%2C411.462262%20285.887701%2C418.073242%20267.128455%2C419.707702%20C246.927543%2C421.466989%20229.152185%2C415.24707%20213.94196%2C402.065094%20C207.552552%2C396.527825%20205.516453%2C388.577876%20204.47693%2C380.482619%20C204.013293%2C376.87335%20203.985963%2C373.207518%20203.856144%2C371.111782%20M330.999747%2C135.578142%20C330.921407%2C158.680001%20311.954257%2C177.560156%20288.830967%2C177.553331%20C265.322125%2C177.546503%20246.434038%2C158.514215%20246.562225%2C134.962782%20C246.68977%2C111.750723%20265.578834%2C92.9417588%20288.706029%2C93.0001355%20C312.263674%2C93.0587845%20331.079531%2C112.002329%20330.999747%2C135.578142%22%20id%3D%22info%22%20fill%3D%22%23101010%22%3E%3C%2Fpath%3E%20%3C%2Fg%3E%3C%2Fsvg%3E');
+}
+
+/* 雷ツールチップの見た目 */
+.lightning .mapboxgl-popup-content {
+  min-width: 200px;
+  padding: 5px;
+}
+
+/* ツールチップのdt,ddの共通レイアウト */
+
+.tooltip-list {
+  width: 100%;
+  display: table;
+}
+
+.tooltip-list * {
+  font-size:15px;
+  color: #444;
+  font-family: 'HelveticaNeue-CondensedBold', 'Helvetica Neue', 'Helvetica',
+    Arial, 'M PLUS 1p', 'ヒラギノ角ゴ Pro W6', 'ヒラギノ角ゴ W6 JIS2004',
+    'ヒラギノ角ゴ ProN W6', 'HiraKakuProN-W6', 'Hiragino Kaku Gothic ProN W6',
+    'Hiragino Kaku Gothic W6 JIS2004', 'Noto Sans JP', 'メイリオ', Meiryo,
+    'ＭＳ Ｐゴシック', sans-serif;
+}
+.tooltip-list-item {
+  display: table-row;
+  overflow: hidden;
+}
+
+.tooltip-list-item > * {
+  display: table-cell;
+  white-space: nowrap;
+  line-height: 1em;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  position: relative;
+}
+
+.tooltip-list-item:not(:last-child) > * {
+  height: 30px;
+  line-height: 1em;
+  border-bottom: 3px solid #fff;
+}
+
+.tooltip-list-title {
+  font-weight: 700;
+  background-color: #E0E0E0;
+  padding-left: 10px;
+  padding-right: 10px;
+  z-index: 2;
+}
+
+.tooltip-list-title:before, .tooltip-list-title:after {
+  content: "";
+  display: block;
+  width : 0px;
+  height: 0px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tooltip-list-title:before {
+  right: -10px;
+  border: 14.5px solid transparent;
+  border-left: 10px solid #FFF;
+  border-right: none;
+}
+
+.tooltip-list-title:after {
+  right: -8px;
+  border: 14.5px solid transparent;
+  border-left: 10px solid #E0E0E0;
+  border-right: none;
+}
+
+.tooltip-list-content {
+  width: 100%;
+  font-weight: 700;
+  padding-left: 20px;
+  padding-right: 10px;
+  background-color: #F0F0F0;
+  z-index: 0;
+}
+.tooltip-list-content a {
+  color: #0000E0;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.tooltip-list-content, .tooltip-list-content * {
+  line-height: 1em;
+}
+
+/* サイドパネルの共通レイアウト */
+
+.sidepanel-list {
+  width: 100%;
+  display: table;
+}
+
+.sidepanel-list *, .sidepanel-list-block * {
+  font-size:15px;
+  color: #444;
+  font-family: 'HelveticaNeue-CondensedBold', 'Helvetica Neue', 'Helvetica',
+    Arial, 'M PLUS 1p', 'ヒラギノ角ゴ Pro W6', 'ヒラギノ角ゴ W6 JIS2004',
+    'ヒラギノ角ゴ ProN W6', 'HiraKakuProN-W6', 'Hiragino Kaku Gothic ProN W6',
+    'Hiragino Kaku Gothic W6 JIS2004', 'Noto Sans JP', 'メイリオ', Meiryo,
+    'ＭＳ Ｐゴシック', sans-serif;
+}
+.sidepanel-list-item {
+  display: table-row;
+  overflow: hidden;
+  border-spacing: 10px;
+}
+
+.sidepanel-list-item > * {
+  display: table-cell;
+  line-height: 1em;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  position: relative;
+}
+
+.sidepanel-list-item:not(:last-child) > * {
+  height: 30px;
+  line-height: 1em;
+  border-bottom: 3px solid #fafafa;
+}
+
+.sidepanel-list-title {
+  font-weight: 700;
+  white-space: nowrap;
+  background-color: #E0E0E0;
+  padding-left: 10px;
+  padding-right: 10px;
+  z-index: 2;
+  border-right: 3px solid #fafafa;
+}
+
+/* .sidepanel-list-title:before, .sidepanel-list-title:after {
+  content: "";
+  display: block;
+  width : 0px;
+  height: 0px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+} */
+
+.sidepanel-list-title:before {
+  right: -10px;
+  border: 14.5px solid transparent;
+  border-left: 10px solid #FFF;
+  border-right: none;
+}
+
+.sidepanel-list-title:after {
+  right: -8px;
+  border: 14.5px solid transparent;
+  border-left: 10px solid #E0E0E0;
+  border-right: none;
+}
+
+.sidepanel-list-content {
+  width: 100%;
+  font-weight: 700;
+  white-space: break-spaces;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: #F0F0F0;
+  z-index: 0;
+}
+.sidepanel-list-content a {
+  color: #0000E0;
+  font-weight: 700;
+  text-decoration: underline;
+  font-size: 15px;
+}
+
+.sidepanel-list-content .list-component:not(:last-child) {
+  margin-right: 15px;
+}
+
+.sidepanel-list-content, .sidepanel-list-content * {
+  line-height: 1em;
+}
+
+.sidepanel-next-table  > *  {
+  border-top: 15px solid #fafafa;
+}
+
+.sidepanel-next-block  {
+  margin-top: 15px;
+}
+
+.sidepanel-header > small {
+  font-size: 15px;
+  font-family: 'Helvetica Neue', 'Helvetica',
+    Arial, 'M PLUS 1p', 'ヒラギノ角ゴ Pro W6', 'ヒラギノ角ゴ W6 JIS2004',
+    'ヒラギノ角ゴ ProN W6', 'HiraKakuProN-W6', 'Hiragino Kaku Gothic ProN W6',
+    'Hiragino Kaku Gothic W6 JIS2004', 'Noto Sans JP', 'メイリオ', Meiryo,
+    'ＭＳ Ｐゴシック', sans-serif;
+}
+.sidepanel-header small img {
+  height: 22px;
+  vertical-align:bottom;
+}
+
+[v-cloak] { display: none}
+
+
+

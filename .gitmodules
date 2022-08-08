@@ -1,0 +1,3 @@
+[submodule "cfn/site/site-web/src/gp/src/SEA-MapWidget-Web"]
+	path = cfn/site/site-web/src/gp/src/SEA-MapWidget-Web
+	url = git@github.com:weathernews/SEA-MapWidget-Web.git

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>btn_noicon_base</title>
+    <g id="アイコン" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="relife_frame_pc_MOL" transform="translate(-57.000000, -654.000000)" fill="#FFFFFF">
+            <g id="btn_noicon_base" transform="translate(57.000000, 654.000000)">
+                <circle id="base" cx="15" cy="15" r="15"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

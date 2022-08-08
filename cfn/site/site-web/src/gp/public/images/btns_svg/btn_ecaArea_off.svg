@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>マップボタン/btn_latlon_off</title>
+    <g id="マップボタン/btn_latlon_off" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="base" fill-opacity="0.5" fill="#FFFFFF" cx="15" cy="15" r="15"></circle>
+        <path d="M24,11.5263158 L15,6 L6,11.5263158 L15,17.0526316 L24,11.5263158 Z M21.6375,11.5263158 L19.1625,13.1052632 L16.2375,11.2105263 L18.6,9.63157895 L21.6375,11.5263158 Z M15,7.42105263 L17.475,8.84210526 L15.1125,10.4210526 L12.6375,8.84210526 L15,7.42105263 Z M8.3625,11.5263158 L11.2875,9.63157895 L13.875,11.2105263 L11.0625,13.1052632 L8.3625,11.5263158 Z M15.1125,12 L17.925,13.7368421 L15,15.4736842 L12.3,13.8947368 L15.1125,12 Z M15,19.4210526 L9.4875,16.1052632 L6,18.3157895 L15,24 L24,18.3157895 L20.5125,16.1052632 L15,19.4210526 Z" id="latlon" fill="#8D949A" fill-rule="nonzero"></path>
+    </g>
+</svg>

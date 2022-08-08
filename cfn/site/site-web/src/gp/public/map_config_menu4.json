@@ -1,0 +1,53 @@
+{
+  "theme": "light",
+  "map": {
+    "center": {
+      "lng": 0,
+      "lat": 0
+    },
+    "zoom": 0.7,
+    "maxZoom": 10
+  },
+  "layer": [
+    {
+      "name": "Graticule",
+      "title": "Graticule"
+    },
+    {
+      "name": "Cyclone",
+      "title": "Cyclone"
+    },
+    {
+      "name": "Current",
+      "title": "Current"
+    },
+    {
+      "name": "Wind",
+      "title": "Wind"
+    },
+    {
+      "name": "WxChart",
+      "title": "Pressure Pattern"
+    },
+    {
+      "name": "Wave",
+      "title": "Wave"
+    },
+    {
+      "name": "RestrictionArea",
+      "title": "ECA / Loadline"
+    },
+    {
+      "name": "Ice",
+      "title": "Iceberg Concentration"
+    },
+    {
+      "name": "ERRM",
+      "title": "Enroute Risk Monitoring"
+    },
+    {
+      "name": "OC",
+      "title": "Ocean/Coastal Storm"
+    }
+  ]
+}
