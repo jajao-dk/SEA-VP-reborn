@@ -7,7 +7,7 @@ export default async function calcCII (arrObj) {
   const year = d.getUTCFullYear()
 
   // 本運用リリース時はドメインを揃える
-  const isB01 = location.host.match(/b01/)
+  const isB01 = location.hostname.match(/vp-b01.weathernews.com/)
   let ciiCalcUrl = ''
   if (isB01) {
     ciiCalcUrl = 'https://b01-cii.seapln-osr.prod-aws.wni.com/v1/cii-calc'
