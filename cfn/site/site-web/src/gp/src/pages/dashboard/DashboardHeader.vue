@@ -31,7 +31,7 @@ watch(toRef(route, 'name'), () => { store.close() })
             >
               <div>
                 <img
-                  src="/Weathernews_logo.svg"
+                  src="/Weathernews_logo_blue.svg"
                   class="h-10"
                 >
               </div>
