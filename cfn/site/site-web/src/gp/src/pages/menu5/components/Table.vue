@@ -154,7 +154,7 @@ const createTable = async (legData) => {
       setting: plan.setting,
       route: plan.route_name,
       eta: plan.eta_lt,
-      co2: Math.round(Number(plan.co2)),
+      co2: (Math.round(Number(plan.co2))).toLocaleString(),
       cii: plan.cii_rank,
       remain_dist: (plan.distance.remain).toLocaleString(),
       entire_dist: (plan.distance.entire).toLocaleString(),
@@ -203,9 +203,9 @@ headers.value = [
   { text: 'Est. FOC', value: 'est_foc', sortable: true, width: 60 },
   { text: 'Bunker cost', value: 'bunker_cost', width: 60 },
   { text: 'Hire cost', value: 'hire_cost', width: 60 },
-  { text: 'Total cost', value: 'total_cost', width: 60 },
+  { text: 'Total cost', value: 'total_cost', width: 70 },
   { text: 'Daily cost', value: 'daily_cost', width: 60 },
-  { text: 'Entire cost', value: 'entire_cost', width: 60 }//,
+  { text: 'Entire cost', value: 'entire_cost', width: 70 }//,
   // { text: 'EDIT', value: 'operation', width: 50 }
 ]
 

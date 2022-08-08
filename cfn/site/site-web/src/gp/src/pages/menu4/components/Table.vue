@@ -100,7 +100,7 @@ const props = defineProps({
   customerId: { type: String, default: '' },
   errmVessels: { type: Object, default: () => { } },
   tableFocusVessel: { type: String, default: '' },
-  load: {type: Boolean, dafault: false}
+  load: { type: Boolean, dafault: false }
 })
 
 const { customerId, errmVessels, tableFocusVessel, load } = toRefs(props)
@@ -244,7 +244,7 @@ const createTable = async (errmVessels) => {
       total_dogo: (Math.round(Number(latest.total_dogo) * 10) / 10).toFixed(1),
       ordered_dogo: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
       cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
-      co2: apiResult.length > 0 ? Math.round(Number(apiResult[0].co2)) : '',
+      co2: apiResult.length > 0 ? (Math.round(Number(apiResult[0].co2))).toLocaleString() : '',
       bgcolor: 'background-color: transparent'
     }
     items.value.push(tmpRaw)
