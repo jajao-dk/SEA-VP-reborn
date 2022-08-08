@@ -107,8 +107,8 @@ const createTable = async (simDatas) => {
         arr: legInfo.arrival.portcode,
         eta: routeInfos[j].simulation_result.eta,
         days: Math.round(parseFloat(routeInfos[j].simulation_result.at_sea_days) * 10) / 10,
-        dist: Math.round(parseFloat(routeInfos[j].simulation_result.distance) * 10) / 10,
-        co2: apiResult.length > 0 ? Math.round(parseFloat(apiResult[0].co2) * 10) / 10 : '',
+        dist: (Math.round(parseFloat(routeInfos[j].simulation_result.distance))).toLocaleString(),
+        co2: apiResult.length > 0 ? (Math.round(parseFloat(apiResult[0].co2))).toLocaleString() : '',
         cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
         hsfo: Math.round(parseFloat(routeInfos[j].simulation_result.hsfo) * 10) / 10,
         dogo: Math.round(parseFloat(routeInfos[j].simulation_result.lsdogo) * 10) / 10,
@@ -185,7 +185,8 @@ const addVoyageEstimate = () => {
     totalIFO = itemsSelected.value[i].hsfo + totalIFO
     totalLSDOGO = itemsSelected.value[i].dogo + totalLSDOGO
     totalInportDays = itemsSelected.value[i].inport + totalInportDays
-    totalCO2 = itemsSelected.value[i].co2 + totalCO2
+    totalCO2 = parseFloat(itemsSelected.value[i].co2) + totalCO2
+    console.log(totalCO2)
   }
 
   const voyageData = {

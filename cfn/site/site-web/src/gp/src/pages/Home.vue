@@ -31,16 +31,17 @@ onMounted(async () => {
   const token = await getToken()
   const user = await getUser()
   let dashboard
+
+  // Green platform top page -> Emission Dashboard
   const res = await axios.get('/api/v1/quicksight', {
     headers: { Authorization: `Bearer ${token}` },
     params: {
       application: 'GP',
-      content_id: 'ssm',
+      content_id: 'emd',
       customer_id: user.customer_ids?.[0],
       user_name: user.email
     }
   })
-
   const options = {
     url: res.data.EmbedUrl,
     container: container.value,
@@ -51,8 +52,32 @@ onMounted(async () => {
     height: '100%',
     locale: 'en-US'
   }
-
   dashboard = QuickSightEmbedding.embedDashboard(options)
+
+  /*
+  // Green platform top page -> SSM-Lite
+  const res = await axios.get('/api/v1/quicksight', {
+    headers: { Authorization: `Bearer ${token}` },
+    params: {
+      application: 'GP',
+      content_id: 'ssm',
+      customer_id: user.customer_ids?.[0],
+      user_name: user.email
+    }
+  })
+  const options = {
+    url: res.data.EmbedUrl,
+    container: container.value,
+    iframeResizeOnSheetChange: true,
+    printEnabled: true,
+    scrolling: 'auto',
+    width: '100%',
+    height: '100%',
+    locale: 'en-US'
+  }
+  dashboard = QuickSightEmbedding.embedDashboard(options)
+  */
+
   // const reload = () => {
   //     let dashboardVesselParameters = '';
   //     dashboard.getActiveParameterValues(function(value){
