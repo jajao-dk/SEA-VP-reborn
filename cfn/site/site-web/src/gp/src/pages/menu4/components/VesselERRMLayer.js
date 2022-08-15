@@ -427,7 +427,7 @@ export class VesselERRMLayer extends Layer {
       'case',
       ['boolean', ['feature-state', 'selected'], false],
       1,
-      0.5
+      0.3
     ])
 
     // this.map.getSource(`${this.source}Highlight`).setData(this.selectedVessel) // ハイライトするデータを設定
@@ -501,7 +501,7 @@ export class VesselERRMLayer extends Layer {
       'case',
       ['boolean', ['feature-state', 'selected'], false],
       1,
-      0.5
+      0.3
     ])
 
     if (this.visibility === 'visible' && this.errmGeoJSON !== undefined) {

@@ -18,7 +18,7 @@ import LegendPanel from '../../../SEA-MapWidget-Web/cfn/site/site-map/src/map/sr
 // const { getToken, token } = useAuth()
 // console.log(token)
 
-const vesselRouteOn = ref(false)
+const timeSliderOn = ref(false)
 
 const props = defineProps({
   customerId: { type: String, default: '' },
@@ -57,7 +57,7 @@ watch(mapFocusVessel, (newValue) => {
   console.log('FOCUS VESSEL on MAP')
   console.log(newValue)
   layerList.ERRM.content.onClickTable(newValue)
-  vesselRouteOn.value = true
+  timeSliderOn.value = true
 })
 
 // Emits to trigger event to Menu4.vue
@@ -96,12 +96,14 @@ onMounted(async () => {
     const imo = e.detail.data
     console.log(imo)
     emits('mapVesselSelected', imo)
-    vesselRouteOn.value = true
+    timeSliderOn.value = true
+    console.log(timeSliderOn.value)
   })
 
   layerList.ERRM.content.event.addEventListener('cancelRoute', (e) => {
     console.log('cancel route')
-    vesselRouteOn.value = true
+    timeSliderOn.value = false
+    console.log(timeSliderOn.value)
   })
 
   ready.value = true
@@ -118,16 +120,15 @@ onMounted(async () => {
     v-if="ready"
     :layer-list="mapMenuLayerList"
   />
-  <template v-if="vesselRouteOn">
-    <TimeSlider
-      v-if="ready"
-      :layer-list="layerList"
-      :back-hour="360"
-      :futuer-hour="360"
-      :color-mode="props.config.theme"
-      :update-interval-second="0"
-    />
-  </template>
+  <TimeSlider
+    v-if="ready"
+    :layer-list="layerList"
+    :back-hour="360"
+    :futuer-hour="360"
+    :color-mode="props.config.theme"
+    :update-interval-second="0"
+    :time-slider-on="timeSliderOn"
+  />
   <!--SidePanel
     v-if="ready"
     :show="sidePanel.show"

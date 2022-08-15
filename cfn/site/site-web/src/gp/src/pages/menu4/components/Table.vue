@@ -174,6 +174,14 @@ const submitEdit = () => {
   item.weight = editingItem.weight
 }
 
+const formatNumber = (number) => {
+  let value = '-'
+  if (number !== '' && number != null) {
+    value = (Math.round(Number(number) * 10) / 10).toFixed(1)
+  }
+  return value
+}
+
 const createTable = async (errmVessels) => {
   console.log('create table')
   console.log(errmVessels)
@@ -192,6 +200,7 @@ const createTable = async (errmVessels) => {
     const riskFocScore = checkRiskScore(riskFocLevel)
     const totalRiskScore = riskSpdScore + riskRpmScore + riskFocScore
 
+    /*
     const imoNumber = errmVessels[i].imo_num
 
     // ERRMデータからCO2排出量を算出(graph_data)
@@ -216,6 +225,7 @@ const createTable = async (errmVessels) => {
     if (arrObj[0].distance && arrObj[0].co2 && arrObj[0].imoNumber) {
       apiResult = await calcCII(arrObj)
     }
+    */
 
     const tmpRaw = {
       id: i,
@@ -231,29 +241,80 @@ const createTable = async (errmVessels) => {
       riskScore: totalRiskScore,
       laden_ballast: latest.loading_condition,
       priority: latest.voyage_priority,
-      atd: (latest.dep_time_utc).slice(5, 16),
+      departure_port: latest.dep_port,
+      atd: (latest.dep_time_utc).slice(5, 16).replace('/', '-').replace('T', ' '),
       arrival_port: latest.arr_port,
-      eta: (latest.arr_time_utc).slice(5, 16),
-      rta: (latest.req_arr_time_utc).slice(5, 16),
-      speed: (Math.round(Number(latest.average_speed) * 10) / 10).toFixed(1),
-      ordered_speed: (Math.round(Number(latest.ordered_speed) * 10) / 10).toFixed(1),
-      rpm: (Math.round(Number(latest.average_rpm) * 10) / 10).toFixed(1),
-      suggested_rpm: (Math.round(Number(latest.suggested_rpm) * 10) / 10).toFixed(1),
-      total_foc: (Math.round(Number(latest.total_foc) * 10) / 10).toFixed(1),
-      ordered_foc: (Math.round(Number(latest.ordered_foc) * 10) / 10).toFixed(1),
-      total_dogo: (Math.round(Number(latest.total_dogo) * 10) / 10).toFixed(1),
-      ordered_dogo: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
-      cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
-      co2: apiResult.length > 0 ? (Math.round(Number(apiResult[0].co2))).toLocaleString() : '',
+      eta: (latest.arr_time_utc).slice(5, 16).replace('/', '-').replace('T', ' '),
+      rta: (latest.req_arr_time_utc).slice(5, 16).replace('/', '-').replace('T', ' '),
+      // speed: (Math.round(Number(latest.average_speed) * 10) / 10).toFixed(1),
+      speed: formatNumber(latest.average_speed),
+      // ordered_speed: (Math.round(Number(latest.ordered_speed) * 10) / 10).toFixed(1),
+      ordered_speed: formatNumber(latest.ordered_speed),
+      // rpm: (Math.round(Number(latest.average_rpm) * 10) / 10).toFixed(1),
+      rpm: formatNumber(latest.average_rpm),
+      // suggested_rpm: (Math.round(Number(latest.suggested_rpm) * 10) / 10).toFixed(1),
+      suggested_rpm: formatNumber(latest.suggested_rpm),
+      // total_foc: (Math.round(Number(latest.total_foc) * 10) / 10).toFixed(1),
+      total_foc: formatNumber(latest.total_foc),
+      // ordered_foc: (Math.round(Number(latest.ordered_foc) * 10) / 10).toFixed(1),
+      ordered_foc: formatNumber(latest.ordered_foc),
+      // total_dogo: (Math.round(Number(latest.total_dogo) * 10) / 10).toFixed(1),
+      total_dogo: formatNumber(latest.total_dogo),
+      // ordered_dogo: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
+      ordered_dogo: formatNumber(latest.ordered_dogo),
+      // cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
+      cii: '',
+      // co2: apiResult.length > 0 ? (Math.round(Number(apiResult[0].co2))).toLocaleString() : '',
+      co2: '',
       bgcolor: 'background-color: transparent'
     }
     items.value.push(tmpRaw)
   }
   items.value.sort((a, b) => b.riskScore - a.riskScore)
   console.log(items.value)
+
+  for (let i = 0; i < errmVessels.length; i++) {
+    // ERRMデータからCO2排出量を算出(graph_data)
+    const graphData = errmVessels[i].graph_data
+    const arrObj = await calcCO2(graphData, errmVessels[i].imo_num)
+
+    // 距離計算 turf
+    const wayPoints = errmVessels[i].past_waypoint
+    let totalDistance = 0.0
+    for (let i = 0; i < wayPoints.length - 1; i++) {
+      const from = point([parseFloat(wayPoints[i].lon), parseFloat(wayPoints[i].lat)])
+      const to = point([parseFloat(wayPoints[i + 1].lon), parseFloat(wayPoints[i + 1].lat)])
+      const options = { units: 'kilometers' }
+      totalDistance += distance(from, to, options)
+      totalDistance = totalDistance / 1.852
+    }
+    arrObj[0].distance = totalDistance
+
+    // CII計算
+    let apiResult = []
+    console.log(arrObj[0])
+    if (arrObj[0].distance && arrObj[0].co2 && arrObj[0].imoNumber) {
+      apiResult = await calcCII(arrObj)
+    }
+
+    const item = items.value.filter((elem) => {
+      return (elem.imo === errmVessels[i].imo_num)
+    })
+
+    if (item.length === 1) {
+      item[0].co2 = apiResult.length > 0 ? (Math.round(Number(apiResult[0].co2))).toLocaleString() : ''
+      item[0].cii = apiResult.length > 0 ? apiResult[0].cii_rank : ''
+    }
+  }
 }
 
 const checkSpdAlert = (vessel) => {
+  const avgSpd = vessel.latest.average_speed
+  const ordSpd = vessel.latest.ordered_speed
+  const tolSpd = vessel.tolerance_range.speed
+  if (avgSpd === '' || avgSpd === null || ordSpd === '' || ordSpd === null || tolSpd === '' || tolSpd === null) {
+    return './images/white.png'
+  }
   const spd = Number(vessel.latest.average_speed)
   const orderSpd = Number(vessel.latest.ordered_speed)
   const toleSpd = Number(vessel.tolerance_range.speed)
@@ -271,6 +332,12 @@ const checkSpdAlert = (vessel) => {
 }
 
 const checkFocAlert = (vessel) => {
+  const totFoc = vessel.latest.total_foc
+  const ordFoc = vessel.latest.ordered_foc
+  const tolFoc = vessel.tolerance_range.consumption
+  if (totFoc === '' || totFoc === null || ordFoc === '' || ordFoc === null || tolFoc === '' || tolFoc === null) {
+    return './images/white.png'
+  }
   const foc = Number(vessel.latest.total_foc)
   const orderFoc = Number(vessel.latest.ordered_foc)
   const toleFoc = Number(vessel.tolerance_range.consumption)
@@ -288,6 +355,12 @@ const checkFocAlert = (vessel) => {
 }
 
 const checkRpmAlert = (vessel) => {
+  const avgRpm = vessel.latest.average_rpm
+  const ordRpm = vessel.latest.suggested_rpm
+  const tolRpm = vessel.tolerance_range.rpm
+  if (avgRpm === '' || avgRpm === null || ordRpm === '' || ordRpm === null || tolRpm === '' || tolRpm === null) {
+    return './images/white.png'
+  }
   const rpm = Number(vessel.latest.average_rpm)
   const orderRpm = Number(vessel.latest.suggested_rpm)
   const toleRpm = Number(vessel.tolerance_range.rpm)
@@ -323,20 +396,21 @@ headers.value = [
   { text: 'FOC', value: 'riskFoc', fixed: true, width: 50 },
   { text: 'L/B', value: 'laden_ballast', width: 30 },
   { text: 'Priority', value: 'priority', width: 110 },
-  { text: 'ATD', value: 'atd', sortable: true, width: 95 },
-  { text: 'Arrival port', value: 'arrival_port', width: 100 },
-  { text: 'ETA', value: 'eta', width: 95 },
-  { text: 'RTA', value: 'rta', width: 95 },
+  { text: 'Dep. port', value: 'departure_port', width: 100 },
+  { text: 'ATD[UTC]', value: 'atd', sortable: true, width: 95 },
+  { text: 'Arr. port', value: 'arrival_port', width: 100 },
+  { text: 'ETA[UTC]', value: 'eta', width: 95 },
+  { text: 'RTA[UTC]', value: 'rta', width: 95 },
   { text: 'CO2', value: 'co2', width: 50 },
   { text: 'CII', value: 'cii', sortable: true, width: 50 },
-  { text: 'Speed', value: 'speed', width: 50 },
-  { text: 'target', value: 'ordered_speed', sortable: true, width: 50 },
+  { text: 'Spd [kts]', value: 'speed', width: 50 },
+  { text: 'Spd target', value: 'ordered_speed', sortable: true, width: 50 },
   { text: 'RPM', value: 'rpm', width: 50 },
-  { text: 'target', value: 'suggested_rpm', width: 50 },
-  { text: 'FOC', value: 'total_foc', width: 50 },
-  { text: 'target', value: 'ordered_foc', sortable: true, width: 50 },
-  { text: 'DO/GO', value: 'total_dogo', width: 50 },
-  { text: 'target', value: 'ordered_dogo', sortable: true, width: 50 }// ,
+  { text: 'RPM target', value: 'suggested_rpm', width: 50 },
+  { text: 'FOC [mt]', value: 'total_foc', width: 50 },
+  { text: 'FOC target', value: 'ordered_foc', sortable: true, width: 50 },
+  { text: 'DO/GO [mt]', value: 'total_dogo', width: 50 },
+  { text: 'DO/GO target', value: 'ordered_dogo', sortable: true, width: 50 }// ,
   // { text: 'Edit', value: 'operation', width: 50 }
 ]
 

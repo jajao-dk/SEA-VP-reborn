@@ -3,7 +3,6 @@
     id="app"
     class="allpane"
   >
-
     <div class="mappane">
       <Map
         v-if="authorized"
@@ -43,13 +42,14 @@ import { loadMapConfig } from '../../scripts/mapConfig.js'
 import Table from './components/Table.vue'
 import Map from './components/Map.vue'
 import { useAuth } from '../../plugins/auth'
+import values from '../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/scripts/values'
 import * as QuickSightEmbedding from 'amazon-quicksight-embedding-sdk'
 import {
   set as gtagSet,
   pageview as gtagPageview,
   optIn as gtagOptin,
   event as gtagEvent,
-  customMap as gtagCustomMap,
+  customMap as gtagCustomMap
 } from 'vue-gtag'
 
 // Common parameters
@@ -61,6 +61,7 @@ const pathParams = ref({ shopName: 'vp' })
 const mapFocusVessel = ref('')
 const tableFocusVessel = ref('')
 const loading = ref(false)
+let token
 let dashboard
 
 // For Table & Map components
@@ -83,7 +84,7 @@ window.addEventListener('message', onMessage, false)
 
 onMounted(async () => {
   const user = await getUser()
-  const token = await getToken()
+  token = await getToken()
   customerId.value = user.customer_ids[0]
   // console.log(user.customer_ids[0])
 
@@ -121,26 +122,24 @@ onMounted(async () => {
   }
   dashboard = QuickSightEmbedding.embedDashboard(options)
 
-
   getLatestERRM()
-  
 
   gtagOptin() // gtag.js にて、プラグイン登録時にプラグイン無効化しているので、ここで有効化する
   // GA4用の記述
   gtagSet('user_id', user.email)
-  gtagSet('user_properties', {login_id: user.email, customer_id: user.customer_ids?.[0]})
+  gtagSet('user_properties', { login_id: user.email, customer_id: user.customer_ids?.[0] })
   // UA用の記述
   gtagCustomMap('dimension1', 'login_id')
   gtagCustomMap('dimension2', 'customer_id')
   gtagEvent('custom_dimension', { login_id: user.email, customer_id: user.customer_ids?.[0] })
   // pageview送信
   gtagPageview(location.href)
-
 })
 
 // Emit
 const tableVesselSelected = selectedVessel => {
   console.log('table emit! ' + selectedVessel)
+  mapFocusVessel.value = ''
   mapFocusVessel.value = selectedVessel
   dashboard.setParameters({ IMO: [''] })
   dashboard.setParameters({ IMO: selectedVessel })
@@ -183,6 +182,7 @@ const getLatestERRM = async () => {
   console.log(vesselList)
   // console.log(allVessels)
 
+  /*
   const urlLatest = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_latest_enrouterisk.cgi'
   const body = ['TEST', JSON.stringify({ ships: allVessels, group: '', client: client.value })]
 
@@ -195,6 +195,20 @@ const getLatestERRM = async () => {
     .catch(console.error)
 
   // console.log(errmJson)
+  */
+
+  const errmJson = await fetch(
+      `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/errm.json`
+  ).then((res) => res.json())
+  /*
+  console.log(token)
+
+  const errmJson = await fetch(
+      `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/errm.json.gz`,
+      { headers: { Authorization: `Bearer ${token}` } }
+  ).then((res) => res.json())
+  console.log(errmJson)
+  */
 
   if (errmJson.result === 'OK') {
     const vessels = errmJson.data
@@ -204,6 +218,7 @@ const getLatestERRM = async () => {
     }
     errmVessels.value = vessels
   }
+
   console.log('ERRM end')
   loading.value = false
   console.log(errmVessels.value)
