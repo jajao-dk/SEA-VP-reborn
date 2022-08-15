@@ -136,7 +136,7 @@ headers.value = [
   // { text: 'EDIT', value: 'operation', width: 50 }
 ]
 
-const addVoyageEstimate = () => {
+const addVoyageEstimate = async () => {
   msg.value = ''
   const voyageInfo = {}
   console.log(props.simDatas)
@@ -147,6 +147,7 @@ const addVoyageEstimate = () => {
     const legInfo = props.simDatas[i]
     voyageInfo[legInfo.leg_id] = false
   }
+  const imoNumber = props.simDatas.imo_no
   console.log(voyageInfo)
 
   // Validation
@@ -179,22 +180,37 @@ const addVoyageEstimate = () => {
   let totalLSDOGO = 0
   let totalInportDays = 0
   let totalCO2 = 0
-
+  let totalDist = 0
   for (let i = 0; i < itemsSelected.value.length; i++) {
     totalDays = itemsSelected.value[i].days + totalDays
     totalIFO = itemsSelected.value[i].hsfo + totalIFO
     totalLSDOGO = itemsSelected.value[i].dogo + totalLSDOGO
     totalInportDays = itemsSelected.value[i].inport + totalInportDays
-    totalCO2 = parseFloat(itemsSelected.value[i].co2) + totalCO2
-    console.log(totalCO2)
+    totalCO2 = parseFloat(itemsSelected.value[i].co2.replace(/,/g, '')) + totalCO2
+    totalDist = parseFloat(itemsSelected.value[i].dist.replace(/,/g, '')) + totalDist
   }
+
+  const totalCIIParam = [{
+    distance: totalDist,
+    co2: totalCO2,
+    imoNumber
+  }]
+  console.log(totalCIIParam)
+  // VOYAGE ESTIMATE CII計算
+  let totalCIIRes = []
+  console.log(totalCIIParam[0])
+  if (totalCIIParam[0].distance && totalCIIParam[0].co2 && totalCIIParam[0].imoNumber) {
+    totalCIIRes = await calcCII(totalCIIParam)
+  }
+  console.log(totalCIIRes)
 
   const voyageData = {
     total_days: totalDays,
     total_ifo: totalIFO,
     total_lsdogo: totalLSDOGO,
     total_inport_days: totalInportDays,
-    total_co2: totalCO2
+    total_co2: totalCIIRes[0].co2,
+    total_cii: totalCIIRes[0].cii_rank
   }
 
   console.log('EMIT to MENU3')

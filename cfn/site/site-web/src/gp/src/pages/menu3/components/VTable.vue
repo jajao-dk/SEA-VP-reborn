@@ -421,6 +421,7 @@ const createVTable = (newValue) => {
       items.value[i].dogo = Math.round(newValue.total_lsdogo * 10) / 10
       items.value[i].inport_days = Math.round(newValue.total_inport_days * 10) / 10
       items.value[i].co2 = (Math.round(newValue.total_co2 * 10) / 10).toLocaleString()
+      items.value[i].cii = newValue.total_cii
       items.value[i].used = true
       break
     }
@@ -455,7 +456,7 @@ const createVTable = (newValue) => {
       profit: 0,
       tc_equiv: 0,
       co2: (Math.round(newValue.total_co2 * 10) / 10).toLocaleString(),
-      cii: 0
+      cii: newValue.total_cii
     }
     items.value.push(newItem)
   }
