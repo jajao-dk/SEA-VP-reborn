@@ -92,7 +92,9 @@ import { point } from '@turf/helpers'
 import distance from '@turf/distance'
 import calcCO2 from './calcCO2_errm.js'
 import calcCII from '../../calcCII.js'
+
 const loadingState = ref(false)
+
 // Props
 const props = defineProps({
   customerId: { type: String, default: '' },
@@ -100,13 +102,16 @@ const props = defineProps({
   tableFocusVessel: { type: String, default: '' },
   load: { type: Boolean, dafault: false }
 })
+
 const { customerId, errmVessels, tableFocusVessel, load } = toRefs(props)
+
 watch(errmVessels, (newValue) => {
   console.log('Table draw Handler')
   console.log(newValue)
   console.log(customerId.value)
   createTable(newValue)
 }, { deep: true })
+
 watch(tableFocusVessel, (newValue) => {
   console.log('FOCUS VESSEL on TABLE')
   console.log(newValue)
@@ -121,10 +126,12 @@ watch(tableFocusVessel, (newValue) => {
     }
   }
 })
+
 watch(load, (newValue) => {
   console.log('LOADING CHANGE')
   loadingState.value = newValue
 })
+
 // Emits
 const emits = defineEmits(['tableVesselSelected'])
 const clickRow = (item) => {
@@ -139,6 +146,7 @@ const clickRow = (item) => {
   }
   emits('tableVesselSelected', item.imo)
 }
+
 // Create Table
 const headers = ref([])
 const items = ref([])
@@ -165,6 +173,7 @@ const submitEdit = () => {
   item.height = editingItem.height
   item.weight = editingItem.weight
 }
+
 const formatNumber = (number) => {
   let value = '-'
   if (number !== '' && number != null) {
@@ -172,13 +181,16 @@ const formatNumber = (number) => {
   }
   return value
 }
+
 const createTable = async (errmVessels) => {
   console.log('create table')
   console.log(errmVessels)
   items.value.length = 0
+
   for (let i = 0; i < errmVessels.length; i++) {
     const latest = errmVessels[i].latest
     // console.log(latest.vessel_name)
+
     // Check alert
     const riskSpdLevel = checkSpdAlert(errmVessels[i])
     const riskRpmLevel = checkRpmAlert(errmVessels[i])
@@ -187,11 +199,14 @@ const createTable = async (errmVessels) => {
     const riskRpmScore = checkRiskScore(riskRpmLevel)
     const riskFocScore = checkRiskScore(riskFocLevel)
     const totalRiskScore = riskSpdScore + riskRpmScore + riskFocScore
+
     /*
     const imoNumber = errmVessels[i].imo_num
+
     // ERRMデータからCO2排出量を算出(graph_data)
     const graphData = errmVessels[i].graph_data
     const arrObj = await calcCO2(graphData, imoNumber)
+
     // 距離計算 turf
     const wayPoints = errmVessels[i].past_waypoint
     let totalDistance = 0.0
@@ -203,6 +218,7 @@ const createTable = async (errmVessels) => {
       totalDistance = totalDistance / 1.852
     }
     arrObj[0].distance = totalDistance
+
     // CII計算
     let apiResult = []
     console.log(arrObj[0])
@@ -210,6 +226,7 @@ const createTable = async (errmVessels) => {
       apiResult = await calcCII(arrObj)
     }
     */
+
     const tmpRaw = {
       id: i,
       vesselName: latest.vessel_name,
@@ -255,6 +272,7 @@ const createTable = async (errmVessels) => {
   }
   items.value.sort((a, b) => b.riskScore - a.riskScore)
   console.log(items.value)
+
   for (let i = 0; i < errmVessels.length; i++) {
     const imoNumber = errmVessels[i].imo_num
 
@@ -297,12 +315,14 @@ const createTable = async (errmVessels) => {
     const item = items.value.filter((elem) => {
       return (elem.imo === errmVessels[i].imo_num)
     })
+
     if (item.length === 1) {
       item[0].co2 = apiResult.length > 0 ? (Math.round(Number(apiResult[0].co2))).toLocaleString() : ''
       item[0].cii = apiResult.length > 0 ? apiResult[0].cii_rank : ''
     }
   }
 }
+
 const checkSpdAlert = (vessel) => {
   const avgSpd = vessel.latest.average_speed
   const ordSpd = vessel.latest.ordered_speed

@@ -5,7 +5,6 @@
   >
     <div class="inputpane">
       <div class="inputplane">
-
         <div class="head">
           <b>SIMULATION INPUT</b>
         </div>
@@ -59,7 +58,7 @@
               style="text-align:right"
               type="number"
             >
-          <!--/div>
+            <!--/div>
           <div class="spd-info-box"-->
             &nbsp; Ballast:
             <input
@@ -70,11 +69,10 @@
             >
           </div>
         </div>
-
       </div>
     </div>
 
-    <div class ="voyplanpane">
+    <div class="voyplanpane">
       <b>Voyage plan</b>
       <div class="voy-plan">
         <div class="voy-plan-box">
@@ -99,8 +97,7 @@
                     <option
                       disalbled
                       value=""
-                    >
-                    </option>
+                    />
                     <option
                       v-for="port in portList"
                       :key="port"
@@ -125,7 +122,13 @@
                   </select>
                 </td>
                 <!--td><input v-model="plan.eta"></td-->
-                <td><input v-model="plan.port_days" style="text-align:right" type="number"></td>
+                <td>
+                  <input
+                    v-model="plan.port_days"
+                    style="text-align:right"
+                    type="number"
+                  >
+                </td>
                 <td>
                   <button
                     type="submit"
@@ -146,7 +149,7 @@
         </div>
 
         <div class="voy-plan-box">
-          ETD (UTC):&nbsp;
+          ETD (LT):&nbsp;
           <div class="dtp">
             <Datepicker
               v-model="date"
@@ -166,7 +169,7 @@
       </div>
     </div>
 
-      <!--div class="vessellist">
+    <!--div class="vessellist">
         <simple-type-ahead
           placeholder="Search vessels"
           :items="vesselList"
@@ -174,7 +177,7 @@
           @selectItem="vesselSelectItemEventHandler"
         ></simple-type-ahead>
       </div-->
-      <!--button
+    <!--button
         class="perfbtn"
         type="submit"
         @click="getVoyComData"
@@ -238,7 +241,7 @@ import {
   pageview as gtagPageview,
   optIn as gtagOptin,
   event as gtagEvent,
-  customMap as gtagCustomMap,
+  customMap as gtagCustomMap
 } from 'vue-gtag'
 
 // Common parameters
@@ -289,23 +292,23 @@ const plans = ref([
 ])
 const options = reactive([
   { text: '---', value: '---', id: '---' },
-  { text: 'Laden', value: 'L', id: 'L' },
-  { text: 'Ballast', value: 'B', id: 'B' }
+  { text: 'Loading', value: 'L', id: 'L' },
+  { text: 'Discharging', value: 'B', id: 'B' }
 ])
 const addRaw = (index) => {
   console.log('add button')
   console.log(index)
   // plans.value.push({ dep: '', dep_days: '', arr: '', arr_days: '', lb: 'L', eta: '' })
   plans.value.splice(index + 1, 0, { dep: '', arr: '', port_days: 0, lb: 'L', eta: '' })
-  plans.value[plans.value.length-1].port_days = 0
-  plans.value[plans.value.length-1].lb = '---'
+  plans.value[plans.value.length - 1].port_days = 0
+  plans.value[plans.value.length - 1].lb = '---'
 }
 const delRaw = (index) => {
   console.log('del button')
   console.log('index')
   plans.value.splice(index, 1)
-  plans.value[plans.value.length-1].port_days = '---'
-  plans.value[plans.value.length-1].lb = '---'
+  plans.value[plans.value.length - 1].port_days = '---'
+  plans.value[plans.value.length - 1].lb = '---'
 }
 
 // Simulation result (Table)
@@ -355,7 +358,6 @@ onMounted(async () => {
   gtagEvent('custom_dimension', { login_id: user.email, customer_id: user.customer_ids?.[0] })
   // pageview送信
   gtagPageview(location.href)
-  
 })
 
 // Get vessel list
@@ -410,7 +412,6 @@ const simStartEventHandler = async (item) => {
   console.log(selectedVessel.value)
   console.log(date.value)
   msg.value = ''
-  loading.value = true
 
   // validation
   if (selectedVessel.value === '') {
@@ -486,10 +487,9 @@ const simStartEventHandler = async (item) => {
       msg.value = ('Input port name.')
       return false
     }
-    
+
     const portCode = tmpPort.split(' / ')
     portCodes.push(portCode[2])
-
   }
 
   const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_port_info.cgi?client=' + client.value + '&port_codes=' + JSON.stringify(portCodes)
@@ -521,12 +521,11 @@ const simStartEventHandler = async (item) => {
         to: ''
       },
       timezone: tmpDetail.TZ,
-      passage_portcode: '',
+      passage_portcode: ''
     }
 
     // Insert loading condition and port days excluding the final port
     if (i < portCodes.length - 1) {
-
       // Validation
       console.log(plans.value[i].lb)
       if (plans.value[i].lb !== 'L' && plans.value[i].lb !== 'B') {
@@ -536,7 +535,7 @@ const simStartEventHandler = async (item) => {
       }
 
       console.log(plans.value[i].port_days)
-      if (plans.value[i].port_days === '' ) {
+      if (plans.value[i].port_days === '') {
         console.log('invalid port days.')
         msg.value = 'Input correct port days'
         return false
@@ -548,12 +547,11 @@ const simStartEventHandler = async (item) => {
 
     // Insert in port days excluding the final port
 
-
-
     param.PLAN.port_rotation.push(tmpJSON)
   }
   console.log(param)
 
+  loading.value = true
   // const url = 'https://tmax.seapln-osr.pt-aws.wni.com/T-Max/TonnageAllocation/api/okamaw-test.cgi'
   const url = 'https://tmax-b01.weathernews.com/T-Max/TonnageAllocation/api/reborn_get_result_analysis_for_tonnageAllocation.cgi'
   const simType = 'plan'
