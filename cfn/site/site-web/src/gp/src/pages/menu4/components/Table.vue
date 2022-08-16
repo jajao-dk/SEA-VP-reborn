@@ -345,6 +345,7 @@ const checkSpdAlert = (vessel) => {
     return './images/white.png'
   }
 }
+
 const checkFocAlert = (vessel) => {
   const totFoc = vessel.latest.total_foc
   const ordFoc = vessel.latest.ordered_foc
@@ -367,6 +368,7 @@ const checkFocAlert = (vessel) => {
     return './images/white.png'
   }
 }
+
 const checkRpmAlert = (vessel) => {
   const avgRpm = vessel.latest.average_rpm
   const ordRpm = vessel.latest.suggested_rpm
@@ -389,6 +391,7 @@ const checkRpmAlert = (vessel) => {
     return './images/white.png'
   }
 }
+
 const checkRiskScore = (item) => {
   if (item === './images/red.png') {
     return 10
@@ -398,6 +401,7 @@ const checkRiskScore = (item) => {
     return 0
   }
 }
+
 // Table headers
 headers.value = [
   { text: 'Vessel name', value: 'vesselName', fixed: true, sortable: true, width: 100 },
@@ -424,6 +428,7 @@ headers.value = [
   { text: 'DO/GO target', value: 'ordered_dogo', sortable: true, width: 50 }// ,
   // { text: 'Edit', value: 'operation', width: 50 }
 ]
+
 </script>
 
 <style>
