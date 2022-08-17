@@ -1,4 +1,4 @@
-export default async function calCO2 (obj, imoNumber) {
+export default async function calCO2 (obj, imoNumber, lastRepTime) {
   const paramArr = []
   console.log('calCO2')
 
@@ -21,20 +21,36 @@ export default async function calCO2 (obj, imoNumber) {
 
   let foCons = 0.0
   let godoCons = 0.0
-  for (let i = 0; i < foArr.length; i++) {
-    if (typeof foArr[i].me === 'number') {
-      foCons += foArr[i].me
+  if (lastRepTime) {
+    for (let i = 0; i < foArr.length; i++) {
+      if (typeof foArr[i].me === 'number') {
+        foCons += foArr[i].me
+      }
+      if (typeof foArr[i].ae === 'number') {
+        foCons += foArr[i].ae
+      }
+      if (typeof foArr[i].other === 'number') {
+        foCons += foArr[i].other
+      }
+      if (foArr[i].date === lastRepTime) {
+        console.log(`total_fo last date: ${foArr[i].date}`)
+        break
+      }
     }
-    if (typeof foArr[i].ae === 'number') {
-      foCons += foArr[i].ae
-    }
-  }
-  for (let i = 0; i < godoArr.length; i++) {
-    if (typeof godoArr[i].me === 'number') {
-      godoCons += godoArr[i].me
-    }
-    if (typeof godoArr[i].ae === 'number') {
-      godoCons += godoArr[i].ae
+    for (let i = 0; i < godoArr.length; i++) {
+      if (typeof godoArr[i].me === 'number') {
+        godoCons += godoArr[i].me
+      }
+      if (typeof godoArr[i].ae === 'number') {
+        godoCons += godoArr[i].ae
+      }
+      if (typeof godoArr[i].other === 'number') {
+        godoCons += godoArr[i].other
+      }
+      if (foArr[i].date === lastRepTime) {
+        console.log(`total_dogo last date: ${foArr[i].date}`)
+        break
+      }
     }
   }
   const consObj = {

@@ -274,9 +274,7 @@ const createTable = async (errmVessels) => {
   console.log(items.value)
 
   for (let i = 0; i < errmVessels.length; i++) {
-    // ERRMデータからCO2排出量を算出(graph_data)
-    const graphData = errmVessels[i].graph_data
-    const arrObj = await calcCO2(graphData, errmVessels[i].imo_num)
+    const imoNumber = errmVessels[i].imo_num
 
     // 距離計算 turf
     const wayPoints = errmVessels[i].past_waypoint
@@ -288,6 +286,22 @@ const createTable = async (errmVessels) => {
       totalDistance += distance(from, to, options)
       totalDistance = totalDistance / 1.852
     }
+
+    // past_waypoint配列の最後のtimeを取得
+    console.log(wayPoints)
+    let lastRepTime = ''
+    // past_waypointが空の場合がある
+    if (wayPoints.length > 0) {
+      lastRepTime = wayPoints[wayPoints.length - 1].info.time
+    }
+
+    // ERRMデータからCO2排出量を算出(graph_data)
+    const graphData = errmVessels[i].graph_data
+    console.log(graphData)
+    console.log(`vessel_name: ${errmVessels[i].latest.vessel_name} / lastRepTime: ${lastRepTime} / totalDistance: ${totalDistance}`)
+    const arrObj = await calcCO2(graphData, imoNumber, lastRepTime)
+
+    // 航海距離を追加
     arrObj[0].distance = totalDistance
 
     // CII計算
@@ -296,6 +310,7 @@ const createTable = async (errmVessels) => {
     if (arrObj[0].distance && arrObj[0].co2 && arrObj[0].imoNumber) {
       apiResult = await calcCII(arrObj)
     }
+    console.log(apiResult)
 
     const item = items.value.filter((elem) => {
       return (elem.imo === errmVessels[i].imo_num)
