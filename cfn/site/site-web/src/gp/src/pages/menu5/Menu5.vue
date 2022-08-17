@@ -4,7 +4,8 @@
     class="allpane"
   >
     <div class="inputpane">
-      <!--div>
+      <div class="inputplane">
+        <!--div>
         Client code:
         <input
           v-model="client"
@@ -20,43 +21,44 @@
           Submit
         </button><br>
       </div-->
-      <div>
-        Vessel name: &nbsp;
-        <select v-model="selectedVessel">
-          <option
-            disalbled
-            value=""
+        <div>
+          Vessel name: &nbsp;
+          <select v-model="selectedVessel">
+            <option
+              disalbled
+              value=""
+            >
+              SELECT
+            </option>
+            <option
+              v-for="vsl in vesselList"
+              :key="vsl.ship_num"
+              :value="vsl"
+            >
+              {{ vsl.ship_name }}
+            </option>
+          </select>&nbsp;
+          <button
+            class="perfbtn"
+            type="submit"
+            @click="getVoyComData"
           >
-            SELECT
-          </option>
-          <option
-            v-for="vsl in vesselList"
-            :key="vsl.ship_num"
-            :value="vsl"
-          >
-            {{ vsl.ship_name }}
-          </option>
-        </select>&nbsp;
-        <button
-          class="perfbtn"
-          type="submit"
-          @click="getVoyComData"
-        >
-          Comparison
-        </button><br><br><br>
-      </div>
+            Comparison
+          </button><br><br><br>
+        </div>
 
-      <table>
-        <tbody>
-          <tr
-            v-for="info in infos"
-            :key="info.label"
-          >
-            <th>{{ info.label }}</th>
-            <td>{{ info.value }}</td>
-          </tr>
-        </tbody>
-      </table>
+        <table>
+          <tbody>
+            <tr
+              v-for="info in infos"
+              :key="info.label"
+            >
+              <th>{{ info.label }}</th>
+              <td>{{ info.value }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="mappane">
@@ -103,7 +105,7 @@ import {
   pageview as gtagPageview,
   optIn as gtagOptin,
   event as gtagEvent,
-  customMap as gtagCustomMap,
+  customMap as gtagCustomMap
 } from 'vue-gtag'
 
 // Common parameters
@@ -159,14 +161,13 @@ onMounted(async () => {
   gtagOptin() // gtag.js にて、プラグイン登録時にプラグイン無効化しているので、ここで有効化する
   // GA4用の記述
   gtagSet('user_id', user.email)
-  gtagSet('user_properties', {login_id: user.email, customer_id: user.customer_ids?.[0]})
+  gtagSet('user_properties', { login_id: user.email, customer_id: user.customer_ids?.[0] })
   // UA用の記述
   gtagCustomMap('dimension1', 'login_id')
   gtagCustomMap('dimension2', 'customer_id')
   gtagEvent('custom_dimension', { login_id: user.email, customer_id: user.customer_ids?.[0] })
   // pageview送信
   gtagPageview(location.href)
-
 })
 
 // Emit
@@ -186,9 +187,14 @@ const getVesselList = async () => {
   }
 
   const osrVessels = await fetch(
+      `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/osr_vessels.json`
+  ).then((res) => res.json())
+  /*
+  const osrVessels = await fetch(
       `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/osr_vessels.json`,
       { headers: { Authorization: `Bearer ${token.value}` } }
   ).then((res) => res.json())
+  */
   console.log(osrVessels)
 
   const list = osrVessels
@@ -376,5 +382,10 @@ body {
   cursor: pointer;
 }
 */
+
+.inputplane {
+  width: 100%;
+  height: 50vh;
+}
 
 </style>

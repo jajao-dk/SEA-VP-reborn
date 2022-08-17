@@ -21,7 +21,7 @@ const store = useStore()
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
         to="/menu3"
       >
-        TAP with CII
+        Voyage Planner with CII
       </router-link>
       <b>Underway</b>
       <router-link

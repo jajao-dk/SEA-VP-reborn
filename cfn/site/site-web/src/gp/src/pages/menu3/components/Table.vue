@@ -105,14 +105,16 @@ const createTable = async (simDatas) => {
         routeId: routeInfos[j].route_id,
         dep: legInfo.departure.portcode,
         arr: legInfo.arrival.portcode,
-        eta: routeInfos[j].simulation_result.eta,
+        eta: (routeInfos[j].simulation_result.eta).slice(5, 16),
         days: Math.round(parseFloat(routeInfos[j].simulation_result.at_sea_days) * 10) / 10,
         dist: (Math.round(parseFloat(routeInfos[j].simulation_result.distance))).toLocaleString(),
         co2: apiResult.length > 0 ? (Math.round(parseFloat(apiResult[0].co2))).toLocaleString() : '',
         cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
         hsfo: Math.round(parseFloat(routeInfos[j].simulation_result.hsfo) * 10) / 10,
         dogo: Math.round(parseFloat(routeInfos[j].simulation_result.lsdogo) * 10) / 10,
-        inport: Math.round(parseFloat(routeInfos[j].simulation_result.in_port_days) * 10) / 10
+        inport: Math.round(parseFloat(routeInfos[j].simulation_result.in_port_days) * 10) / 10,
+        wxfact: routeInfos[j].simulation_result.weather_factor,
+        curfact: routeInfos[j].simulation_result.current_factor
         // hire_cost: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
       }
       items.value.push(tmpRaw)
@@ -122,21 +124,23 @@ const createTable = async (simDatas) => {
 
 // Table headers
 headers.value = [
-  { text: 'LEG', value: 'leg', width: 60, fixed: true },
-  { text: 'DEP', value: 'dep', width: 60, fixed: true },
-  { text: 'ARR', value: 'arr', width: 60, fixed: true },
-  { text: 'ETA(UTC)', value: 'eta', width: 150 },
+  { text: 'LEG', value: 'leg', width: 40, fixed: true },
+  { text: 'DEP', value: 'dep', width: 50, fixed: true },
+  { text: 'ARR', value: 'arr', width: 50, fixed: true },
+  { text: 'ETA(LT)', value: 'eta', width: 100 },
   { text: 'Ocean days', value: 'days', width: 60 },
   { text: 'In port days', value: 'inport', width: 60 },
   { text: 'Dist.[nm]', value: 'dist', width: 60 },
   { text: 'CO2', value: 'co2', width: 50 },
   { text: 'CII', value: 'cii', width: 50 },
   { text: 'HSFO', value: 'hsfo', width: 50 },
-  { text: 'DO/GO', value: 'dogo', width: 50 }//,
+  { text: 'DO/GO', value: 'dogo', width: 50 },
+  { text: 'Weather factor', value: 'wxfact', width: 60 },
+  { text: 'Current factor', value: 'curfact', width: 60 }
   // { text: 'EDIT', value: 'operation', width: 50 }
 ]
 
-const addVoyageEstimate = () => {
+const addVoyageEstimate = async () => {
   msg.value = ''
   const voyageInfo = {}
   console.log(props.simDatas)
@@ -147,6 +151,7 @@ const addVoyageEstimate = () => {
     const legInfo = props.simDatas[i]
     voyageInfo[legInfo.leg_id] = false
   }
+  const imoNumber = props.simDatas.imo_no
   console.log(voyageInfo)
 
   // Validation
@@ -179,22 +184,37 @@ const addVoyageEstimate = () => {
   let totalLSDOGO = 0
   let totalInportDays = 0
   let totalCO2 = 0
-
+  let totalDist = 0
   for (let i = 0; i < itemsSelected.value.length; i++) {
     totalDays = itemsSelected.value[i].days + totalDays
     totalIFO = itemsSelected.value[i].hsfo + totalIFO
     totalLSDOGO = itemsSelected.value[i].dogo + totalLSDOGO
     totalInportDays = itemsSelected.value[i].inport + totalInportDays
-    totalCO2 = parseFloat(itemsSelected.value[i].co2) + totalCO2
-    console.log(totalCO2)
+    totalCO2 = parseFloat(itemsSelected.value[i].co2.replace(/,/g, '')) + totalCO2
+    totalDist = parseFloat(itemsSelected.value[i].dist.replace(/,/g, '')) + totalDist
   }
+
+  const totalCIIParam = [{
+    distance: totalDist,
+    co2: totalCO2,
+    imoNumber
+  }]
+  console.log(totalCIIParam)
+  // VOYAGE ESTIMATE CII計算
+  let totalCIIRes = []
+  console.log(totalCIIParam[0])
+  if (totalCIIParam[0].distance && totalCIIParam[0].co2 && totalCIIParam[0].imoNumber) {
+    totalCIIRes = await calcCII(totalCIIParam)
+  }
+  console.log(totalCIIRes)
 
   const voyageData = {
     total_days: totalDays,
     total_ifo: totalIFO,
     total_lsdogo: totalLSDOGO,
     total_inport_days: totalInportDays,
-    total_co2: totalCO2
+    total_co2: totalCIIRes[0].co2,
+    total_cii: totalCIIRes[0].cii_rank
   }
 
   console.log('EMIT to MENU3')

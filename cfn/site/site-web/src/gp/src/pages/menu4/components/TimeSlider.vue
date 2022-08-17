@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineProps, watch, ref } from 'vue'
+import { computed, defineProps, watch, ref, toRefs } from 'vue'
 import { throttle } from 'lodash'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -14,13 +14,28 @@ const props = defineProps({
   updateIntervalSecond: { type: Number, default: 3600, required: false },
   backHour: { type: Number, default: 360, required: false },
   futureHour: { type: Number, default: 360, required: false },
-  colorMode: { type: String, default: 'dark', required: false }
+  colorMode: { type: String, default: 'dark', required: false },
+  timeSliderOn: { type: Boolean, dafault: false }
 })
+
+const { timeSliderOn } = toRefs(props)
+
+watch(timeSliderOn, (newValue) => {
+  console.log('Time Slider on/off')
+  console.log(newValue)
+  onoff.value = newValue
+  if (!newValue) {
+    currentTime()
+  }
+})
+
+const onoff = ref(false)
 
 const intervalHour = ref(12)
 const index = ref(360)
 const totalHour = props.backHour + props.futureHour
-const now = ref(dayjs().startOf('hour'))
+// const now = ref(dayjs().startOf('hour'))
+const now = ref(dayjs.utc().startOf('day'))
 
 const min = computed(() => now.value.subtract(props.backHour, 'hour'))
 const max = computed(() => now.value.add(props.futureHour, 'hour'))
@@ -108,52 +123,53 @@ if (props.updateIntervalSecond) {
 </script>
 
 <template>
-  <section
-    class="timeSlider"
-    :class="[props.colorMode]"
-  >
-    <div class="timeSlider__top">
-      <div class="timeSlider__rangeTextArea">
-        <p class="timeSlider__rangeText first">
-          {{ minDate }}
-        </p>
-        <div
-          v-show="showCurrentPosition"
-          class="timeSlider__curr_position"
-          :style="{ left: currentPosition }"
-        >
-          <div>Now</div> <div>▲</div>
-        </div>
-        <p class="timeSlider__rangeText last">
-          {{ maxDate }}
-        </p>
-      </div>
-      <input
-        v-model.number="index"
-        type="range"
-        name="range"
-        class="timeSlider__range"
-        :step="intervalHour"
-        min="0"
-        :max="totalHour"
-        @change="changeEvent()"
-      >
-    </div>
-    <div
-      id="timeSlider_bottom"
-      class="timeSlider__bottom"
+  <template v-if="props.timeSliderOn">
+    <section
+      class="timeSlider"
+      :class="[props.colorMode]"
     >
-      <label
-        for="timeSlider__select"
-        class="timeSlider__label"
-      >
-        <select
-          id="timeSlider__select"
-          v-model.number="intervalHour"
-          name=""
-          class="timeSlider__select"
+      <div class="timeSlider__top">
+        <div class="timeSlider__rangeTextArea">
+          <p class="timeSlider__rangeText first">
+            {{ minDate }}
+          </p>
+          <div
+            v-show="showCurrentPosition"
+            class="timeSlider__curr_position"
+            :style="{ left: currentPosition }"
+          >
+            <div>Now</div> <div>▲</div>
+          </div>
+          <p class="timeSlider__rangeText last">
+            {{ maxDate }}
+          </p>
+        </div>
+        <input
+          v-model.number="index"
+          type="range"
+          name="range"
+          class="timeSlider__range"
+          :step="intervalHour"
+          min="0"
+          :max="totalHour"
+          @change="changeEvent()"
         >
-          <!--option
+      </div>
+      <div
+        id="timeSlider_bottom"
+        class="timeSlider__bottom"
+      >
+        <label
+          for="timeSlider__select"
+          class="timeSlider__label"
+        >
+          <select
+            id="timeSlider__select"
+            v-model.number="intervalHour"
+            name=""
+            class="timeSlider__select"
+          >
+            <!--option
             value="1"
             class="timeSlider__option"
           >1h</option>
@@ -165,39 +181,40 @@ if (props.updateIntervalSecond) {
             value="6"
             class="timeSlider__option"
           >6h</option-->
-          <option
-            value="12"
-            class="timeSlider__option"
-          >12h</option>
-          <option
-            value="24"
-            class="timeSlider__option"
-          >24h</option>
-        </select>
-      </label>
-      <div class="timeSlider__buttons">
-        <div
-          class="timeSlider__prev"
-          :class="{ disable: disablePrev }"
-          @click="prevTime()"
-        />
-        <div
-          class="timeSlider__curr"
-          @click="currentTime()"
-        />
-        <div
-          class="timeSlider__next"
-          :class="{ disable: disableNext }"
-          @click="nextTime()"
-        />
+            <option
+              value="12"
+              class="timeSlider__option"
+            >12h</option>
+            <option
+              value="24"
+              class="timeSlider__option"
+            >24h</option>
+          </select>
+        </label>
+        <div class="timeSlider__buttons">
+          <div
+            class="timeSlider__prev"
+            :class="{ disable: disablePrev }"
+            @click="prevTime()"
+          />
+          <div
+            class="timeSlider__curr"
+            @click="currentTime()"
+          />
+          <div
+            class="timeSlider__next"
+            :class="{ disable: disableNext }"
+            @click="nextTime()"
+          />
+        </div>
+        <div id="timeSlider_text">
+          <p class="timeSlider__text">
+            {{ targetDate }}
+          </p>
+        </div>
       </div>
-      <div id="timeSlider_text">
-        <p class="timeSlider__text">
-          {{ targetDate }}
-        </p>
-      </div>
-    </div>
-  </section>
+    </section>
+  </template>
 </template>
 
 <style scoped>

@@ -2,6 +2,7 @@
   <div class="tableplane">
     <EasyDataTable
       show-index
+      height="100%"
       header-background-color="#ddd"
       :fixed-header="true"
       table-height="200"
