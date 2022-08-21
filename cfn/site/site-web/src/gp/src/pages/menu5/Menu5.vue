@@ -5,22 +5,6 @@
   >
     <div class="inputpane">
       <div class="inputplane">
-        <!--div>
-        Client code:
-        <input
-          v-model="client"
-          class="perfin"
-          type="text"
-          placeholder=""
-        >&nbsp;
-        <button
-          class="perfbtn"
-          type="submit"
-          @click="getVesselList"
-        >
-          Submit
-        </button><br>
-      </div-->
         <div>
           Vessel name: &nbsp;
           <select v-model="selectedVessel">
@@ -82,12 +66,13 @@
       />
     </div>
 
-    <!--div class="qspane">
-      <div
-        ref="container"
-        class="h-full"
+    <div class="chartpane">
+      <GChart
+        v-if="authorized"
+        :customer-id="customerId"
+        :cii-data="ciiData"
       />
-    </div-->
+    </div>
   </div>
 </template>
 
@@ -96,6 +81,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { loadMapConfig } from '../../scripts/mapConfig.js'
 import Map from './components/Map.vue'
 import Table from './components/Table.vue'
+import GChart from './components/GChart.vue'
 import { useAuth } from '../../plugins/auth'
 import values from '../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/scripts/values'
 // import axios from 'axios'
@@ -117,16 +103,15 @@ const pathParams = ref({ shopName: 'vp' })
 const mapFocusVessel = ref('')
 const token = ref('')
 
-// Create Info, Table and Map
+// Create Info, Table, Map, Chart
 const infos = ref([])
 const vesselList = ref([])
 const selectedVessel = ref('')
 let legDatas = []
 const legData = ref({})
 const client = ref('')
-
-// QS
-// const container = ref(null)
+let ciiTarget = []
+const ciiData = ref({})
 
 const onMessage = (event) => {
   if (event.origin === location.origin && event.data) {
@@ -152,9 +137,7 @@ onMounted(async () => {
 
   pathParams.value.client = user.customer_ids[0]
   pathParams.value.application = 'ssm'
-  // console.log(pathParams.value)
   authorized.value = true
-  // console.log(authorized.value)
 
   getVesselList()
 
@@ -186,15 +169,18 @@ const getVesselList = async () => {
     return false
   }
 
+  // Fetch list of vessels using OSR/OSR-L
   const osrVessels = await fetch(
       `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/osr_vessels.json`
   ).then((res) => res.json())
+
   /*
   const osrVessels = await fetch(
       `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/osr_vessels.json`,
       { headers: { Authorization: `Bearer ${token.value}` } }
   ).then((res) => res.json())
   */
+
   console.log(osrVessels)
 
   const list = osrVessels
@@ -203,50 +189,19 @@ const getVesselList = async () => {
     if (a.ship_name > b.ship_name) return 1
     return 0
   })
-
   vesselList.value = list
 
-  /*
-  // client.value = 'RIO'
-  // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value
-  // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=menu_id&val=Tonnage'
-  const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=file_name&val=fam_vessel_list'
-  const resp = await fetch(urlSetting)
-  const data = await resp.json()
-  console.log(data)
-  if (data.result === 'OK') {
-    // vesselList.value = data.data
+  // Fetch CIM target data
+  ciiTarget = await fetch(
+      `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/cii-target.json`
+  ).then((res) => res.json())
 
-    // const list = data.data.vessel_list
-    // list.sort(function (a, b) {
-    //  if (a.vessel_name < b.vessel_name) return -1
-    //  if (a.vessel_name > b.vessel_name) return 1
-    //  return 0
-    // })
+  // ciiTarget = await fetch(
+  //    `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/cii-target.json`,
+  //    { headers: { Authorization: `Bearer ${token.value}` } }
+  // ).then((res) => res.json())
 
-    const list = data.data
-    list.sort(function (a, b) {
-      if (a.ship_name < b.ship_name) return -1
-      if (a.ship_name > b.ship_name) return 1
-      return 0
-    })
-
-    // vesselList.value = checkVesselList(list)
-    // checkVesselList(list)
-    vesselList.value = list
-  }
-
-  // const allVessels = []
-  // const allIMOs = []
-  // vesselList.value.map(ship => {
-  //  allVessels.push(ship.ship_name)
-  //  allIMOs.push(ship.imo_num)
-  //  return false
-  // })
-  console.log(vesselList.value)
-  // console.log(allVessels)
-  // console.log(allIMOs)
-  */
+  console.log(ciiTarget)
 }
 
 // Get LEG data
@@ -258,8 +213,6 @@ const getVoyComData = async () => {
 
   // const urlVoyCom = 'https://tmax-b01.weathernews.com/T-Max/VoyageComparison/api/reborn_get_voy_comparison_data.cgi?wnishipnum=' + selectedVessel.value.wnishipnum + '&client=' + client.value
   const urlVoyCom = 'https://tmax-b01.weathernews.com/T-Max/VoyageComparison/api/reborn_get_voy_comparison_data.cgi?wnishipnum=' + selectedVessel.value.ship_num + '&client=' + client.value
-  // const urlLatest = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_latest_enrouterisk.cgi'
-  // const body = ['TEST', JSON.stringify({ ships: allVessels, group: '', client: client.value })]
 
   const resp = await fetch(urlVoyCom)
   const data = await resp.json()
@@ -290,10 +243,12 @@ const getVoyComData = async () => {
     }
     legData.value.imo_number = imoNumber
 
-    console
-
     if (legData.value !== undefined) {
       infos.value = legData.value.voyage_information
+    }
+
+    if (imoNumber !== '') {
+      ciiData.value = ciiTarget[imoNumber]
     }
   } else {
     infos.value.push({ label: 'Voyage No', value: 'CANNOT FIND VOYAGE COMPARISON DATA' })
@@ -308,7 +263,7 @@ const getVoyComData = async () => {
   display: grid;
   height: 100%;
   grid-template-rows: 60% 40%;
-  grid-template-columns: 40% 60%;
+  grid-template-columns: 30% 40% 30%;
 }
 
 .inputpane {
@@ -358,13 +313,13 @@ th,td {
 }
 .tablepane {
   grid-row: 2;
-  grid-column: 1/3;
+  grid-column: 1/4;
   overflow-y: scroll;
   /* overflow-x: scroll; */
 }
-.qspane {
-  grid-row: 1/4;
-  grid-column: 2;
+.chartpane {
+  grid-row: 1;
+  grid-column: 3;
 }
 
 body {
