@@ -45,6 +45,11 @@ function createRouter() {
           name: 'menu5',
           path: 'menu5',
           component: () => import('../pages/menu5/Menu5.vue')
+        },
+        {
+          name: 'menu6',
+          path: 'menu6',
+          component: () => import('../pages/menu6/Menu6.vue')
         }
       ]
     },

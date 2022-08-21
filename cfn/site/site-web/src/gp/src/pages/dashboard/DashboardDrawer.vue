@@ -21,14 +21,14 @@ const store = useStore()
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
         to="/menu3"
       >
-        Voyage Planner with CII
+        Voyage Planner
       </router-link>
       <b>Underway</b>
       <router-link
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
         to="/menu4"
       >
-        ERRM with CII
+        Risk Monotoring
       </router-link>
       <router-link
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
@@ -42,6 +42,12 @@ const store = useStore()
         to="/menu1"
       >
         Emission Dashboard
+      </router-link>
+      <router-link
+        class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+        to="/menu6"
+      >
+        Performance Evaluation
       </router-link>
     </div>
   </div>
