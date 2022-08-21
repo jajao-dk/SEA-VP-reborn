@@ -78,6 +78,8 @@ const createTable = async (simDatas) => {
   items.value.length = 0
   itemsSelected.value.length = 0
   const imoNumber = simDatas.imo_no
+  const inPortFoc = simDatas.inPortFoc
+  const inPortDaysLast = simDatas.inPortDaysLast
 
   for (let i = 0; i < simDatas.length; i++) {
     console.log(i)
@@ -86,6 +88,7 @@ const createTable = async (simDatas) => {
     const routeInfos = simDatas[i].route_infos
 
     for (let j = 0; j < routeInfos.length; j++) {
+      loadingState.value = true
       // CO2計算
       const simResult = routeInfos[j].simulation_result
       const arrObj = await calcCO2(simResult, imoNumber)
@@ -97,6 +100,7 @@ const createTable = async (simDatas) => {
         apiResult = await calcCII(arrObj)
       }
       console.log(apiResult)
+      loadingState.value = false
 
       const tmpRaw = {
         leg: i + 1,
@@ -105,18 +109,28 @@ const createTable = async (simDatas) => {
         routeId: routeInfos[j].route_id,
         dep: legInfo.departure.portcode,
         arr: legInfo.arrival.portcode,
+        lb: legInfo.loading_condition,
         eta: (routeInfos[j].simulation_result.eta).slice(5, 16),
         days: Math.round(parseFloat(routeInfos[j].simulation_result.at_sea_days) * 10) / 10,
+        inportDays: Math.round(parseFloat(routeInfos[j].simulation_result.in_port_days) * 10) / 10,
         dist: (Math.round(parseFloat(routeInfos[j].simulation_result.distance))).toLocaleString(),
         co2: apiResult.length > 0 ? (Math.round(parseFloat(apiResult[0].co2))).toLocaleString() : '',
         cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
+        co2Total: 0,
+        CIITotal: '',
         hsfo: Math.round(parseFloat(routeInfos[j].simulation_result.hsfo) * 10) / 10,
         dogo: Math.round(parseFloat(routeInfos[j].simulation_result.lsdogo) * 10) / 10,
-        inport: Math.round(parseFloat(routeInfos[j].simulation_result.in_port_days) * 10) / 10,
+        inportFoc: Math.round(routeInfos[j].simulation_result.in_port_days * inPortFoc * 10) / 10,
         wxfact: routeInfos[j].simulation_result.weather_factor,
         curfact: routeInfos[j].simulation_result.current_factor
         // hire_cost: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
       }
+
+      if (i === simDatas.length - 1) {
+        tmpRaw.inportDays = Math.round((routeInfos[j].simulation_result.in_port_days + inPortDaysLast) * 10) / 10
+        tmpRaw.inportFoc = Math.round((routeInfos[j].simulation_result.in_port_days + inPortDaysLast) * inPortFoc * 10) / 10
+      }
+
       items.value.push(tmpRaw)
     }
   }
@@ -127,14 +141,18 @@ headers.value = [
   { text: 'LEG', value: 'leg', width: 40, fixed: true },
   { text: 'DEP', value: 'dep', width: 50, fixed: true },
   { text: 'ARR', value: 'arr', width: 50, fixed: true },
+  { text: 'L/B', value: 'lb', width: 50 },
   { text: 'ETA(LT)', value: 'eta', width: 100 },
   { text: 'Ocean days', value: 'days', width: 60 },
-  { text: 'In port days', value: 'inport', width: 60 },
+  { text: 'In port days', value: 'inportDays', width: 60 },
   { text: 'Dist.[nm]', value: 'dist', width: 60 },
-  { text: 'CO2', value: 'co2', width: 50 },
-  { text: 'CII', value: 'cii', width: 50 },
-  { text: 'HSFO', value: 'hsfo', width: 50 },
-  { text: 'DO/GO', value: 'dogo', width: 50 },
+  { text: 'CO2 (sea)', value: 'co2', width: 50 },
+  { text: 'CII (sea)', value: 'cii', width: 50 },
+  { text: 'CO2 (total)', value: 'co2Total', width: 50 },
+  { text: 'CII (total)', value: 'ciiTotal', width: 50 },
+  { text: 'HSFO [mt]', value: 'hsfo', width: 50 },
+  { text: 'DO/GO [mt]', value: 'dogo', width: 50 },
+  { text: 'In port [mt]', value: 'inportFoc', width: 60 },
   { text: 'Weather factor', value: 'wxfact', width: 60 },
   { text: 'Current factor', value: 'curfact', width: 60 }
   // { text: 'EDIT', value: 'operation', width: 50 }
@@ -185,13 +203,18 @@ const addVoyageEstimate = async () => {
   let totalInportDays = 0
   let totalCO2 = 0
   let totalDist = 0
+  // include in port consumption
+  let totalInportFoc = 0
+  let totalCO2Total = 0
   for (let i = 0; i < itemsSelected.value.length; i++) {
     totalDays = itemsSelected.value[i].days + totalDays
     totalIFO = itemsSelected.value[i].hsfo + totalIFO
     totalLSDOGO = itemsSelected.value[i].dogo + totalLSDOGO
-    totalInportDays = itemsSelected.value[i].inport + totalInportDays
+    totalInportDays = itemsSelected.value[i].inportDays + totalInportDays
     totalCO2 = parseFloat(itemsSelected.value[i].co2.replace(/,/g, '')) + totalCO2
     totalDist = parseFloat(itemsSelected.value[i].dist.replace(/,/g, '')) + totalDist
+    totalInportFoc = itemsSelected.value[i].inportFoc + totalInportFoc
+    totalCO2Total = itemsSelected.value[i].co2Total + totalCO2Total
   }
 
   const totalCIIParam = [{
@@ -214,7 +237,10 @@ const addVoyageEstimate = async () => {
     total_lsdogo: totalLSDOGO,
     total_inport_days: totalInportDays,
     total_co2: totalCIIRes[0].co2,
-    total_cii: totalCIIRes[0].cii_rank
+    total_cii: totalCIIRes[0].cii_rank,
+    total_inport_foc: totalInportFoc,
+    total_co2_total: totalCO2Total,
+    total_cii_total: ''
   }
 
   console.log('EMIT to MENU3')
