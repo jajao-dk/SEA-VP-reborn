@@ -28,7 +28,7 @@ const store = useStore()
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
         to="/menu4"
       >
-        Risk Monotoring
+        Risk Monitoring
       </router-link>
       <router-link
         class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
