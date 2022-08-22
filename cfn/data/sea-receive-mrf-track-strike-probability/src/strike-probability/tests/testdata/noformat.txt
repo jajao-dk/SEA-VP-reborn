@@ -1,0 +1,72 @@
+WN
+announced=2022/04/04 18:00:00 GMT
+created=2022/04/05 00:11:07 GMT
+header_version=1.00
+revision=1
+data_name=WNI_MRF_TRACK_PROB_polygon
+global_id=0200
+category=6000
+data_id=11024694
+data_size=189615
+header_comment=prob_GPLC2022023SHSP_20220404.18_20220404.12.json
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "value": "5-10",
+                "content": 5
+            },
+            "geometry": {
+                "type": "MultiPolygon",
+                "coordinates": [
+                    [
+
+{
+    "type": "Feature",
+    "properties": {
+        "value": "60-70",
+        "content": 60
+    },
+    "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+            [
+                [
+                    [
+                        163.4,
+                        -23.558
+                    ],
+                    [
+                        163.381,
+                        -23.5
+                    ],
+                    [
+                        163.378,
+                        -23.4
+                    ],
+                    [
+                        163.365,
+                        -23.3
+                    ],
+                    [
+                        163.3,
+                        -23.24
+                    ]
+                ]
+            ]
+        ]
+    }
+}
+                    ]
+                ]
+
+            }
+            
+
+            }
+        ]
+
+}
+

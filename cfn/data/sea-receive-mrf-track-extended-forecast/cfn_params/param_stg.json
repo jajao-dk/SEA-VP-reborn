@@ -1,0 +1,9 @@
+{
+  "Parameters": {
+      "LogLevel": "info",
+      "ReceiveBucket": "sea-dev-mapwidget"
+  },
+  "Tags": {
+      "map-migrated": "d-server-02u0a4y8g4omh6"
+  }
+}
