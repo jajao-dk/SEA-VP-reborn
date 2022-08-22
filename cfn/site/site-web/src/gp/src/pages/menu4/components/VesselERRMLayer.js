@@ -165,38 +165,6 @@ export class VesselERRMLayer extends Layer {
       id: `${this.layer}Symbol`,
       source: `${this.source}Route`,
       type: 'circle',
-      /*
-      layout: {
-        'icon-image': 'vesselSymbol', // アイコンは、先に読み込んで置く
-        'icon-allow-overlap': true,
-        'icon-rotate': ['get', 'heading'],
-        'icon-size': ['interpolate', ['linear'], ['zoom'], 1, 2, 4, 4],
-        'icon-pitch-alignment': 'map', // 3D表示や回転をしたときにも、地図に対して角度が保たれるように
-        'icon-rotation-alignment': 'map', // 3D表示や回転をしたときにも、地図に対して角度が保たれるように
-        'icon-ignore-placement': true, // 他のアイコンを間引いてしまわないように
-        'text-field': [
-          'format',
-          ['get', 'vessel_name'],
-          { 'font-scale': 0.6 }
-          // '\n',
-          // {},
-          // ['downcase', ['get', 'imo']],
-          // { 'font-scale': 0.6 }
-        ],
-        'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-        // 'text-radial-offset': 0.9,
-        'text-radial-offset': [
-          'interpolate',
-          ['linear'],
-          ['zoom'],
-          1,
-          0.6,
-          3,
-          1.2
-        ],
-        'text-justify': 'auto',
-        visibility: this.visibility
-      },*/
       paint: {
         'circle-radius': {
           base: 1,
@@ -333,49 +301,6 @@ export class VesselERRMLayer extends Layer {
   async init() {
     super.init()
     console.log('INITIALIZE')
-    /*
-    await Promise.all([
-      this.loadIconImage('./images/ship_white.svg', 'vesselSymbol'),
-      this.loadIconImage('./images/ship_red.svg', 'vesselSymbolRed'),
-      this.loadIconImage('./images/ship_yellow.svg', 'vesselSymbolYellow')
-    ])
-    */
-
-    // initialize data list
-    // if (this.options.data.latest !== undefined) {
-    /*
-    this.vesselListGeoJSON = this.options.data.latest
-    console.log(this.options.data.latest)
-    this.map.getSource(this.source).setData(this.options.data.latest)
-    */
-    //if (this.selectedVessel) {
-    // this.selectedVessel = this.errmGeoJSON.latest.features[0]
-    /*
-    this.map.setPaintProperty(this.layer, 'icon-opacity', 0.5)
-    this.map.setPaintProperty(this.layer, 'icon-opacity', 1.0)
-    this.map.setFeatureState(
-      {
-        source: this.source,
-        id: this.selectedVessel.properties.imo
-      },
-      { selected: true }
-    )
-    */
-    // this.map.getSource(`${this.source}Highlight`).setData(this.selectedVessel)
-    /*
-    const tmpRoute = this.errmGeoJSON[this.selectedVessel.properties.imo]
-    tmpRoute.features.forEach((feature) => {
-      convertCross180Coordinates(feature.geometry.coordinates)
-    })
-    this.map.getSource(`${this.source}Route`).setData(tmpRoute)
-    */
-    /*
-      this.map
-        .getSource(`${this.source}Highlight`)
-        .setData(featureCollection([]))
-        */
-    //}
-
     this.initialized = true
   }
 
@@ -658,14 +583,6 @@ export class VesselERRMLayer extends Layer {
         this.yellowVessels.push(imoNum)
       }
 
-      /*
-      const alert = this.checkAlert(errmVessels[i])
-      if (alert === 'red') {
-        this.redVessels.push(imoNum)
-      } else if (alert === 'yellow') {
-        this.yellowVessels.push(imoNum)
-      }
-      */
       this.paintVessels()
 
       // Latest positions
@@ -884,36 +801,14 @@ export class VesselERRMLayer extends Layer {
         value = tmpTime + 'Z'
       }
     }
-    console.log(value)
     return Date.parse(value) / 1000
   }
-
-  /*
-  checkAlert(vessel) {
-    const spd = Number(vessel.latest.average_speed)
-    const targetSpd = Number(vessel.latest.ordered_speed)
-    const spdWarn = 2
-    const spdCaut = 1
-    if (targetSpd === 0) {
-      return 'white'
-    } else if (spd < targetSpd - spdWarn || spd > targetSpd + spdWarn) {
-      return 'red'
-    } else if (spd < targetSpd - spdCaut || spd > targetSpd + spdCaut) {
-      return 'yellow'
-    } else {
-      return 'white'
-    }
-  }
-  */
 
   checkSpdAlert = (vessel) => {
     // Check Speed alert
     const spd = Number(vessel.latest.average_speed)
     const orderSpd = Number(vessel.latest.ordered_speed)
     const toleSpd = Number(vessel.tolerance_range.speed)
-    // console.log(spd)
-    // console.log(orderSpd)
-    // console.log(toleSpd)
     if (orderSpd > 0 && toleSpd > 0) {
       if (spd < orderSpd - toleSpd) {
         return 10
@@ -932,9 +827,6 @@ export class VesselERRMLayer extends Layer {
     const foc = Number(vessel.latest.total_foc)
     const orderFoc = Number(vessel.latest.ordered_foc)
     const toleFoc = Number(vessel.tolerance_range.consumption)
-    // console.log(foc)
-    // console.log(orderFoc)
-    // console.log(toleFoc)
     if (orderFoc > 0 && toleFoc > 0) {
       if (foc > orderFoc + toleFoc) {
         return 10
@@ -953,9 +845,6 @@ export class VesselERRMLayer extends Layer {
     const rpm = Number(vessel.latest.average_rpm)
     const orderRpm = Number(vessel.latest.suggested_rpm)
     const toleRpm = Number(vessel.tolerance_range.rpm)
-    // console.log(rpm)
-    // console.log(orderRpm)
-    // console.log(toleRpm)
     if (orderRpm > 0 && toleRpm > 0) {
       if (rpm > orderRpm + toleRpm || rpm < orderRpm - toleRpm) {
         return 10
@@ -973,45 +862,6 @@ export class VesselERRMLayer extends Layer {
   }
 
   paintVessels() {
-    console.log('PAINT VESSELS')
-
-    // paint only selected vessels
-    /*
-    for (const tmpAlert in alertList) {
-      if (
-        alertList[tmpAlert].visible === true &&
-        alertList[tmpAlert].using === true
-      ) {
-        if (alertList[tmpAlert].color === 'red') {
-          console.log('RED: ' + alertList[tmpAlert].name)
-          const tmparr1 = this.alertVessels[alertList[tmpAlert].name]
-          const tmparr2 = displayRedVessels.concat(tmparr1)
-          displayRedVessels = [...new Set(tmparr2)] // remove duplicates
-        } else if (alertList[tmpAlert].color === 'yellow') {
-          console.log('YELLOW: ' + alertList[tmpAlert].name)
-          const tmparr1 = this.alertVessels[alertList[tmpAlert].name]
-          const tmparr2 = displayYellowVessels.concat(tmparr1)
-          displayYellowVessels = [...new Set(tmparr2)] // remove duplicates
-        }
-      }
-    }
-    */
-    // }
-
-    // Vessels included in both Red and Yellow
-    /*
-    const both = displayRedVessels.filter((value) =>
-      displayYellowVessels.includes(value)
-    )
-
-    // Remove both from Yellow to make them unique
-    displayYellowVessels = [...displayYellowVessels, ...both].filter(
-      (value) => !displayYellowVessels.includes(value) || !both.includes(value)
-    )
-    */
-    // console.log('Red: ' + JSON.stringify(this.redVessels))f
-    // console.log('Yellow: ' + JSON.stringify(this.yellowVessels))
-
     // Modefy vessel layer properties
     const vesseltypeExpressions = [
       'match',

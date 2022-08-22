@@ -53,7 +53,7 @@ const hideTooltip = (text) => {
 <style>
 #layers {
   position: absolute;
-  top: 30px;
+  top: 10px;
   left: 20px;
   background-color: rgba(200, 200, 200, 0.8);
   z-index: 1;
