@@ -285,7 +285,7 @@ input {
 
 select {
   border: 2px solid blue;
-  width: 100px;
+  width: 150px;
 }
 
 button {

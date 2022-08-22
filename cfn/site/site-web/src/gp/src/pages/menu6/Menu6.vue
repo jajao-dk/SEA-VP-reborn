@@ -1,8 +1,6 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
-// import axios from 'axios'
 import { useAuth } from '../../plugins/auth'
-// import * as QuickSightEmbedding from 'amazon-quicksight-embedding-sdk'
 import { Chart, Grid, Line } from 'vue3-charts'
 import Vue3EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
@@ -509,7 +507,7 @@ input {
 
 select {
   border: 2px solid blue;
-  width: 100px;
+  width: 150px;
 }
 
 button {
