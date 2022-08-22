@@ -93,9 +93,19 @@ const createTable = async (simDatas) => {
       const simResult = routeInfos[j].simulation_result
       const arrObj = await calcCO2(simResult, imoNumber)
 
+      // in portでのCO2排出量(DOGOとして計算する)
+      const inPortCO2 = inPortFoc * 3.206 * simResult.in_port_days
+      console.log(inPortCO2)
+      // index = 1にin portを加えた要素として追加
+      arrObj[1] = {
+        co2: arrObj[0].co2 + inPortCO2,
+        distance: arrObj[0].distance,
+        imoNumber: arrObj[0].imoNumber
+      }
+      console.log(arrObj)
+
       // CII計算
       let apiResult = []
-      console.log(arrObj[0])
       if (arrObj[0].distance && arrObj[0].co2 && arrObj[0].imoNumber) {
         apiResult = await calcCII(arrObj)
       }
@@ -116,8 +126,8 @@ const createTable = async (simDatas) => {
         dist: (Math.round(parseFloat(routeInfos[j].simulation_result.distance))).toLocaleString(),
         co2: apiResult.length > 0 ? (Math.round(parseFloat(apiResult[0].co2))).toLocaleString() : '',
         cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
-        co2Total: 0,
-        CIITotal: '',
+        co2Total: apiResult[1] ? (Math.round(parseFloat(apiResult[1].co2))).toLocaleString() : '',
+        ciiTotal: apiResult[1] ? apiResult[1].cii_rank : '',
         hsfo: Math.round(parseFloat(routeInfos[j].simulation_result.hsfo) * 10) / 10,
         dogo: Math.round(parseFloat(routeInfos[j].simulation_result.lsdogo) * 10) / 10,
         inportFoc: Math.round(routeInfos[j].simulation_result.in_port_days * inPortFoc * 10) / 10,
@@ -214,14 +224,21 @@ const addVoyageEstimate = async () => {
     totalCO2 = parseFloat(itemsSelected.value[i].co2.replace(/,/g, '')) + totalCO2
     totalDist = parseFloat(itemsSelected.value[i].dist.replace(/,/g, '')) + totalDist
     totalInportFoc = itemsSelected.value[i].inportFoc + totalInportFoc
-    totalCO2Total = itemsSelected.value[i].co2Total + totalCO2Total
+    totalCO2Total = parseFloat(itemsSelected.value[i].co2Total.replace(/,/g, '')) + totalCO2Total
   }
 
-  const totalCIIParam = [{
-    distance: totalDist,
-    co2: totalCO2,
-    imoNumber
-  }]
+  const totalCIIParam = [
+    {
+      distance: totalDist,
+      co2: totalCO2,
+      imoNumber
+    },
+    {
+      distance: totalDist,
+      co2: totalCO2Total,
+      imoNumber
+    }
+  ]
   console.log(totalCIIParam)
   // VOYAGE ESTIMATE CII計算
   let totalCIIRes = []
@@ -239,8 +256,8 @@ const addVoyageEstimate = async () => {
     total_co2: totalCIIRes[0].co2,
     total_cii: totalCIIRes[0].cii_rank,
     total_inport_foc: totalInportFoc,
-    total_co2_total: totalCO2Total,
-    total_cii_total: ''
+    total_co2_total: totalCIIRes[1].co2,
+    total_cii_total: totalCIIRes[1].cii_rank
   }
 
   console.log('EMIT to MENU3')
