@@ -483,7 +483,9 @@ const createVTable = (newValue) => {
       profit: 0,
       tc_equiv: 0,
       co2: (Math.round(newValue.total_co2 * 10) / 10).toLocaleString(),
-      cii: newValue.total_cii
+      cii: newValue.total_cii,
+      co2_total: (Math.round(newValue.total_co2_total * 10) / 10).toLocaleString(),
+      cii_tatal: newValue.total_cii_total
     }
     items.value.push(newItem)
   }
