@@ -249,9 +249,12 @@ const getVoyComData = async () => {
 
     if (imoNumber !== '') {
       ciiData.value = ciiTarget[imoNumber]
+    } else {
+      console.log('CII no imo number is found.')
     }
   } else {
     infos.value.push({ label: 'Voyage No', value: 'CANNOT FIND VOYAGE COMPARISON DATA' })
+    ciiData.value = {}
   }
   console.log(infos.value)
 }
@@ -261,9 +264,10 @@ const getVoyComData = async () => {
 <style scoped>
 .allpane {
   display: grid;
+  width: 100%;
   height: 100%;
   grid-template-rows: 60% 40%;
-  grid-template-columns: 30% 40% 30%;
+  grid-template-columns: 27% 40% 33%;
 }
 
 .inputpane {

@@ -8,6 +8,7 @@
       table-height="200"
       :headers="headers"
       :items="items"
+      :loading="loadingState"
       table-class-name="customize-table"
       @click-row="clickRow"
     >
@@ -44,7 +45,7 @@
         ok
       </button>
     </div>
-    <div>{{ itemsSelected }}</div>
+    <!--div>{{ itemsSelected }}</div-->
   </div>
 </template>
 
@@ -74,6 +75,7 @@ const headers = ref([])
 const items = ref([])
 const itemsSelected = ref([])
 const isEditing = ref(false)
+const loadingState = ref(false)
 const editingItem = reactive({
   height: '',
   weight: 0,
@@ -100,6 +102,8 @@ const createTable = async (legData) => {
   if (legData === undefined) {
     return false
   }
+
+  loadingState.value = true
 
   // CO2計算
   const arrObj = await calcCO2(legData)
@@ -179,6 +183,8 @@ const createTable = async (legData) => {
     }
     items.value.push(tmpRaw)
   }
+
+  loadingState.value = false
 }
 
 // Table headers
