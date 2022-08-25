@@ -182,6 +182,26 @@ const formatNumber = (number) => {
   return value
 }
 
+const calcEnvIndex = async (arrObj, items, errmVessel) => {
+  console.log('calcEnvIndex')
+  let apiResult = []
+  console.log(arrObj[0])
+  if (arrObj[0].distance && arrObj[0].co2 && arrObj[0].imoNumber) {
+    apiResult = await calcCII(arrObj)
+  }
+
+  const item = items.value.filter((elem) => {
+    return (elem.imo === errmVessel.imo_num)
+  })
+
+  if (item.length === 1) {
+    item[0].co2 = apiResult.length > 0 ? (Math.round(Number(apiResult[0].co2))).toLocaleString() : ''
+    item[0].cii = apiResult.length > 0 ? apiResult[0].cii_rank : ''
+    console.log(apiResult)
+    console.log(item)
+  }
+}
+
 const createTable = async (errmVessels) => {
   console.log('create table')
   console.log(errmVessels)
@@ -299,27 +319,11 @@ const createTable = async (errmVessels) => {
     const graphData = errmVessels[i].graph_data
     console.log(graphData)
     console.log(`vessel_name: ${errmVessels[i].latest.vessel_name} / lastRepTime: ${lastRepTime} / totalDistance: ${totalDistance}`)
-    const arrObj = await calcCO2(graphData, imoNumber, lastRepTime)
+    const arrObj = await calcCO2(graphData, imoNumber, lastRepTime, totalDistance)
+    console.log(arrObj)
 
-    // 航海距離を追加
-    arrObj[0].distance = totalDistance
-
-    // CII計算
-    let apiResult = []
-    console.log(arrObj[0])
-    if (arrObj[0].distance && arrObj[0].co2 && arrObj[0].imoNumber) {
-      apiResult = await calcCII(arrObj)
-    }
-    console.log(apiResult)
-
-    const item = items.value.filter((elem) => {
-      return (elem.imo === errmVessels[i].imo_num)
-    })
-
-    if (item.length === 1) {
-      item[0].co2 = apiResult.length > 0 ? (Math.round(Number(apiResult[0].co2))).toLocaleString() : ''
-      item[0].cii = apiResult.length > 0 ? apiResult[0].cii_rank : ''
-    }
+    // CII計算処理
+    calcEnvIndex(arrObj, items, errmVessels[i])
   }
 }
 

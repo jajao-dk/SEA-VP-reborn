@@ -1,8 +1,8 @@
-export default async function calCO2 (obj, imoNumber, lastRepTime) {
+export default async function calCO2 (obj, imoNumber, lastRepTime, totalDistance) {
   const paramArr = []
   console.log('calCO2')
 
-  const calcTotalCO2 = function (consObj, imoNumber) {
+  const calcTotalCO2 = function (consObj, imoNumber, totalDistance) {
     const addObj = {}
     const sfoConvFactor = 3.114
     const ulsConvFactor = 3.151
@@ -13,6 +13,7 @@ export default async function calCO2 (obj, imoNumber, lastRepTime) {
     totalCO2 += consObj.total_godo_cons * dogoConvFactor
     addObj.co2 = totalCO2
     addObj.imoNumber = imoNumber
+    addObj.distance = totalDistance
     paramArr.push(addObj)
   }
 
@@ -57,6 +58,6 @@ export default async function calCO2 (obj, imoNumber, lastRepTime) {
     total_fo_cons: foCons,
     total_godo_cons: godoCons
   }
-  await calcTotalCO2(consObj, imoNumber)
+  await calcTotalCO2(consObj, imoNumber, totalDistance)
   return paramArr
 }

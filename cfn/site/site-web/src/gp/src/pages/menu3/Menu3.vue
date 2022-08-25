@@ -12,7 +12,7 @@
         <b>Vessel info</b>
         <div class="basic-info">
           <div class="basic-info-box">
-            &nbsp; Vessel name: &nbsp;
+            &nbsp; Vessel name: <br>&nbsp;
             <select v-model="selectedVessel">
               <option
                 disalbled
@@ -31,11 +31,12 @@
           </div>
         </div>
 
-        <b>Speed info</b>
+        <b>Speed Unit setting</b>
         <div class="spd-info">
           <!-- form novalidate @submit.prevent="onSubmit"-->
           <div class="spd-info-box">
-            &nbsp; Speed/rpm/%MCR
+            &nbsp; Speed/rpm/%MCR: <br>
+            &nbsp;
             <select
               v-model="selectedKey"
               class="spdinput"
@@ -50,23 +51,20 @@
               </option>
             </select>
           </div>
+        </div>
+
+        <b>In port FOC setting</b>
+        <div class="spd-info">
+          <!-- form novalidate @submit.prevent="onSubmit"-->
           <div class="spd-info-box">
-            &nbsp; Laden:
+            &nbsp; In port daily FOC:<br>
+            &nbsp;
             <input
-              v-model="ladSpeed"
-              class="spdinput"
+              v-model="inPortFoc"
               style="text-align:right"
               type="number"
             >
-            <!--/div>
-          <div class="spd-info-box"-->
-            &nbsp; Ballast:
-            <input
-              v-model="balSpeed"
-              class="spdinput"
-              style="text-align:right"
-              type="number"
-            >
+            &nbsp; [MT/day]
           </div>
         </div>
       </div>
@@ -80,9 +78,8 @@
             <thead>
               <tr>
                 <th>Port</th>
-                <!--th>Arrival</th-->
                 <th>Laden/Ballast</th>
-                <!--th>Target ETA</th-->
+                <th>SPD to next port</th>
                 <th>In port days</th>
                 <th>Add/Delete</th>
               </tr>
@@ -122,6 +119,13 @@
                   </select>
                 </td>
                 <!--td><input v-model="plan.eta"></td-->
+                <td>
+                  <input
+                    v-model="plan.speed"
+                    style="text-align:right"
+                    type="number"
+                  >
+                </td>
                 <td>
                   <input
                     v-model="plan.port_days"
@@ -273,6 +277,7 @@ const client = ref('')
 const vesselList = ref([])
 const portList = ref([])
 const selectedVessel = ref('')
+const inPortFoc = ref(0)
 
 // Simulation input - speed info
 const speeds = reactive([
@@ -287,8 +292,8 @@ const balSpeed = ref(0)
 
 // Simulation input - voyage plans
 const plans = ref([
-  { port: '', port_days: 0, lb: 'L', eta: '' },
-  { port: '', port_days: 0, lb: '---', eta: '' }
+  { port: '', port_days: 0, speed: 0, lb: 'L', eta: '' },
+  { port: '', port_days: 0, speed: 0, lb: 'B', eta: '' }
 ])
 const options = reactive([
   { text: '---', value: '---', id: '---' },
@@ -299,9 +304,9 @@ const addRaw = (index) => {
   console.log('add button')
   console.log(index)
   // plans.value.push({ dep: '', dep_days: '', arr: '', arr_days: '', lb: 'L', eta: '' })
-  plans.value.splice(index + 1, 0, { dep: '', arr: '', port_days: 0, lb: 'L', eta: '' })
+  plans.value.splice(index + 1, 0, { port: '', port_days: 0, speed: 0, lb: 'B', eta: '' })
   plans.value[plans.value.length - 1].port_days = 0
-  plans.value[plans.value.length - 1].lb = '---'
+  plans.value[plans.value.length - 1].lb = 'B'
 }
 const delRaw = (index) => {
   console.log('del button')
@@ -370,8 +375,6 @@ const getVesselList = async () => {
     return false
   }
 
-  // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value
-  // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=menu_id&val=Tonnage'
   const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?client=' + client.value + '&search_type=file_name&val=all'
   const resp = await fetch(urlSetting)
   const data = await resp.json()
@@ -392,7 +395,6 @@ const getVesselList = async () => {
 // Get port list
 const getPortList = async () => {
   console.log('getPortList')
-  // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_port_list_all.cgi?client=' + client.value
   const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_port_list_all.cgi?client=NYK'
   const resp = await fetch(urlSetting)
   const data = await resp.json()
@@ -407,10 +409,9 @@ const simStartEventHandler = async (item) => {
   console.log('simulation start')
   console.log(plans.value)
   console.log(selectedKey.value)
-  console.log(ladSpeed.value)
-  console.log(balSpeed.value)
   console.log(selectedVessel.value)
   console.log(date.value)
+  console.log(inPortFoc.value)
   msg.value = ''
 
   // validation
@@ -419,14 +420,14 @@ const simStartEventHandler = async (item) => {
     msg.value = 'Input vessel name.'
     return false
   }
-  if (selectedKey.value === '' || ladSpeed.value === 0 || balSpeed.value === 0) {
-    console.log('Speed values are missing.')
-    msg.value = 'Input speed info.'
-    return false
-  }
   if (date.value === undefined || date.value === null) {
     console.log('ETD is missing.')
-    msg.value = 'Input ETD(UTC).'
+    msg.value = 'Input ETD(LT).'
+    return false
+  }
+  if (inPortFoc.value === undefined || inPortFoc.value === null || inPortFoc.value === 0) {
+    console.log('In port FOC is missing.')
+    msg.value = 'Input in-port-FOC.'
     return false
   }
 
@@ -442,37 +443,6 @@ const simStartEventHandler = async (item) => {
   console.log(ETD)
 
   simDatas.value.length = 0
-
-  // Create post data
-  const planName = 'plan'
-  console.log(planName)
-  const param = {}
-  param.PLAN = {
-    name: planName,
-    ship_info: {
-      wnishipnum: selectedVessel.value.ship_num,
-      shipname: selectedVessel.value.ship_name,
-      callsign: selectedVessel.value.call_sign,
-      imo_num: selectedVessel.value.imo_num,
-      shiptype: selectedVessel.value.ship_type,
-      dwt: {
-        min: selectedVessel.value.dwt,
-        max: selectedVessel.value.dwt
-      }
-    },
-    etd: ETD,
-    routeing_condition: {
-      type: selectedKey.value,
-      laden: String(ladSpeed.value),
-      ballast: String(balSpeed.value)
-    },
-    cost: {
-      hire: parseFloat(100),
-      ifo: parseFloat(200),
-      lsdogo: parseFloat(300)
-    },
-    port_rotation: []
-  }
 
   // Create port rotation
   const portCodes = []
@@ -500,77 +470,123 @@ const simStartEventHandler = async (item) => {
     portDetail = data.data
   }
 
-  for (let i = 0; i < portCodes.length; i++) {
-    const tmpDetail = portDetail[portCodes[i]]
+  const legInfos = []
+  let nextETD = ETD
+  for (let i = 0; i < plans.value.length - 1; i++) {
+    // validation
+    if (selectedKey.value === '' || plans.value[i].speed === 0) {
+      console.log('Speed Unit and/or SPD to next port is missing.')
+      msg.value = 'Input Speed unit or SPD to next port.'
+      return false
+    }
 
-    const tmpJSON = {
-      portcode: tmpDetail.AREA,
-      portname: tmpDetail.ENAME,
-      country: tmpDetail.CNTRY,
-      point: {
-        lat: tmpDetail.LATD,
-        lon: tmpDetail.LOND,
-        name: tmpDetail.ENAME,
+    // Create POST data
+    const param = {}
+    param.PLAN = {
+      name: 'plan',
+      ship_info: {
+        wnishipnum: selectedVessel.value.ship_num,
+        shipname: selectedVessel.value.ship_name,
+        callsign: selectedVessel.value.call_sign,
+        imo_num: selectedVessel.value.imo_num,
+        shiptype: selectedVessel.value.ship_type,
+        dwt: {
+          min: selectedVessel.value.dwt,
+          max: selectedVessel.value.dwt
+        }
+      },
+      etd: nextETD,
+      routeing_condition: {
+        type: selectedKey.value,
+        laden: String(plans.value[i].speed),
+        ballast: String(plans.value[i].speed)
+      },
+      cost: {
+        hire: parseFloat(100),
+        ifo: parseFloat(200),
+        lsdogo: parseFloat(300)
+      },
+      port_rotation: []
+    }
+
+    // Set dep and arr port for i-th leg
+    for (let j = 0; j < 2; j++) {
+      const tmpDetail = portDetail[portCodes[i + j]]
+
+      const tmpJSON = {
+        portcode: tmpDetail.AREA,
+        portname: tmpDetail.ENAME,
+        country: tmpDetail.CNTRY,
+        point: {
+          lat: tmpDetail.LATD,
+          lon: tmpDetail.LOND,
+          name: tmpDetail.ENAME,
+          timezone: tmpDetail.TZ,
+          country: tmpDetail.CNTRY
+        },
+        passage_days: '',
+        time_window: true,
+        target_eta: {
+          from: '',
+          to: ''
+        },
         timezone: tmpDetail.TZ,
-        country: tmpDetail.CNTRY
-      },
-      passage_days: '',
-      time_window: true,
-      target_eta: {
-        from: '',
-        to: ''
-      },
-      timezone: tmpDetail.TZ,
-      passage_portcode: ''
-    }
-
-    // Insert loading condition and port days excluding the final port
-    if (i < portCodes.length - 1) {
-      // Validation
-      console.log(plans.value[i].lb)
-      if (plans.value[i].lb !== 'L' && plans.value[i].lb !== 'B') {
-        console.log('loading condition is missing.')
-        msg.value = 'Input Laden or Ballast'
-        return false
+        passage_portcode: ''
       }
 
-      console.log(plans.value[i].port_days)
-      if (plans.value[i].port_days === '') {
-        console.log('invalid port days.')
-        msg.value = 'Input correct port days'
-        return false
+      // Insert loading condition and port days excluding the final port
+      if (i < portCodes.length - 1) {
+        // Validation
+        console.log(plans.value[i + j].lb)
+        if (plans.value[i + j].lb !== 'L' && plans.value[i + j].lb !== 'B') {
+          console.log('loading condition is missing.')
+          msg.value = 'Input Laden or Ballast'
+          return false
+        }
+
+        console.log(plans.value[i + j].port_days)
+        if (plans.value[i + j].port_days === '') {
+          console.log('invalid port days.')
+          msg.value = 'Input correct port days'
+          return false
+        }
+
+        tmpJSON.loading_condition = plans.value[i + j].lb
+        tmpJSON.port_days = plans.value[i + j].port_days
       }
 
-      tmpJSON.loading_condition = plans.value[i].lb
-      tmpJSON.port_days = plans.value[i].port_days
+      param.PLAN.port_rotation.push(tmpJSON)
     }
+    // }
+    console.log(param)
 
-    // Insert in port days excluding the final port
+    loading.value = true
+    const url = 'https://tmax-b01.weathernews.com/T-Max/TonnageAllocation/api/reborn_get_result_analysis_for_tonnageAllocation.cgi'
+    const simType = 'plan'
+    const body1 = [simType, client.value, JSON.stringify(param)]
+    const simJson = await fetch(url, {
+      mode: 'cors',
+      method: 'POST',
+      body: JSON.stringify(body1)
+    })
+      .then(res => res.json())
+      .catch(console.error)
 
-    param.PLAN.port_rotation.push(tmpJSON)
+    console.log(simJson)
+    if (simJson.result === 'OK') {
+      simJson.data.PLAN.leg_infos[0].leg_id = 'leg-' + String(i)
+      legInfos.push(simJson.data.PLAN.leg_infos[0])
+    }
+    loading.value = false
+
+    nextETD = simJson.data.PLAN.leg_infos[0].route_infos[0].simulation_result.eta
   }
-  console.log(param)
 
-  loading.value = true
-  // const url = 'https://tmax.seapln-osr.pt-aws.wni.com/T-Max/TonnageAllocation/api/okamaw-test.cgi'
-  const url = 'https://tmax-b01.weathernews.com/T-Max/TonnageAllocation/api/reborn_get_result_analysis_for_tonnageAllocation.cgi'
-  const simType = 'plan'
-  const body1 = [simType, client.value, JSON.stringify(param)]
-  const simJson = await fetch(url, {
-    mode: 'cors',
-    method: 'POST',
-    body: JSON.stringify(body1)
-  })
-    .then(res => res.json())
-    .catch(console.error)
+  simDatas.value = legInfos
+  simDatas.value.imo_no = selectedVessel.value.imo_num
+  simDatas.value.inPortFoc = inPortFoc.value
+  simDatas.value.inPortDaysLast = plans.value[plans.value.length - 1].port_days
 
-  console.log(simJson)
-  if (simJson.result === 'OK') {
-    simDatas.value = simJson.data.PLAN.leg_infos
-    simDatas.value.imo_no = param.PLAN.ship_info.imo_num
-  }
-
-  loading.value = false
   console.log(simDatas.value)
   return false
 }
@@ -663,13 +679,13 @@ const simStartEventHandler = async (item) => {
 .spd-info{
   /* display: flex; */
   font-size: 12px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .spd-info input{
   border: 2px solid blue;
-  width: 55px;
-  margin-top: 5px;
+  width: 100px;
+  /* margin-top: 5px; */
   margin-bottom: 10px;
 }
 
@@ -687,7 +703,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 select {
   border: 2px solid blue;
-  width: 100px;
+  width: 150px;
 }
 
 button {

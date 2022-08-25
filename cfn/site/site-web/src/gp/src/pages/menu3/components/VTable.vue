@@ -111,6 +111,16 @@
           </td>
         </tr>
         <tr>
+          <th>In port days</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.inport_days }}
+          </td>
+        </tr>
+        <tr>
           <th>IFO [MT]</th>
           <td
             v-for="item in items"
@@ -128,6 +138,22 @@
             style="text-align:right"
           >
             {{ item.dogo }}
+          </td>
+        </tr>
+        <tr>
+          <th>In port FOC [MT]</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.inport_foc }}
+            <!--input
+              v-model="item.inport_foc"
+              type="number"
+              class="form-control"
+              style="text-align:right"
+            -->
           </td>
         </tr>
         <tr>
@@ -203,30 +229,6 @@
           </td>
         </tr>
         <tr>
-          <th>In port days</th>
-          <td
-            v-for="item in items"
-            :key="item.id"
-            style="text-align:right"
-          >
-            {{ item.inport_days }}
-          </td>
-        </tr>
-        <tr>
-          <th>In port FOC [MT/day]</th>
-          <td
-            v-for="item in items"
-            :key="item.id"
-          >
-            <input
-              v-model="item.inport_foc"
-              type="number"
-              class="form-control"
-              style="text-align:right"
-            >
-          </td>
-        </tr>
-        <tr>
           <th>Port charges [USD]</th>
           <td
             v-for="item in items"
@@ -292,7 +294,7 @@
           </td>
         </tr>
         <tr>
-          <th>CO2</th>
+          <th>CO2 (sea only)</th>
           <td
             v-for="item in items"
             :key="item.id"
@@ -302,13 +304,33 @@
           </td>
         </tr>
         <tr>
-          <th>CII</th>
+          <th>CII (sea only)</th>
           <td
             v-for="item in items"
             :key="item.id"
             style="text-align:right"
           >
             {{ item.cii }}
+          </td>
+        </tr>
+        <tr>
+          <th>CO2 (total)</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.co2_total }}
+          </td>
+        </tr>
+        <tr>
+          <th>CII (total)</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.cii_total }}
           </td>
         </tr>
         <tr>
@@ -396,7 +418,9 @@ const initVoyageData = () => {
       profit: 0,
       tc_equiv: 0,
       co2: 0,
-      cii: 0
+      cii: '',
+      co2_total: 0,
+      cii_total: ''
     }
     items.value.push(tmpData)
   }
@@ -420,8 +444,11 @@ const createVTable = (newValue) => {
       items.value[i].fo = Math.round(newValue.total_ifo * 10) / 10
       items.value[i].dogo = Math.round(newValue.total_lsdogo * 10) / 10
       items.value[i].inport_days = Math.round(newValue.total_inport_days * 10) / 10
+      items.value[i].inport_foc = Math.round(newValue.total_inport_foc * 10) / 10
       items.value[i].co2 = (Math.round(newValue.total_co2 * 10) / 10).toLocaleString()
       items.value[i].cii = newValue.total_cii
+      items.value[i].co2_total = (Math.round(newValue.total_co2_total * 10) / 10).toLocaleString()
+      items.value[i].cii_total = newValue.total_cii_total
       items.value[i].used = true
       break
     }
@@ -450,13 +477,15 @@ const createVTable = (newValue) => {
       total_foc: 0,
       total_dogoc: 0,
       inport_days: Math.round(newValue.total_inport_days * 10) / 10,
-      inport_foc: 0,
+      inport_foc: Math.round(newValue.total_inport_foc * 10) / 10,
       port_charge: 0,
       passage: 0,
       profit: 0,
       tc_equiv: 0,
       co2: (Math.round(newValue.total_co2 * 10) / 10).toLocaleString(),
-      cii: newValue.total_cii
+      cii: newValue.total_cii,
+      co2_total: (Math.round(newValue.total_co2_total * 10) / 10).toLocaleString(),
+      cii_total: newValue.total_cii_total
     }
     items.value.push(newItem)
   }
@@ -482,13 +511,13 @@ const calcCost = (val) => {
   item.inport_foc = val.inport_foc
   item.port_charge = val.port_charge
   item.passage = val.passage
-  const tmpTotalHire = val.hire * val.days
+  const tmpTotalHire = val.hire * (val.days + val.inport_days)
   item.total_hire = Math.round(tmpTotalHire).toLocaleString()
   const tmpTotalFoc = val.fo * val.foc
   item.total_foc = Math.round(tmpTotalFoc).toLocaleString()
-  const tmpTotalDogoc = val.dogo * val.dogoc
+  const tmpTotalDogoc = val.dogo * val.dogoc + val.inport_foc * val.dogoc
   item.total_dogoc = Math.round(tmpTotalDogoc).toLocaleString()
-  const tmpExpense = tmpTotalHire + tmpTotalFoc + tmpTotalDogoc + val.inport_days * val.inport_foc * val.dogoc + val.port_charge + val.passage
+  const tmpExpense = tmpTotalHire + tmpTotalFoc + tmpTotalDogoc + val.port_charge + val.passage
   item.expense = Math.round(tmpExpense).toLocaleString()
   // others
   const tmpProfit = tmpIncome - tmpExpense

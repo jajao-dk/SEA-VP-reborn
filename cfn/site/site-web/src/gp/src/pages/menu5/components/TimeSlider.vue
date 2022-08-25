@@ -221,7 +221,7 @@ if (props.updateIntervalSecond) {
   position: fixed;
   /* bottom: 15px; */
   bottom: 39%;
-  left: 70%;
+  left: 47%;
   width: 330px; /* 480px; */
   overflow: hidden;
   transform: translateX(-50%);
