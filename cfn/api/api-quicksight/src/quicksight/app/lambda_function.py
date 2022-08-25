@@ -63,6 +63,11 @@ def get_embed_url(event: APIGatewayProxyEvent):
             dashboard_id=f'{env_prefix}quicksight-dashboard-sea-vp-{content_id}-client-v1'
         elif content_id == 'emd':
             dashboard_id=f'{env_prefix}quicksight-dashboard-sea-vp-{content_id}-client-v1_3'
+        elif content_id == 'cimrd':
+            if Env.QUICKSIGHT_ENV_PREFIX == 'b01-':
+                dashboard_id=f'quicksight-dashboard-sea-vp-cim-{customer_id}'
+            else:
+                dashboard_id=f'{env_prefix}quicksight-dashboard-sea-vp-cim-{customer_id}'
         else:
             return Response(403, 'text/plain', 'Forbidden')
     else:
