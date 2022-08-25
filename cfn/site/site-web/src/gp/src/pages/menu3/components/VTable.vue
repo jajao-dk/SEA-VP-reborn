@@ -447,7 +447,7 @@ const createVTable = (newValue) => {
       items.value[i].inport_foc = Math.round(newValue.total_inport_foc * 10) / 10
       items.value[i].co2 = (Math.round(newValue.total_co2 * 10) / 10).toLocaleString()
       items.value[i].cii = newValue.total_cii
-      items.value[i].co2_total = newValue.total_co2_total
+      items.value[i].co2_total = (Math.round(newValue.total_co2_total * 10) / 10).toLocaleString()
       items.value[i].cii_total = newValue.total_cii_total
       items.value[i].used = true
       break
