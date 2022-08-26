@@ -35,15 +35,16 @@ watch(toRef(route, 'name'), () => { store.close() })
                   class="h-10"
                 >
               </div>
-              <div class="flex-col space-y-0">
-                <div class="font-bold">
-                  GREEN-Dashboard by OSR/PMS-e
-                </div>
-                <div class="text-xs">
-                  powered by Weathernews
-                </div>
-              </div>
             </router-link>
+            <div class="flex-col space-y-0">
+              <div class="font-bold">
+                {{ $route.meta.title }}
+                <!-- GREEN-Dashboard by OSR/PMS-e -->
+              </div>
+              <div class="text-xs">
+                powered by Weathernews
+              </div>
+            </div>
           </div>
         </div>
         <div class="flex-1">
