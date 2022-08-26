@@ -586,6 +586,7 @@ const simStartEventHandler = async (item) => {
   simDatas.value.imo_no = selectedVessel.value.imo_num
   simDatas.value.inPortFoc = inPortFoc.value
   simDatas.value.inPortDaysLast = plans.value[plans.value.length - 1].port_days
+  simDatas.value.clientCode = client.value
 
   console.log(simDatas.value)
   return false

@@ -334,6 +334,46 @@
           </td>
         </tr>
         <tr>
+          <th>YTD Attained CII</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.ytd_cii }}
+          </td>
+        </tr>
+        <tr>
+          <th>YTD CII rating</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.ytd_cii_rank }}
+          </td>
+        </tr>
+        <tr>
+          <th>YTD Attained CII (total)</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.ytd_cii_total }}
+          </td>
+        </tr>
+        <tr>
+          <th>YTD CII rating (total)</th>
+          <td
+            v-for="item in items"
+            :key="item.id"
+            style="text-align:right"
+          >
+            {{ item.ytd_cii_rank_total }}
+          </td>
+        </tr>
+        <tr>
           <th>Calculation</th>
           <td
             v-for="item in items"
@@ -420,7 +460,11 @@ const initVoyageData = () => {
       co2: 0,
       cii: '',
       co2_total: 0,
-      cii_total: ''
+      cii_total: '',
+      ytd_cii: 0,
+      ytd_cii_rank: '',
+      ytd_cii_total: 0,
+      ytd_cii_rank_total: ''
     }
     items.value.push(tmpData)
   }
@@ -449,6 +493,10 @@ const createVTable = (newValue) => {
       items.value[i].cii = newValue.total_cii
       items.value[i].co2_total = (Math.round(newValue.total_co2_total * 10) / 10).toLocaleString()
       items.value[i].cii_total = newValue.total_cii_total
+      items.value[i].ytd_cii = newValue.ytd_cii
+      items.value[i].ytd_cii_rank = newValue.ytd_cii_rank
+      items.value[i].ytd_cii_total = newValue.ytd_cii_total
+      items.value[i].ytd_cii_rank_total = newValue.ytd_cii_rank_total
       items.value[i].used = true
       break
     }
@@ -485,7 +533,11 @@ const createVTable = (newValue) => {
       co2: (Math.round(newValue.total_co2 * 10) / 10).toLocaleString(),
       cii: newValue.total_cii,
       co2_total: (Math.round(newValue.total_co2_total * 10) / 10).toLocaleString(),
-      cii_total: newValue.total_cii_total
+      cii_total: newValue.total_cii_total,
+      ytd_cii: newValue.ytd_cii,
+      ytd_cii_rank: newValue.ytd_cii_rank,
+      ytd_cii_total: newValue.ytd_cii_total,
+      ytd_cii_rank_total: newValue.ytd_cii_rank_total
     }
     items.value.push(newItem)
   }

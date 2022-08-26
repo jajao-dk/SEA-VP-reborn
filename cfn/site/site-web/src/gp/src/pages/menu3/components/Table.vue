@@ -27,6 +27,7 @@ import EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
 import calcCO2 from './calcCO2_tap.js'
 import calcCII from '../../calcCII.js'
+import getYtdData from '../../getYtdData.js'
 
 // Error message
 const msg = ref('')
@@ -77,9 +78,29 @@ const createTable = async (simDatas) => {
   console.log(simDatas)
   items.value.length = 0
   itemsSelected.value.length = 0
-  const imoNumber = simDatas.imo_no
+  // 仮のimo number
+  const imoNumber = 9456745
   const inPortFoc = simDatas.inPortFoc
   const inPortDaysLast = simDatas.inPortDaysLast
+
+  // YTDの取得
+  const getYTDParam = {
+    client_code: simDatas.clientCode,
+    imo_no: [imoNumber]
+  }
+  console.log(getYTDParam)
+  const ytdDatas = await getYtdData(getYTDParam)
+  console.log(ytdDatas)
+
+  const ytdParam = {
+    hsfo: ytdDatas[0].ytd_cons.grand_total_hfo,
+    lsfo: ytdDatas[0].ytd_cons.grand_total_lfo,
+    lsdogo: ytdDatas[0].ytd_cons.grand_total_dogo,
+    distance: ytdDatas[0].ytd_dist_depart_arr
+  }
+  console.log(ytdParam)
+  const ytdCO2 = await calcCO2(ytdParam, imoNumber, 'ytdData')
+  console.log(ytdCO2)
 
   for (let i = 0; i < simDatas.length; i++) {
     console.log(i)
@@ -91,7 +112,7 @@ const createTable = async (simDatas) => {
       loadingState.value = true
       // CO2計算
       const simResult = routeInfos[j].simulation_result
-      const arrObj = await calcCO2(simResult, imoNumber)
+      const arrObj = await calcCO2(simResult, imoNumber, 'tapData')
 
       // in portでのCO2排出量(DOGOとして計算する)
       const inPortCO2 = inPortFoc * 3.206 * simResult.in_port_days
@@ -102,6 +123,14 @@ const createTable = async (simDatas) => {
         distance: arrObj[0].distance,
         imoNumber: arrObj[0].imoNumber
       }
+
+      // index = 2に今航のin portを含む値にYTDを加えた要素として追加
+      arrObj[2] = {
+        co2: arrObj[1].co2 + ytdCO2[0].co2,
+        distance: arrObj[1].distance + ytdCO2[0].distance,
+        imoNumber: arrObj[0].imoNumber
+      }
+
       console.log(arrObj)
 
       // CII計算
