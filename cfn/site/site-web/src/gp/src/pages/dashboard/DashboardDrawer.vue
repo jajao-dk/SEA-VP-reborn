@@ -45,8 +45,8 @@ onMounted(async () => {
       <DrawerMenu :menu="gperrm" />
       <DrawerMenu :menu="gpvc" />
       <b class="px-1">Analysis/Statistics</b>
-      <DrawerMenu :menu="emd" />
       <DrawerMenu :menu="cimrd" />
+      <DrawerMenu :menu="emd" />
       <DrawerMenu :menu="gppe" />
     </div>
   </div>
