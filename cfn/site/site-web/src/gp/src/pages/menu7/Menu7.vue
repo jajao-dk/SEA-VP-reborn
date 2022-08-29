@@ -30,7 +30,6 @@ window.addEventListener('message', onMessage, false)
 onMounted(async () => {
   const token = await getToken()
   const user = await getUser()
-  let dashboard;
   const res = await axios.get('/api/v1/quicksight',{
     headers: { Authorization: `Bearer ${token}` },
     params: {
@@ -52,7 +51,7 @@ onMounted(async () => {
     locale: 'en-US'
   }
 
-  dashboard = QuickSightEmbedding.embedDashboard(options)
+  QuickSightEmbedding.embedDashboard(options)
 
   gtagOptin() // gtag.js にて、プラグイン登録時にプラグイン無効化しているので、ここで有効化する
 
@@ -66,7 +65,7 @@ onMounted(async () => {
 
   // pageview送信
   gtagPageview(location.href)
-
+})
 </script>
 
 <template>
