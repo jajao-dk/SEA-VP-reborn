@@ -101,6 +101,8 @@ const createTable = async (simDatas) => {
   console.log(ytdParam)
   const ytdCO2 = await calcCO2(ytdParam, imoNumber, 'ytdData')
   console.log(ytdCO2)
+  simDatas.ytd_co2 = ytdCO2[0].co2
+  simDatas.ytd_dist = ytdCO2[0].distance
 
   for (let i = 0; i < simDatas.length; i++) {
     console.log(i)
@@ -121,13 +123,6 @@ const createTable = async (simDatas) => {
       arrObj[1] = {
         co2: arrObj[0].co2 + inPortCO2,
         distance: arrObj[0].distance,
-        imoNumber: arrObj[0].imoNumber
-      }
-
-      // index = 2に今航のin portを含む値にYTDを加えた要素として追加
-      arrObj[2] = {
-        co2: arrObj[1].co2 + ytdCO2[0].co2,
-        distance: arrObj[1].distance + ytdCO2[0].distance,
         imoNumber: arrObj[0].imoNumber
       }
 
@@ -169,7 +164,6 @@ const createTable = async (simDatas) => {
         tmpRaw.inportDays = Math.round((routeInfos[j].simulation_result.in_port_days + inPortDaysLast) * 10) / 10
         tmpRaw.inportFoc = Math.round((routeInfos[j].simulation_result.in_port_days + inPortDaysLast) * inPortFoc * 10) / 10
       }
-
       items.value.push(tmpRaw)
     }
   }
@@ -185,10 +179,10 @@ headers.value = [
   { text: 'Ocean days', value: 'days', width: 60 },
   { text: 'In port days', value: 'inportDays', width: 60 },
   { text: 'Dist.[nm]', value: 'dist', width: 60 },
-  { text: 'CO2 (sea)', value: 'co2', width: 50 },
-  { text: 'CII (sea)', value: 'cii', width: 50 },
-  { text: 'CO2 (total)', value: 'co2Total', width: 50 },
-  { text: 'CII (total)', value: 'ciiTotal', width: 50 },
+  { text: 'CO2 sea', value: 'co2', width: 50 },
+  { text: 'CII sea', value: 'cii', width: 50 },
+  { text: 'CO2 sea+port', value: 'co2Total', width: 70 },
+  { text: 'CII sea+port', value: 'ciiTotal', width: 70 },
   { text: 'HSFO [mt]', value: 'hsfo', width: 50 },
   { text: 'DO/GO [mt]', value: 'dogo', width: 50 },
   { text: 'In port [mt]', value: 'inportFoc', width: 60 },
@@ -209,6 +203,8 @@ const addVoyageEstimate = async () => {
     voyageInfo[legInfo.leg_id] = false
   }
   const imoNumber = props.simDatas.imo_no
+  const ytdDist = props.simDatas.ytd_dist
+  const ytdCO2 = props.simDatas.ytd_co2
   console.log(voyageInfo)
 
   // Validation
@@ -266,6 +262,11 @@ const addVoyageEstimate = async () => {
       distance: totalDist,
       co2: totalCO2Total,
       imoNumber
+    },
+    {
+      distance: totalDist + ytdDist,
+      co2: totalCO2Total + ytdCO2,
+      imoNumber
     }
   ]
   console.log(totalCIIParam)
@@ -286,7 +287,10 @@ const addVoyageEstimate = async () => {
     total_cii: totalCIIRes[0].cii_rank,
     total_inport_foc: totalInportFoc,
     total_co2_total: totalCIIRes[1].co2,
-    total_cii_total: totalCIIRes[1].cii_rank
+    total_cii_total: totalCIIRes[1].cii_rank,
+    ytd_co2: totalCIIRes[2].co2,
+    ytd_attaiend_cii: totalCIIRes[2].cii,
+    ytd_cii_rank: totalCIIRes[2].cii_rank
   }
 
   console.log('EMIT to MENU3')
