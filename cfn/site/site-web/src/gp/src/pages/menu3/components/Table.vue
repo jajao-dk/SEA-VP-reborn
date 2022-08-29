@@ -85,7 +85,7 @@ const createTable = async (simDatas) => {
   // YTDの取得
   const getYTDParam = {
     client_code: simDatas.clientCode,
-    imo_no: [imoNumber]
+    imo_no: [Number(imoNumber)]
   }
   console.log(getYTDParam)
   const ytdDatas = await getYtdData(getYTDParam)
