@@ -2,7 +2,6 @@ export default async function getYTDData (params) {
   console.log('getYTDData')
   console.log(params)
 
-  // let response = {}
   const requestUrl = 'https://cii.seapln-osr.pt-aws.wni.com/v1/vdv/ytd/'
 
   const requestBody = params

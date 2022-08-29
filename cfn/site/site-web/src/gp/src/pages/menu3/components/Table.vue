@@ -78,8 +78,7 @@ const createTable = async (simDatas) => {
   console.log(simDatas)
   items.value.length = 0
   itemsSelected.value.length = 0
-  // 仮のimo number
-  const imoNumber = 9456745
+  const imoNumber = simDatas.imo_no
   const inPortFoc = simDatas.inPortFoc
   const inPortDaysLast = simDatas.inPortDaysLast
 
