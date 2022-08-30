@@ -170,7 +170,8 @@ export class VesselVoyComLayer extends Layer {
     console.log('VoyCom update handler!!!')
 
     console.log(legData)
-    if (legData === undefined) {
+    // if (legData === undefined) {
+    if (Object.keys(legData).length === 0) {
       this.map.getSource(`${this.source}Voycom`).setData({
         type: 'FeatureCollection',
         features: []
