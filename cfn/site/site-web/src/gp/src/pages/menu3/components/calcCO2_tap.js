@@ -1,8 +1,9 @@
-export default async function calCO2 (obj, imoNumber) {
+export default async function calCO2 (obj, imoNumber, flag) {
   const paramArr = []
   console.log('calCO2')
 
   const hsfoCons = obj.hsfo
+  const lsfoCons = obj.lsfo
   const dogoCons = obj.lsdogo
 
   const addObj = {}
@@ -12,7 +13,13 @@ export default async function calCO2 (obj, imoNumber) {
   let totalCO2 = 0.0
 
   // FOCは油種区別ができない為悪い値をとる3.151を使用
-  totalCO2 += hsfoCons * ulsConvFactor
+  if (flag === 'tapData') {
+    totalCO2 += hsfoCons * ulsConvFactor
+  }
+  if (flag === 'ytdData') {
+    totalCO2 += hsfoCons * sfoConvFactor
+    totalCO2 += lsfoCons * ulsConvFactor
+  }
   totalCO2 += dogoCons * dogoConvFactor
 
   addObj.co2 = totalCO2
