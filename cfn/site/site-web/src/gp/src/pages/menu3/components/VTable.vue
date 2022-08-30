@@ -310,7 +310,7 @@
             :key="item.id"
             style="text-align:right"
           >
-            {{ item.cii }}
+            {{ `${item.cii_rank} (${item.cii})` }}
           </td>
         </tr>
         <tr>
@@ -330,7 +330,7 @@
             :key="item.id"
             style="text-align:right"
           >
-            {{ item.cii_total }}
+            {{ `${item.cii_rank_total} (${item.cii_total})` }}
           </td>
         </tr>
         <tr>
@@ -344,23 +344,13 @@
           </td>
         </tr>
         <tr>
-          <th>Attained CII (YtD)</th>
-          <td
-            v-for="item in items"
-            :key="item.id"
-            style="text-align:right"
-          >
-            {{ item.ytd_attaiend_cii }}
-          </td>
-        </tr>
-        <tr>
           <th>CII rating (YtD)</th>
           <td
             v-for="item in items"
             :key="item.id"
             style="text-align:right"
           >
-            {{ item.ytd_cii_rank }}
+            {{ `${item.ytd_cii_rank} (${item.ytd_cii})` }}
           </td>
         </tr>
         <tr>
@@ -448,12 +438,14 @@ const initVoyageData = () => {
       profit: 0,
       tc_equiv: 0,
       co2: 0,
-      cii: '',
+      cii_rank: '',
+      cii: 0,
       co2_total: 0,
-      cii_total: '',
+      cii_rank_total: '',
+      cii_total: 0,
       ytd_co2: 0,
-      ytd_attaiend_cii: 0,
-      ytd_cii_rank: ''
+      ytd_cii_rank: '',
+      ytd_cii: 0
     }
     items.value.push(tmpData)
   }
@@ -479,12 +471,14 @@ const createVTable = (newValue) => {
       items.value[i].inport_days = Math.round(newValue.total_inport_days * 10) / 10
       items.value[i].inport_foc = Math.round(newValue.total_inport_foc * 10) / 10
       items.value[i].co2 = (Math.round(newValue.total_co2 * 10) / 10).toLocaleString()
-      items.value[i].cii = newValue.total_cii
+      items.value[i].cii_rank = newValue.total_cii_rank
+      items.value[i].cii = (Math.round(newValue.total_cii * 100) / 100).toLocaleString()
       items.value[i].co2_total = (Math.round(newValue.total_co2_total * 10) / 10).toLocaleString()
-      items.value[i].cii_total = newValue.total_cii_total
+      items.value[i].cii_rank_total = newValue.total_cii_rank_total
+      items.value[i].cii_total = (Math.round(newValue.total_cii_total * 100) / 100).toLocaleString()
       items.value[i].ytd_co2 = (Math.round(newValue.ytd_co2 * 10) / 10).toLocaleString()
-      items.value[i].ytd_attaiend_cii = newValue.ytd_attaiend_cii
       items.value[i].ytd_cii_rank = newValue.ytd_cii_rank
+      items.value[i].ytd_cii = (Math.round(newValue.ytd_cii * 100) / 100).toLocaleString()
       items.value[i].used = true
       break
     }
@@ -519,12 +513,14 @@ const createVTable = (newValue) => {
       profit: 0,
       tc_equiv: 0,
       co2: (Math.round(newValue.total_co2 * 10) / 10).toLocaleString(),
-      cii: newValue.total_cii,
+      cii_rank: newValue.total_cii_rank,
+      cii: (Math.round(newValue.total_cii * 100) / 100).toLocaleString(),
       co2_total: (Math.round(newValue.total_co2_total * 10) / 10).toLocaleString(),
-      cii_total: newValue.total_cii_total,
+      cii_rank_total: newValue.total_cii_rank_total,
+      cii_total: (Math.round(newValue.total_cii_total * 100) / 100).toLocaleString(),
       ytd_co2: (Math.round(newValue.ytd_co2 * 10) / 10).toLocaleString(),
-      ytd_attaiend_cii: newValue.ytd_attaiend_cii,
-      ytd_cii_rank: newValue.ytd_cii_rank
+      ytd_cii_rank: newValue.ytd_cii_rank,
+      ytd_cii: (Math.round(newValue.ytd_cii * 100) / 100).toLocaleString()
     }
     items.value.push(newItem)
   }

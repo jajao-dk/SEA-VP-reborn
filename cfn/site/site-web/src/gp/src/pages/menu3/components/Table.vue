@@ -148,9 +148,9 @@ const createTable = async (simDatas) => {
         inportDays: Math.round(parseFloat(routeInfos[j].simulation_result.in_port_days) * 10) / 10,
         dist: (Math.round(parseFloat(routeInfos[j].simulation_result.distance))).toLocaleString(),
         co2: apiResult.length > 0 ? (Math.round(parseFloat(apiResult[0].co2))).toLocaleString() : '',
-        cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
+        cii: apiResult.length > 0 ? `${apiResult[0].cii_rank} (${(Math.round(apiResult[0].cii * 100) / 100).toLocaleString()})` : '',
         co2Total: apiResult[1] ? (Math.round(parseFloat(apiResult[1].co2))).toLocaleString() : '',
-        ciiTotal: apiResult[1] ? apiResult[1].cii_rank : '',
+        ciiTotal: apiResult[1] ? `${apiResult[1].cii_rank} (${(Math.round(apiResult[1].cii * 100) / 100).toLocaleString()})` : '',
         hsfo: Math.round(parseFloat(routeInfos[j].simulation_result.hsfo) * 10) / 10,
         dogo: Math.round(parseFloat(routeInfos[j].simulation_result.lsdogo) * 10) / 10,
         inportFoc: Math.round(routeInfos[j].simulation_result.in_port_days * inPortFoc * 10) / 10,
@@ -179,7 +179,7 @@ headers.value = [
   { text: 'In port days', value: 'inportDays', width: 60 },
   { text: 'Dist.[nm]', value: 'dist', width: 60 },
   { text: 'CO2 sea', value: 'co2', width: 50 },
-  { text: 'CII sea', value: 'cii', width: 50 },
+  { text: 'CII sea', value: 'cii', width: 70 },
   { text: 'CO2 sea+port', value: 'co2Total', width: 70 },
   { text: 'CII sea+port', value: 'ciiTotal', width: 70 },
   { text: 'HSFO [mt]', value: 'hsfo', width: 50 },
@@ -283,13 +283,15 @@ const addVoyageEstimate = async () => {
     total_lsdogo: totalLSDOGO,
     total_inport_days: totalInportDays,
     total_co2: totalCIIRes[0].co2,
-    total_cii: totalCIIRes[0].cii_rank,
+    total_cii_rank: totalCIIRes[0].cii_rank,
+    total_cii: totalCIIRes[0].cii,
     total_inport_foc: totalInportFoc,
     total_co2_total: totalCIIRes[1].co2,
-    total_cii_total: totalCIIRes[1].cii_rank,
+    total_cii_rank_total: totalCIIRes[1].cii_rank,
+    total_cii_total: totalCIIRes[1].cii,
     ytd_co2: totalCIIRes[2].co2,
-    ytd_attaiend_cii: totalCIIRes[2].cii,
-    ytd_cii_rank: totalCIIRes[2].cii_rank
+    ytd_cii_rank: totalCIIRes[2].cii_rank,
+    ytd_cii: totalCIIRes[2].cii
   }
 
   console.log('EMIT to MENU3')
