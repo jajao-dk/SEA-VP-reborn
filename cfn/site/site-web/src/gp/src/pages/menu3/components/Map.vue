@@ -32,7 +32,7 @@ const { simDatas, /* simUpdate, */ mapFocusRoute } = toRefs(props)
 watch(simDatas, (newValue) => {
   console.log('map TAP Handler 3')
   console.log(newValue)
-  layerList.TAP.content.displayRouteHandler(props.simDatas)
+  layerList.TAP.content.displayRouteHandler(props.simDatas.data)
 }, { deep: true })
 
 watch(mapFocusRoute, (newValue) => {

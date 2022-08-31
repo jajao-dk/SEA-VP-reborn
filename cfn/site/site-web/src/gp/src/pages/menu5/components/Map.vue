@@ -46,7 +46,7 @@ watch(legData, (newValue) => {
   console.log(newValue)
   console.log(props.legData)
   layerList.VoyCom.content.updateRouteHandler(props.legData)
-})
+}, { deep: true })
 
 const mapMenuLayerList = computed(() => {
   const filteredList = {}

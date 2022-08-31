@@ -101,7 +101,7 @@
         </tr>
         <tr />
         <tr>
-          <th>Ocean days</th>
+          <th>At sea days</th>
           <td
             v-for="item in items"
             :key="item.id"
@@ -294,7 +294,7 @@
           </td>
         </tr>
         <tr>
-          <th>CO2 (sea)</th>
+          <th>CO2 (at sea)</th>
           <td
             v-for="item in items"
             :key="item.id"
@@ -304,7 +304,7 @@
           </td>
         </tr>
         <tr>
-          <th>CII (sea)</th>
+          <th>CII (at sea)</th>
           <td
             v-for="item in items"
             :key="item.id"
@@ -470,13 +470,13 @@ const createVTable = (newValue) => {
       items.value[i].dogo = Math.round(newValue.total_lsdogo * 10) / 10
       items.value[i].inport_days = Math.round(newValue.total_inport_days * 10) / 10
       items.value[i].inport_foc = Math.round(newValue.total_inport_foc * 10) / 10
-      items.value[i].co2 = (Math.round(newValue.total_co2 * 10) / 10).toLocaleString()
+      items.value[i].co2 = (Math.round(newValue.total_co2)).toLocaleString()
       items.value[i].cii_rank = newValue.total_cii_rank
       items.value[i].cii = (Math.round(newValue.total_cii * 100) / 100).toLocaleString()
-      items.value[i].co2_total = (Math.round(newValue.total_co2_total * 10) / 10).toLocaleString()
+      items.value[i].co2_total = (Math.round(newValue.total_co2_total)).toLocaleString()
       items.value[i].cii_rank_total = newValue.total_cii_rank_total
       items.value[i].cii_total = (Math.round(newValue.total_cii_total * 100) / 100).toLocaleString()
-      items.value[i].ytd_co2 = (Math.round(newValue.ytd_co2 * 10) / 10).toLocaleString()
+      items.value[i].ytd_co2 = (Math.round(newValue.ytd_co2)).toLocaleString()
       items.value[i].ytd_cii_rank = newValue.ytd_cii_rank
       items.value[i].ytd_cii = (Math.round(newValue.ytd_cii * 100) / 100).toLocaleString()
       items.value[i].used = true
