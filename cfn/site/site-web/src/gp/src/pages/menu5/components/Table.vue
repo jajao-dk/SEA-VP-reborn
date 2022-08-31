@@ -10,10 +10,26 @@
       :items="items"
       :loading="loadingState"
       table-class-name="customize-table"
+      @click-row="clickRow"
     >
       <template #item-select="{select, bgcolor}">
         <div :style="bgcolor">
           <b>{{ select }}</b>
+        </div>
+      </template>
+      <template #item-setting="{setting, bgcolor1}">
+        <div :style="bgcolor1">
+          {{ setting }}
+        </div>
+      </template>
+      <template #item-cii="{cii, bgcolor2}">
+        <div :style="bgcolor2">
+          {{ cii }}
+        </div>
+      </template>
+      <template #item-ciiYtd="{ciiYtd, bgcolor3}">
+        <div :style="bgcolor3">
+          {{ ciiYtd }}
         </div>
       </template>
       <template #item-operation="item">
@@ -73,6 +89,44 @@ watch(legData, (newValue) => {
 watch(loading, (newValue) => {
   loadingState.value = newValue
 })
+
+// Emits
+const emits = defineEmits(['tablePlanSelected'])
+const clickRow = (item) => {
+  console.log(item.setting)
+  for (let i = 0; i < items.value.length; i++) {
+    if (items.value[i].id === item.id) {
+      items.value[i].bgcolor1 = 'background-color: #0f0'
+      if ((item.cii).slice(0, 1) === 'A') {
+        items.value[i].bgcolor2 = 'background-color: #0ff'
+      } else if ((item.cii).slice(0, 1) === 'B') {
+        items.value[i].bgcolor2 = 'background-color: #0f0'
+      } else if ((item.cii).slice(0, 1) === 'C') {
+        items.value[i].bgcolor2 = 'background-color: #ff0'
+      } else if ((item.cii).slice(0, 1) === 'D') {
+        items.value[i].bgcolor2 = 'background-color: #f90'
+      } else if ((item.cii).slice(0, 1) === 'E') {
+        items.value[i].bgcolor2 = 'background-color: #f00'
+      }
+      if ((item.ciiYtd).slice(0, 1) === 'A') {
+        items.value[i].bgcolor3 = 'background-color: #0ff'
+      } else if ((item.ciiYtd).slice(0, 1) === 'B') {
+        items.value[i].bgcolor3 = 'background-color: #0f0'
+      } else if ((item.ciiYtd).slice(0, 1) === 'C') {
+        items.value[i].bgcolor3 = 'background-color: #ff0'
+      } else if ((item.ciiYtd).slice(0, 1) === 'D') {
+        items.value[i].bgcolor3 = 'background-color: #f90'
+      } else if ((item.ciiYtd).slice(0, 1) === 'E') {
+        items.value[i].bgcolor3 = 'background-color: #f00'
+      }
+    } else {
+      items.value[i].bgcolor1 = 'background-color: transparent'
+      items.value[i].bgcolor2 = 'background-color: transparent'
+      items.value[i].bgcolor3 = 'background-color: transparent'
+    }
+  }
+  emits('tablePlanSelected', item)
+}
 
 // Create Table
 const headers = ref([])
@@ -176,17 +230,22 @@ const createTable = async (legData) => {
       id: i,
       select: plan.selected,
       bgcolor: color,
+      bgcolor1: 'background-color: transparent',
+      bgcolor2: 'background-color: transparent',
+      bgcolor3: 'background-color: transparent',
       setting: plan.setting,
       route: plan.route_name,
       eta: plan.eta_lt,
       // co2: (Math.round(Number(plan.co2))).toLocaleString(),
       co2: Math.round(Number(tmpCo2)).toLocaleString(),
+      co2Raw: tmpCo2,
       // cii: plan.cii_rank,
       cii: tmpCii,
       co2Ytd: '',
       ciiYtd: '-',
       remain_dist: (plan.distance.remain).toLocaleString(),
       entire_dist: (plan.distance.entire).toLocaleString(),
+      distRaw: plan.distance.entire,
       ocean_days: (Math.round(Number(plan.sailing_area.OpenOcean.sailing_days) * 10) / 10).toFixed(1),
       remain_days: (Math.round(Number(plan.sailing_area.Remain.sailing_days) * 10) / 10).toFixed(1),
       entire_days: (Math.round(Number(plan.sailing_area.Entire.sailing_days) * 10) / 10).toFixed(1),
@@ -247,7 +306,7 @@ const createTable = async (legData) => {
 headers.value = [
   { text: 'Select', value: 'select', fixed: true, width: 60 },
   { text: 'Setting', value: 'setting', width: 150 },
-  // { text: 'Route', value: 'route', width: 120 },
+  { text: 'Route', value: 'route', width: 120 },
   { text: 'ETA (LT)', value: 'eta', sortable: true, width: 100 },
   { text: 'CO2 at sea', value: 'co2', sortable: true, width: 75 },
   { text: 'CII　　at sea', value: 'cii', sortable: true, width: 75 },
