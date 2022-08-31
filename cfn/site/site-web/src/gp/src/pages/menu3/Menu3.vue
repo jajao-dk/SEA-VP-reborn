@@ -313,11 +313,11 @@ const delRaw = (index) => {
   console.log('index')
   plans.value.splice(index, 1)
   plans.value[plans.value.length - 1].port_days = '---'
-  plans.value[plans.value.length - 1].lb = '---'
+  plans.value[plans.value.length - 1].lb = 'B'
 }
 
 // Simulation result (Table)
-const simDatas = ref([])
+const simDatas = ref({ data: [] })
 // const simData = ref({})
 
 // Voyage evaluation sheet (VTable)
@@ -442,7 +442,7 @@ const simStartEventHandler = async (item) => {
   const ETD = String(Y) + '/' + String(M + 1) + '/' + String(D) + ' ' + String(h) + ':' + String(m)
   console.log(ETD)
 
-  simDatas.value.length = 0
+  simDatas.value.data.length = 0
 
   // Create port rotation
   const portCodes = []
@@ -582,11 +582,19 @@ const simStartEventHandler = async (item) => {
     nextETD = simJson.data.PLAN.leg_infos[0].route_infos[0].simulation_result.eta
   }
 
-  simDatas.value = legInfos
-  simDatas.value.imo_no = selectedVessel.value.imo_num
-  simDatas.value.inPortFoc = inPortFoc.value
-  simDatas.value.inPortDaysLast = plans.value[plans.value.length - 1].port_days
-  simDatas.value.clientCode = client.value
+  const tmpSimDatas = { data: [] }
+  tmpSimDatas.data = legInfos
+  tmpSimDatas.imo_no = selectedVessel.value.imo_num
+  tmpSimDatas.inPortFoc = inPortFoc.value
+  tmpSimDatas.inPortDaysLast = plans.value[plans.value.length - 1].port_days
+  tmpSimDatas.clientCode = client.value
+  /*
+  legInfos.imo_no = selectedVessel.value.imo_num
+  legInfos.inPortFoc = inPortFoc.value
+  legInfos.inPortDaysLast = plans.value[plans.value.length - 1].port_days
+  legInfos.clientCode = client.value
+  */
+  simDatas.value = tmpSimDatas
 
   console.log(simDatas.value)
   return false
