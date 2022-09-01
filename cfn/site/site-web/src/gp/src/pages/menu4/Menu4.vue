@@ -167,10 +167,8 @@ const getLatestERRM = async () => {
   loading.value = true
   console.log('ERRM start')
 
-  // client.value = 'ZZZ'
-  // const url = 'https://tmax-b01.weathernews.com/T-Max/api/reborn_get_vessel_list.cgi?search_type=file_name&val=all&client=' + client.value
+  /*
   const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value
-  // const urlSetting = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_setting_for_enrouterisk.cgi?client=' + client.value + '&section=' + section + '&group=' + group
   const resp = await fetch(urlSetting)
   const data = await resp.json()
   console.log(data)
@@ -180,7 +178,7 @@ const getLatestERRM = async () => {
   const allVessels = vesselList.map(ship => { return ship.wnishipnum }).join(',')
   const tolerance = data.data.settings.tolerance_range
   console.log(vesselList)
-  // console.log(allVessels)
+  */
 
   /*
   const urlLatest = 'https://tmax-b01.weathernews.com/T-Max/EnrouteRisk/api/reborn_get_latest_enrouterisk.cgi'
@@ -197,14 +195,26 @@ const getLatestERRM = async () => {
   // console.log(errmJson)
   */
 
+  const errmSetting = await fetch(
+     `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/errm_setting.json`
+  ).then((res) => res.json())
+  const tolerance = errmSetting.data.settings.tolerance_range
+
+  /*
+  const setting = await fetch(
+      `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/errm_setting.json`,
+      { headers: { Authorization: `Bearer ${token}` } }
+  ).then((res) => res.json())
+  console.log(errmJson)
+  const tolerance = errm_setting.data.settings.tolerance_range
+  */
+
   const errmJson = await fetch(
       `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/errm.json`
   ).then((res) => res.json())
   /*
-  console.log(token)
-
   const errmJson = await fetch(
-      `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/errm.json.gz`,
+      `${values.SECURE_DATA_URL}/${customerId.value}/errm/data/vessel/errm.json`,
       { headers: { Authorization: `Bearer ${token}` } }
   ).then((res) => res.json())
   console.log(errmJson)

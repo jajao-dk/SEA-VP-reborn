@@ -195,8 +195,9 @@ const calcEnvIndex = async (arrObj, items, errmVessel) => {
   })
 
   if (item.length === 1) {
+    const ciiValue = String(Math.round(apiResult[0].cii * 100) / 100)
     item[0].co2 = apiResult.length > 0 ? (Math.round(Number(apiResult[0].co2))).toLocaleString() : ''
-    item[0].cii = apiResult.length > 0 ? apiResult[0].cii_rank : ''
+    item[0].cii = apiResult.length > 0 ? apiResult[0].cii_rank + '(' + ciiValue + ')' : ''
     console.log(apiResult)
     console.log(item)
   }
@@ -266,26 +267,18 @@ const createTable = async (errmVessels) => {
       arrival_port: latest.arr_port,
       eta: (latest.arr_time_utc).slice(5, 16).replace('/', '-').replace('T', ' '),
       rta: (latest.req_arr_time_utc).slice(5, 16).replace('/', '-').replace('T', ' '),
-      // speed: (Math.round(Number(latest.average_speed) * 10) / 10).toFixed(1),
       speed: formatNumber(latest.average_speed),
-      // ordered_speed: (Math.round(Number(latest.ordered_speed) * 10) / 10).toFixed(1),
       ordered_speed: formatNumber(latest.ordered_speed),
-      // rpm: (Math.round(Number(latest.average_rpm) * 10) / 10).toFixed(1),
       rpm: formatNumber(latest.average_rpm),
-      // suggested_rpm: (Math.round(Number(latest.suggested_rpm) * 10) / 10).toFixed(1),
       suggested_rpm: formatNumber(latest.suggested_rpm),
-      // total_foc: (Math.round(Number(latest.total_foc) * 10) / 10).toFixed(1),
       total_foc: formatNumber(latest.total_foc),
-      // ordered_foc: (Math.round(Number(latest.ordered_foc) * 10) / 10).toFixed(1),
       ordered_foc: formatNumber(latest.ordered_foc),
-      // total_dogo: (Math.round(Number(latest.total_dogo) * 10) / 10).toFixed(1),
       total_dogo: formatNumber(latest.total_dogo),
-      // ordered_dogo: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
       ordered_dogo: formatNumber(latest.ordered_dogo),
-      // cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
-      cii: '',
-      // co2: apiResult.length > 0 ? (Math.round(Number(apiResult[0].co2))).toLocaleString() : '',
+      cii: '-',
       co2: '',
+      ciiYtd: '-',
+      co2Ytd: '',
       bgcolor: 'background-color: transparent'
     }
     items.value.push(tmpRaw)
@@ -293,6 +286,7 @@ const createTable = async (errmVessels) => {
   items.value.sort((a, b) => b.riskScore - a.riskScore)
   console.log(items.value)
 
+  const ciiArr = []
   for (let i = 0; i < errmVessels.length; i++) {
     const imoNumber = errmVessels[i].imo_num
 
@@ -300,11 +294,11 @@ const createTable = async (errmVessels) => {
     const wayPoints = errmVessels[i].past_waypoint
     let totalDistance = 0.0
     for (let i = 0; i < wayPoints.length - 1; i++) {
-      const from = point([parseFloat(wayPoints[i].lon), parseFloat(wayPoints[i].lat)])
-      const to = point([parseFloat(wayPoints[i + 1].lon), parseFloat(wayPoints[i + 1].lat)])
+      const from = point([parseFloat(wayPoints[i].lon) / 60, parseFloat(wayPoints[i].lat) / 60])
+      const to = point([parseFloat(wayPoints[i + 1].lon) / 60, parseFloat(wayPoints[i + 1].lat) / 60])
       const options = { units: 'kilometers' }
-      totalDistance += distance(from, to, options)
-      totalDistance = totalDistance / 1.852
+      totalDistance += distance(from, to, options) / 1.852
+      // totalDistance = totalDistance / 1.852
     }
 
     // past_waypoint配列の最後のtimeを取得
@@ -321,9 +315,80 @@ const createTable = async (errmVessels) => {
     console.log(`vessel_name: ${errmVessels[i].latest.vessel_name} / lastRepTime: ${lastRepTime} / totalDistance: ${totalDistance}`)
     const arrObj = await calcCO2(graphData, imoNumber, lastRepTime, totalDistance)
     console.log(arrObj)
+    ciiArr.push(arrObj[0])
 
     // CII計算処理
     calcEnvIndex(arrObj, items, errmVessels[i])
+  }
+
+  console.log(ciiArr)
+  /*
+  const ciiResp = await calcCII(ciiArr)
+  console.log(ciiResp)
+  const ciiData = {}
+  for (let i = 0; i < ciiResp.length; i++) {
+    ciiData[ciiResp[i].imoNumber] = {
+      co2: ciiResp[i].co2,
+      cii_rank: ciiResp[i].cii_rank,
+      distance: ciiResp[i].distance
+    }
+  }
+  */
+
+  // Get YTD data
+  const ytdPost = { client_code: props.customerId, imo_no: [] }
+  for (let i = 0; i < items.value.length; i++) {
+    // items.value[i].co2 = Math.round(ciiData[items.value[i].imo].co2).toLocaleString()
+    // items.value[i].cii = ciiData[items.value[i].imo].cii_rank
+    ytdPost.imo_no.push(Number(items.value[i].imo))
+  }
+  const requestUrl = 'https://cii.seapln-osr.pt-aws.wni.com/v1/vdv/ytd/'
+  const ciiYtdResp = await fetch(requestUrl, {
+    mode: 'cors',
+    method: 'POST',
+    body: JSON.stringify(ytdPost)
+  })
+    .then((res) => res.json())
+    .catch(console.error)
+  console.log(ciiYtdResp)
+
+  const ytdData = {}
+  const totalCIIPost = []
+  for (let i = 0; i < ciiYtdResp.length; i++) {
+    if (ciiYtdResp[i].ytd_dist_depart_arr === 0) { continue }
+    const imo = ciiYtdResp[i].imoNumber
+    const co2Total =
+      ciiYtdResp[i].ytd_cons.grand_total_dogo * 3.206 +
+      ciiYtdResp[i].ytd_cons.grand_total_hfo * 3.114 +
+      ciiYtdResp[i].ytd_cons.grand_total_lfo * 3.151
+    const ciiData = ciiArr.find((item) => item.imoNumber === String(imo))
+    console.log(ciiData)
+    const tmpDict = {
+      co2: co2Total + ciiData.co2,
+      distance: ciiYtdResp[i].ytd_dist_depart_arr + ciiData.distance,
+      imoNumber: imo
+    }
+    ytdData[imo] = tmpDict
+    totalCIIPost.push(tmpDict)
+  }
+  console.log(totalCIIPost)
+  const ciiTotalResp = await calcCII(totalCIIPost)
+  console.log(ciiTotalResp)
+
+  const totalData = {}
+  for (let i = 0; i < ciiTotalResp.length; i++) {
+    totalData[ciiTotalResp[i].imoNumber] = {
+      co2: ciiTotalResp[i].co2,
+      cii: Math.round(ciiTotalResp[i].cii * 100) / 100,
+      cii_rank: ciiTotalResp[i].cii_rank,
+      distance: ciiTotalResp[i].distance
+    }
+  }
+  for (let i = 0; i < items.value.length; i++) {
+    if (items.value[i].imo in totalData) {
+      items.value[i].ciiYtd = totalData[items.value[i].imo].cii_rank + '(' + String(totalData[items.value[i].imo].cii) + ')'
+      items.value[i].co2Ytd = Math.round(totalData[items.value[i].imo].co2).toLocaleString()
+    }
   }
 }
 
@@ -420,8 +485,10 @@ headers.value = [
   { text: 'Arr. port', value: 'arrival_port', width: 100 },
   { text: 'ETA[UTC]', value: 'eta', width: 95 },
   { text: 'RTA[UTC]', value: 'rta', width: 95 },
-  { text: 'CO2', value: 'co2', width: 50 },
-  { text: 'CII', value: 'cii', sortable: true, width: 50 },
+  { text: 'CO2 at sea', value: 'co2', sortable: true, width: 75 },
+  { text: 'CII　　at sea', value: 'cii', sortable: true, width: 75 },
+  { text: 'CO2 YtD', value: 'co2Ytd', sortable: true, width: 50 },
+  { text: 'CII YtD', value: 'ciiYtd', sortable: true, width: 60 },
   { text: 'Spd [kts]', value: 'speed', width: 50 },
   { text: 'Spd target', value: 'ordered_speed', sortable: true, width: 50 },
   { text: 'RPM', value: 'rpm', width: 50 },

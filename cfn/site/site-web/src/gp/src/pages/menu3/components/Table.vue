@@ -12,12 +12,14 @@
       table-class-name="customize-table"
     />
     <!--div>{{ itemsSelected }}</div-->
-    <button
-      class="simbtn"
-      @click="addVoyageEstimate"
-    >
-      Add Voyage Estimate
-    </button>&nbsp; <b class="errmsg">{{ msg }}</b>
+    <div v-if="ytdReady">
+      <button
+        class="simbtn"
+        @click="addVoyageEstimate"
+      >
+        Add Voyage Estimate
+      </button>&nbsp; <b class="errmsg">{{ msg }}</b>
+    </div>
   </div>
 </template>
 
@@ -27,10 +29,13 @@ import EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
 import calcCO2 from './calcCO2_tap.js'
 import calcCII from '../../calcCII.js'
+import getYtdData from '../../getYtdData.js'
 
 // Error message
 const msg = ref('')
+const ytdReady = ref(false)
 const loadingState = ref(false)
+let YTD = {}
 
 // Props
 const props = defineProps({
@@ -77,41 +82,19 @@ const createTable = async (simDatas) => {
   console.log(simDatas)
   items.value.length = 0
   itemsSelected.value.length = 0
+  ytdReady.value = false
   const imoNumber = simDatas.imo_no
   const inPortFoc = simDatas.inPortFoc
   const inPortDaysLast = simDatas.inPortDaysLast
 
-  for (let i = 0; i < simDatas.length; i++) {
+  let k = 0
+  for (let i = 0; i < simDatas.data.length; i++) {
     console.log(i)
-    console.log(simDatas[i])
-    const legInfo = simDatas[i]
-    const routeInfos = simDatas[i].route_infos
+    console.log(simDatas.data[i])
+    const legInfo = simDatas.data[i]
+    const routeInfos = simDatas.data[i].route_infos
 
     for (let j = 0; j < routeInfos.length; j++) {
-      loadingState.value = true
-      // CO2計算
-      const simResult = routeInfos[j].simulation_result
-      const arrObj = await calcCO2(simResult, imoNumber)
-
-      // in portでのCO2排出量(DOGOとして計算する)
-      const inPortCO2 = inPortFoc * 3.206 * simResult.in_port_days
-      console.log(inPortCO2)
-      // index = 1にin portを加えた要素として追加
-      arrObj[1] = {
-        co2: arrObj[0].co2 + inPortCO2,
-        distance: arrObj[0].distance,
-        imoNumber: arrObj[0].imoNumber
-      }
-      console.log(arrObj)
-
-      // CII計算
-      let apiResult = []
-      if (arrObj[0].distance && arrObj[0].co2 && arrObj[0].imoNumber) {
-        apiResult = await calcCII(arrObj)
-      }
-      console.log(apiResult)
-      loadingState.value = false
-
       const tmpRaw = {
         leg: i + 1,
         id: legInfo.leg_id + '-' + routeInfos[j].route_id,
@@ -124,10 +107,10 @@ const createTable = async (simDatas) => {
         days: Math.round(parseFloat(routeInfos[j].simulation_result.at_sea_days) * 10) / 10,
         inportDays: Math.round(parseFloat(routeInfos[j].simulation_result.in_port_days) * 10) / 10,
         dist: (Math.round(parseFloat(routeInfos[j].simulation_result.distance))).toLocaleString(),
-        co2: apiResult.length > 0 ? (Math.round(parseFloat(apiResult[0].co2))).toLocaleString() : '',
-        cii: apiResult.length > 0 ? apiResult[0].cii_rank : '',
-        co2Total: apiResult[1] ? (Math.round(parseFloat(apiResult[1].co2))).toLocaleString() : '',
-        ciiTotal: apiResult[1] ? apiResult[1].cii_rank : '',
+        co2: '',
+        cii: '-',
+        co2Total: '',
+        ciiTotal: '-',
         hsfo: Math.round(parseFloat(routeInfos[j].simulation_result.hsfo) * 10) / 10,
         dogo: Math.round(parseFloat(routeInfos[j].simulation_result.lsdogo) * 10) / 10,
         inportFoc: Math.round(routeInfos[j].simulation_result.in_port_days * inPortFoc * 10) / 10,
@@ -136,14 +119,66 @@ const createTable = async (simDatas) => {
         // hire_cost: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
       }
 
-      if (i === simDatas.length - 1) {
+      if (i === simDatas.data.length - 1) {
         tmpRaw.inportDays = Math.round((routeInfos[j].simulation_result.in_port_days + inPortDaysLast) * 10) / 10
         tmpRaw.inportFoc = Math.round((routeInfos[j].simulation_result.in_port_days + inPortDaysLast) * inPortFoc * 10) / 10
       }
-
       items.value.push(tmpRaw)
+      k++
+
+      // CO2計算
+      const simResult = routeInfos[j].simulation_result
+      const arrObj = await calcCO2(simResult, imoNumber, 'tapData')
+
+      // in portでのCO2排出量(DOGOとして計算する)
+      let inPortCO2 = inPortFoc * 3.206 * simResult.in_port_days
+      if (i === simDatas.data.length - 1) {
+        inPortCO2 = inPortFoc * 3.206 * (simResult.in_port_days + inPortDaysLast)
+      }
+      console.log(inPortCO2)
+      // index = 1にin portを加えた要素として追加
+      arrObj[1] = {
+        co2: arrObj[0].co2 + inPortCO2,
+        distance: arrObj[0].distance,
+        imoNumber: arrObj[0].imoNumber
+      }
+
+      console.log(arrObj)
+
+      // CII計算
+      let apiResult = []
+      if (arrObj[0].distance && arrObj[0].co2 && arrObj[0].imoNumber) {
+        apiResult = await calcCII(arrObj)
+        console.log('kkk=' + k)
+        items.value[k - 1].co2 = apiResult.length > 0 ? (Math.round(parseFloat(apiResult[0].co2))).toLocaleString() : ''
+        items.value[k - 1].cii = apiResult.length > 0 ? `${apiResult[0].cii_rank}(${(Math.round(apiResult[0].cii * 100) / 100).toLocaleString()})` : ''
+        items.value[k - 1].co2Total = apiResult[1] ? (Math.round(parseFloat(apiResult[1].co2))).toLocaleString() : ''
+        items.value[k - 1].ciiTotal = apiResult[1] ? `${apiResult[1].cii_rank}(${(Math.round(apiResult[1].cii * 100) / 100).toLocaleString()})` : ''
+      }
+      console.log(apiResult)
     }
   }
+
+  // YTDの取得
+  const getYTDParam = {
+    client_code: simDatas.clientCode,
+    imo_no: [Number(imoNumber)]
+  }
+  console.log(getYTDParam)
+  const ytdDatas = await getYtdData(getYTDParam)
+  console.log(ytdDatas)
+
+  const ytdParam = {
+    hsfo: ytdDatas[0].ytd_cons.grand_total_hfo,
+    lsfo: ytdDatas[0].ytd_cons.grand_total_lfo,
+    lsdogo: ytdDatas[0].ytd_cons.grand_total_dogo,
+    distance: ytdDatas[0].ytd_dist_depart_arr
+  }
+  console.log(ytdParam)
+  const ytdCO2 = await calcCO2(ytdParam, imoNumber, 'ytdData')
+  console.log(ytdCO2)
+  YTD = ytdCO2[0]
+  ytdReady.value = true
 }
 
 // Table headers
@@ -153,13 +188,13 @@ headers.value = [
   { text: 'ARR', value: 'arr', width: 50, fixed: true },
   { text: 'L/B', value: 'lb', width: 50 },
   { text: 'ETA(LT)', value: 'eta', width: 100 },
-  { text: 'Ocean days', value: 'days', width: 60 },
+  { text: 'At sea days', value: 'days', width: 60 },
   { text: 'In port days', value: 'inportDays', width: 60 },
   { text: 'Dist.[nm]', value: 'dist', width: 60 },
-  { text: 'CO2 (sea)', value: 'co2', width: 50 },
-  { text: 'CII (sea)', value: 'cii', width: 50 },
-  { text: 'CO2 (total)', value: 'co2Total', width: 50 },
-  { text: 'CII (total)', value: 'ciiTotal', width: 50 },
+  { text: 'CO2 at sea', value: 'co2', width: 60 },
+  { text: 'CII　　at sea', value: 'cii', width: 60 },
+  { text: 'CO2 sea+port', value: 'co2Total', width: 70 },
+  { text: 'CII sea+port', value: 'ciiTotal', width: 70 },
   { text: 'HSFO [mt]', value: 'hsfo', width: 50 },
   { text: 'DO/GO [mt]', value: 'dogo', width: 50 },
   { text: 'In port [mt]', value: 'inportFoc', width: 60 },
@@ -173,13 +208,15 @@ const addVoyageEstimate = async () => {
   const voyageInfo = {}
   console.log(props.simDatas)
 
-  for (let i = 0; i < props.simDatas.length; i++) {
+  for (let i = 0; i < props.simDatas.data.length; i++) {
     console.log(i)
-    console.log(props.simDatas[i])
-    const legInfo = props.simDatas[i]
+    console.log(props.simDatas.data[i])
+    const legInfo = props.simDatas.data[i]
     voyageInfo[legInfo.leg_id] = false
   }
   const imoNumber = props.simDatas.imo_no
+  const ytdDist = YTD.distance
+  const ytdCO2 = YTD.co2
   console.log(voyageInfo)
 
   // Validation
@@ -237,6 +274,11 @@ const addVoyageEstimate = async () => {
       distance: totalDist,
       co2: totalCO2Total,
       imoNumber
+    },
+    {
+      distance: totalDist + ytdDist,
+      co2: totalCO2Total + ytdCO2,
+      imoNumber
     }
   ]
   console.log(totalCIIParam)
@@ -254,10 +296,15 @@ const addVoyageEstimate = async () => {
     total_lsdogo: totalLSDOGO,
     total_inport_days: totalInportDays,
     total_co2: totalCIIRes[0].co2,
-    total_cii: totalCIIRes[0].cii_rank,
+    total_cii_rank: totalCIIRes[0].cii_rank,
+    total_cii: totalCIIRes[0].cii,
     total_inport_foc: totalInportFoc,
     total_co2_total: totalCIIRes[1].co2,
-    total_cii_total: totalCIIRes[1].cii_rank
+    total_cii_rank_total: totalCIIRes[1].cii_rank,
+    total_cii_total: totalCIIRes[1].cii,
+    ytd_co2: totalCIIRes[2].co2,
+    ytd_cii_rank: totalCIIRes[2].cii_rank,
+    ytd_cii: totalCIIRes[2].cii
   }
 
   console.log('EMIT to MENU3')
