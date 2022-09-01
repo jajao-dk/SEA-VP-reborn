@@ -89,6 +89,7 @@
         :customer-id="customerId"
         :leg-data="legData"
         :loading="loading"
+        @table-plan-selected="tablePlanSelected"
       />
     </div>
 
@@ -276,15 +277,6 @@ const getVoyComData = async () => {
     ytdAvailable.value = false
   }
 
-  /*
-  if (imoNumber !== '') {
-    ciiTarget[imoNumber].ytd = ytdCII.value
-    ciiData.value = ciiTarget[imoNumber]
-  } else {
-    console.log('CII target: No imo number is found.')
-  }
-  */
-
   const urlVoyCom = 'https://tmax-b01.weathernews.com/T-Max/VoyageComparison/api/reborn_get_voy_comparison_data.cgi?wnishipnum=' + selectedVessel.value.ship_num + '&client=' + client.value
 
   const resp = await fetch(urlVoyCom)
@@ -308,10 +300,6 @@ const getVoyComData = async () => {
     legData.value = legDatas[0]
     console.log(legData.value)
 
-    // legData.value.imo_number = imoNumber
-    // legData.value.ytd_co2 = ytdCII.value.co2
-    // legData.value.ytd_distance = ytdCII.value.distance
-
     if (legData.value !== undefined) {
       infos.value = legData.value.voyage_information
     }
@@ -322,15 +310,6 @@ const getVoyComData = async () => {
     } else {
       console.log('CII target: No imo number is found.')
     }
-
-    /*
-    if (imoNumber !== '') {
-      ciiTarget[imoNumber].ytd = ytdCII[0]
-      ciiData.value = ciiTarget[imoNumber]
-    } else {
-      console.log('CII target: No imo number is found.')
-    }
-    */
   } else {
     infos.value.push({ label: 'Voyage No', value: 'CANNOT FIND VOYAGE COMPARISON DATA' })
     // legData.value = {}
@@ -348,6 +327,19 @@ const calcPortFoc = async () => {
     legData.value.inPortFoc = inPortFoc.value
     ciiData.value.inPortFoc = inPortFoc.value
   }
+}
+
+// Emit
+const tablePlanSelected = selectedPlan => {
+  console.log('table emit!')
+  console.log(selectedPlan)
+  ciiData.value.selectedPlan = selectedPlan
+  /*
+  mapFocusVessel.value = ''
+  mapFocusVessel.value = selectedVessel
+  dashboard.setParameters({ IMO: [''] })
+  dashboard.setParameters({ IMO: selectedVessel })
+  */
 }
 
 </script>
