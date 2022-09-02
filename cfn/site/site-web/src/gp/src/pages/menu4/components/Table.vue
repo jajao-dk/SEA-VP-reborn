@@ -92,6 +92,7 @@ import { point } from '@turf/helpers'
 import distance from '@turf/distance'
 import calcCO2 from './calcCO2_errm.js'
 import calcCII from '../../calcCII.js'
+import getYtdData from '../../getYtdData.js'
 
 const loadingState = ref(false)
 
@@ -322,34 +323,13 @@ const createTable = async (errmVessels) => {
   }
 
   console.log(ciiArr)
-  /*
-  const ciiResp = await calcCII(ciiArr)
-  console.log(ciiResp)
-  const ciiData = {}
-  for (let i = 0; i < ciiResp.length; i++) {
-    ciiData[ciiResp[i].imoNumber] = {
-      co2: ciiResp[i].co2,
-      cii_rank: ciiResp[i].cii_rank,
-      distance: ciiResp[i].distance
-    }
-  }
-  */
 
   // Get YTD data
   const ytdPost = { client_code: props.customerId, imo_no: [] }
   for (let i = 0; i < items.value.length; i++) {
-    // items.value[i].co2 = Math.round(ciiData[items.value[i].imo].co2).toLocaleString()
-    // items.value[i].cii = ciiData[items.value[i].imo].cii_rank
     ytdPost.imo_no.push(Number(items.value[i].imo))
   }
-  const requestUrl = 'https://cii.seapln-osr.pt-aws.wni.com/v1/vdv/ytd/'
-  const ciiYtdResp = await fetch(requestUrl, {
-    mode: 'cors',
-    method: 'POST',
-    body: JSON.stringify(ytdPost)
-  })
-    .then((res) => res.json())
-    .catch(console.error)
+  const ciiYtdResp = await getYtdData(ytdPost)
   console.log(ciiYtdResp)
 
   const ytdData = {}

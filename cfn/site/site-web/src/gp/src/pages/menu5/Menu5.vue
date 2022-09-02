@@ -111,6 +111,7 @@ import Table from './components/Table.vue'
 import GChart from './components/GChart.vue'
 import { useAuth } from '../../plugins/auth'
 import calcCII from '../calcCII.js'
+import getYtdData from '../getYtdData.js'
 import values from '../../SEA-MapWidget-Web/cfn/site/site-map/src/map/src/scripts/values'
 import {
   set as gtagSet,
@@ -246,15 +247,8 @@ const getVoyComData = async () => {
   loading.value = true
 
   // Get YTD data
-  const requestUrl = 'https://cii.seapln-osr.pt-aws.wni.com/v1/vdv/ytd/'
   const requestBody = { client_code: client.value, imo_no: [Number(imoNumber)] }
-  const response = await fetch(requestUrl, {
-    mode: 'cors',
-    method: 'POST',
-    body: JSON.stringify(requestBody)
-  })
-    .then((res) => res.json())
-    .catch(console.error)
+  const response = await getYtdData(requestBody)
   console.log(response)
 
   // YTD CII calculation
