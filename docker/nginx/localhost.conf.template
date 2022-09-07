@@ -12,12 +12,12 @@ server {
 
     location /api/ {
 	proxy_ssl_server_name on;
-	proxy_pass	https://oe.seapln-osr.pt-aws.wni.com/api/;
+	proxy_pass	https://vp.seapln-osr.pt-aws.wni.com/api/;
     }
 
     location /customer/ {
 	proxy_ssl_server_name on;
-	proxy_pass 	https://oe.seapln-osr.pt-aws.wni.com/customer/;
+	proxy_pass 	https://vp.seapln-osr.pt-aws.wni.com/customer/;
     }
 
     location / {
