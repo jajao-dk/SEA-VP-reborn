@@ -12,7 +12,7 @@ const { login } = useAuth()
         Lite version
       </div-->
       <img
-        src="/Weathernews_logo_blue.svg"
+        src="../assets/img/astrolabe.svg"
         class="logoMark"
       >
       <!-- SSM text -->
@@ -50,7 +50,7 @@ const { login } = useAuth()
       </svg-->
       <!-- weathernews text -->
       <div class="weathernews">
-        GREEN-Dashboard
+        astrolabe
       </div>
       <div
         class="enterBtn"
@@ -112,7 +112,7 @@ const { login } = useAuth()
   .weathernews {
     width : 100% ;
     height : 12px ;
-    color : #69848c ;
+    color : #177CBE ;
     font-size : 30px ;
     line-height : 1em ;
     text-align : center ;
@@ -181,12 +181,12 @@ const { login } = useAuth()
 
   .enterBtn g {
     fill : none ;
-    stroke : #2d91b3 ;
+    stroke : #177CBE ;
     stroke-width : 4 ;
   }
 
   .enterBtn:hover {
-    background-color : #2d91b3 ;
+    background-color : #177CBE ;
     box-shadow : 0px 2px 4px rgba(0,40,76,0.2) ;
   }
 

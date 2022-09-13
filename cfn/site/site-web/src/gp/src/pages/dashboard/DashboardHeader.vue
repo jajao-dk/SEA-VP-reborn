@@ -12,16 +12,16 @@ watch(toRef(route, 'name'), () => { store.close() })
 </script>
 
 <template>
-  <div class="flex border-b-2 border-gray-200">
+  <div class="flex bg-background border-b-2 border-gray-200">
     <!--  <div class="container mx-auto h-16 relative"> -->
     <div class="flex-auto px-4 h-12 relative">
       <div class="h-full flex items-center">
         <div class="flex-1">
-          <div class="flex gap-4">
+          <div class="flex items-center space-x-5">
             <a @click="store.toggleDrawer()">
               <font-awesome-icon
-                class="text-gray-500 cursor-pointer"
-                size="2x"
+                class="text-gray-100 cursor-pointer"
+                size="lg"
                 :icon="['fas', 'bars']"
               />
             </a>
@@ -29,28 +29,28 @@ watch(toRef(route, 'name'), () => { store.close() })
               class="flex items-center gap-4 text-gray-700"
               to="/"
             >
-              <div>
+              <div class="space-x-4">
                 <img
-                  src="/Weathernews_logo_blue.svg"
+                  src="../../assets/img/Weathernews_logo_white.svg"
                   class="h-10"
                 >
               </div>
             </router-link>
-            <div class="flex-col space-y-0">
-              <div class="font-bold">
+            <div class="text-gray-100 text-2xl flex">
+              <!-- <div class="font-bold"> -->
                 {{ $route.meta.title }}
                 <!-- GREEN-Dashboard by OSR/PMS-e -->
-              </div>
-              <div class="text-xs">
+              <!-- </div> -->
+              <!-- <div class="text-xs">
                 powered by Weathernews
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
         <div class="flex-1">
           <div class="flex justify-end">
             <a
-              class="hover:bg-gray-200 text-gray-500 cursor-pointer px-2 flex justify-end items-center gap-4"
+              class="hover:text-gray-800 text-gray-100 cursor-pointer px-2 flex justify-end items-center gap-4"
               @click="store.toggleMenu()"
             >
               <div class="text-base">

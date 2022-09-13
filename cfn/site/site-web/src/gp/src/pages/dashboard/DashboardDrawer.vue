@@ -34,17 +34,17 @@ onMounted(async () => {
 
 <template>
   <div
-    class="absolute inset-y-0 w-72 z-50 bg-white shadow-2xl border-r-2 border-gray-200 transform duration-500 ease-in-out"
+    class="absolute inset-y-0 w-72 z-50 bg-gray-100/60 backdrop-blur-md shadow-2xl border-r-2 border-gray-200 transform duration-500 ease-in-out"
     :class="{ 'left-0': store.drawerOpen, '-left-72': !store.drawerOpen }"
   >
-    <div class="flex flex-col text-lg text-gray-700">
-      <b class="px-1">Planning</b>
+    <div class="flex py-2 flex-col text-gray-800">
+      <b class="py-2 self-center">Planning</b>
       <DrawerMenu :menu="gpvcs" />
       <DrawerMenu :menu="gptap" />
-      <b class="px-1">Underway</b>
+      <b class="py-2 self-center">Underway</b>
       <DrawerMenu :menu="gperrm" />
       <DrawerMenu :menu="gpvc" />
-      <b class="px-1">Analysis/Statistics</b>
+      <b class="py-2 self-center">Analysis</b>
       <DrawerMenu :menu="cimrd" />
       <DrawerMenu :menu="emd" />
       <DrawerMenu :menu="gppe" />
