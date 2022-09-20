@@ -2,13 +2,15 @@
   <div class="tableplane">
     <EasyDataTable
       v-model:items-selected="itemsSelected"
-      header-background-color="#ddd"
+      :theme-color="blue"
       :dense="true"
       :loading="loadingState"
       :fixed-header="true"
-      table-height="200"
+
       :headers="headers"
       :items="items"
+      :rows-per-page="5"
+    hide-footer
       table-class-name="customize-table"
     />
     <!--div>{{ itemsSelected }}</div-->
@@ -30,6 +32,7 @@ import 'vue3-easy-data-table/dist/style.css'
 import calcCO2 from './calcCO2_tap.js'
 import calcCII from '../../calcCII.js'
 import getYtdData from '../../getYtdData.js'
+import { blue } from 'color-name'
 
 // Error message
 const msg = ref('')
@@ -188,16 +191,16 @@ headers.value = [
   { text: 'ARR', value: 'arr', width: 50, fixed: true },
   { text: 'L/B', value: 'lb', width: 50 },
   { text: 'ETA(LT)', value: 'eta', width: 100 },
-  { text: 'At sea days', value: 'days', width: 60 },
-  { text: 'In port days', value: 'inportDays', width: 60 },
+  { text: 'Sea days', value: 'days', width: 60 },
+  { text: 'Port days', value: 'inportDays', width: 60 },
   { text: 'Dist.[nm]', value: 'dist', width: 60 },
-  { text: 'CO2 at sea', value: 'co2', width: 60 },
-  { text: 'CII　　at sea', value: 'cii', width: 60 },
-  { text: 'CO2 sea+port', value: 'co2Total', width: 70 },
+  { text: 'CO2 at sea', value: 'co2', width: 65 },
+  { text: 'CII at sea', value: 'cii', width: 60 },
+  { text: 'CO2 sea+port', value: 'co2Total', width: 80 },
   { text: 'CII sea+port', value: 'ciiTotal', width: 70 },
-  { text: 'HSFO [mt]', value: 'hsfo', width: 50 },
-  { text: 'DO/GO [mt]', value: 'dogo', width: 50 },
-  { text: 'In port [mt]', value: 'inportFoc', width: 60 },
+  { text: 'HSFO [mt]', value: 'hsfo', width: 60 },
+  { text: 'DO/GO [mt]', value: 'dogo', width: 65 },
+  { text: 'In port [mt]', value: 'inportFoc', width: 65 },
   { text: 'Weather factor', value: 'wxfact', width: 60 },
   { text: 'Current factor', value: 'curfact', width: 60 }
   // { text: 'EDIT', value: 'operation', width: 50 }
@@ -316,8 +319,8 @@ const addVoyageEstimate = async () => {
 
 <style scoped>
 .tableplane {
-  width: 100%;
-  height: 30vh;
+  /* width: 100%; */
+  /* height: 30vh; */
   /* overflow: scroll; */
 }
 
@@ -345,7 +348,7 @@ const addVoyageEstimate = async () => {
 
 .customize-table {
   --easy-table-header-font-size: 12px;
-  --easy-table-header-height: 14px;
+  --easy-table-header-height: 32px;
   --easy-table-header-background-color: #ccc;
   --easy-table-body-row-height: 24px;
 }

@@ -23,7 +23,7 @@ function createRouter() {
           name: 'home',
           path: '',
           meta: {
-            title: 'Emission Dashboard (PS2PS)',
+            title: 'Emissions (Pilot-to-Pilot)',
             isEnabled: false
           },
           component: Home
@@ -33,7 +33,7 @@ function createRouter() {
           name: 'menu1',
           path: 'menu1',
           meta: {
-            title: 'Emission Dashboard (PS2PS)',
+            title: 'Emissions (Pilot-to-Pilot)',
             isEnabled: false
           },
           component: () => import('../pages/menu1/Menu1.vue')
@@ -87,7 +87,7 @@ function createRouter() {
           name: 'menu7',
           path: 'menu7',
           meta: {
-            title: 'Emission Dashboard (B2B)',
+            title: 'Emissions (Berth-to-Berth)',
             isEnabled: false
           },
           component: () => import('../pages/menu7/Menu7.vue')

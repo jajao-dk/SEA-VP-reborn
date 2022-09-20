@@ -17,19 +17,24 @@
           <b>{{ select }}</b>
         </div>
       </template>
-      <template #item-setting="{setting, bgcolor1}">
-        <div :style="bgcolor1">
+      <template #item-setting="{setting, bgcolorSetting}">
+        <div :style="bgcolorSetting">
           {{ setting }}
         </div>
       </template>
-      <template #item-cii="{cii, bgcolor2}">
-        <div :style="bgcolor2">
+      <template #item-cii="{cii, bgcolorCii}">
+        <div :style="bgcolorCii">
           {{ cii }}
         </div>
       </template>
-      <template #item-ciiYtd="{ciiYtd, bgcolor3}">
-        <div :style="bgcolor3">
+      <template #item-ciiYtd="{ciiYtd, bgcolorCiiYtd}">
+        <div :style="bgcolorCiiYtd">
           {{ ciiYtd }}
+        </div>
+      </template>
+      <template #item-entire_cost="{entire_cost, bgcolorCost}">
+        <div :style="bgcolorCost">
+          {{ entire_cost }}
         </div>
       </template>
       <template #item-operation="item">
@@ -96,33 +101,33 @@ const clickRow = (item) => {
   console.log(item.setting)
   for (let i = 0; i < items.value.length; i++) {
     if (items.value[i].id === item.id) {
-      items.value[i].bgcolor1 = 'background-color: #0f0'
+      items.value[i].bgcolorSetting = 'background-color: #0f0'
       if ((item.cii).slice(0, 1) === 'A') {
-        items.value[i].bgcolor2 = 'background-color: #0ff'
+        items.value[i].bgcolorCii = 'background-color: #0ff'
       } else if ((item.cii).slice(0, 1) === 'B') {
-        items.value[i].bgcolor2 = 'background-color: #0f0'
+        items.value[i].bgcolorCii = 'background-color: #0f0'
       } else if ((item.cii).slice(0, 1) === 'C') {
-        items.value[i].bgcolor2 = 'background-color: #ff0'
+        items.value[i].bgcolorCii = 'background-color: #ff0'
       } else if ((item.cii).slice(0, 1) === 'D') {
-        items.value[i].bgcolor2 = 'background-color: #f90'
+        items.value[i].bgcolorCii = 'background-color: #f90'
       } else if ((item.cii).slice(0, 1) === 'E') {
-        items.value[i].bgcolor2 = 'background-color: #f00'
+        items.value[i].bgcolorCii = 'background-color: #f00'
       }
       if ((item.ciiYtd).slice(0, 1) === 'A') {
-        items.value[i].bgcolor3 = 'background-color: #0ff'
+        items.value[i].bgcolorCiiYtd = 'background-color: #0ff'
       } else if ((item.ciiYtd).slice(0, 1) === 'B') {
-        items.value[i].bgcolor3 = 'background-color: #0f0'
+        items.value[i].bgcolorCiiYtd = 'background-color: #0f0'
       } else if ((item.ciiYtd).slice(0, 1) === 'C') {
-        items.value[i].bgcolor3 = 'background-color: #ff0'
+        items.value[i].bgcolorCiiYtd = 'background-color: #ff0'
       } else if ((item.ciiYtd).slice(0, 1) === 'D') {
-        items.value[i].bgcolor3 = 'background-color: #f90'
+        items.value[i].bgcolorCiiYtd = 'background-color: #f90'
       } else if ((item.ciiYtd).slice(0, 1) === 'E') {
-        items.value[i].bgcolor3 = 'background-color: #f00'
+        items.value[i].bgcolorCiiYtd = 'background-color: #f00'
       }
     } else {
-      items.value[i].bgcolor1 = 'background-color: transparent'
-      items.value[i].bgcolor2 = 'background-color: transparent'
-      items.value[i].bgcolor3 = 'background-color: transparent'
+      items.value[i].bgcolorSetting = 'background-color: transparent'
+      items.value[i].bgcolorCii = 'background-color: transparent'
+      items.value[i].bgcolorCiiYtd = 'background-color: transparent'
     }
   }
   emits('tablePlanSelected', item)
@@ -212,6 +217,15 @@ const createTable = async (legData) => {
   })
   */
 
+  // pre-calculation (minimum cost)
+  let minEntireCost = 10 ** 10
+  for (let i = 0; i < plans.length; i++) {
+    if (Number(plans[i].cost_entire) < minEntireCost) {
+      minEntireCost = Number(plans[i].cost_entire)
+    }
+  }
+
+  // main loop
   for (let i = 0; i < plans.length; i++) {
     const plan = plans[i]
     let color = 'background-color: transparent'
@@ -228,11 +242,12 @@ const createTable = async (legData) => {
     }
     const tmpRaw = {
       id: i,
-      select: plan.selected,
+      select: (plan.selected === true) ? 'Recommend' : 'Ref-' + String(i + 1),
       bgcolor: color,
-      bgcolor1: 'background-color: transparent',
-      bgcolor2: 'background-color: transparent',
-      bgcolor3: 'background-color: transparent',
+      bgcolorSetting: 'background-color: transparent',
+      bgcolorCii: 'background-color: transparent',
+      bgcolorCiiYtd: 'background-color: transparent',
+      bgcolorCost: (plan.cost_entire === minEntireCost) ? 'background-color: #0f0' : 'background-color: #ccc',
       setting: plan.setting,
       route: plan.route_name,
       eta: plan.eta_lt,
@@ -261,15 +276,13 @@ const createTable = async (legData) => {
       hire_cost: (plan.cost_hire).toLocaleString(),
       total_cost: (plan.cost_total).toLocaleString(),
       daily_cost: (plan.cost_daily).toLocaleString(),
-      entire_cost: (plan.cost_entire).toLocaleString()
+      entire_cost: (plan.cost_entire).toLocaleString() + ' (' + (Number(plan.cost_entire) - minEntireCost).toLocaleString() + ')'
       // hire_cost: (Math.round(Number(latest.ordered_dogo) * 10) / 10).toFixed(1),
     }
     items.value.push(tmpRaw)
   }
 
-  // loadingState.value = true
-
-  // Ytd calculation
+  // post calculation (YtD)
   if (legData.ytd_distance !== 0) {
     const tmpArr = []
     for (let i = 0; i < plans.length; i++) {
@@ -294,8 +307,8 @@ const createTable = async (legData) => {
   }
 
   items.value.sort(function (a, b) {
-    if (a.select >= b.select) return -1
-    if (a.select < b.select) return 1
+    if (a.select >= b.select) return 1
+    if (a.select < b.select) return -1
     return 0
   })
 
@@ -304,7 +317,7 @@ const createTable = async (legData) => {
 
 // Table headers
 headers.value = [
-  { text: 'Select', value: 'select', fixed: true, width: 60 },
+  { text: 'Select', value: 'select', fixed: true, width: 100 },
   { text: 'Setting', value: 'setting', width: 150 },
   { text: 'Route', value: 'route', width: 120 },
   { text: 'ETA (LT)', value: 'eta', sortable: true, width: 100 },
@@ -313,7 +326,7 @@ headers.value = [
   { text: 'CO2 YtD', value: 'co2Ytd', sortable: true, width: 70 },
   { text: 'CII YtD', value: 'ciiYtd', sortable: true, width: 70 },
   { text: 'Daily cost [$]', value: 'daily_cost', sortable: true, width: 85 },
-  { text: 'Entire cost [$]', value: 'entire_cost', sortable: true, width: 85 },
+  { text: 'Entire cost [$]', value: 'entire_cost', sortable: true, width: 125 },
   { text: 'Remain dist.', value: 'remain_dist', sortable: true, width: 70 },
   { text: 'Entire dist.', value: 'entire_dist', sortable: true, width: 70 },
   { text: 'Ocean days', value: 'ocean_days', sortable: true, width: 70 },
@@ -327,9 +340,9 @@ headers.value = [
   { text: 'LSFO', value: 'lsfo', sortable: true, width: 60 },
   { text: 'DO/GO', value: 'dogo', sortable: true, width: 60 },
   { text: 'Est. FOC', value: 'est_foc', sortable: true, width: 60 },
-  { text: 'Bunker cost', value: 'bunker_cost', sortable: true, width: 70 },
-  { text: 'Hire cost', value: 'hire_cost', sortable: true, width: 70 },
-  { text: 'Total cost', value: 'total_cost', sortable: true, width: 70 }
+  { text: 'Bunker cost [$]', value: 'bunker_cost', sortable: true, width: 85 },
+  { text: 'Hire cost [$]', value: 'hire_cost', sortable: true, width: 85 },
+  { text: 'Total cost [$]', value: 'total_cost', sortable: true, width: 85 }
 
   // { text: 'EDIT', value: 'operation', width: 50 }
 ]

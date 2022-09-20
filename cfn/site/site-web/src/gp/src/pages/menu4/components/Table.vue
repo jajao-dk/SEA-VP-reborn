@@ -329,41 +329,50 @@ const createTable = async (errmVessels) => {
   for (let i = 0; i < items.value.length; i++) {
     ytdPost.imo_no.push(Number(items.value[i].imo))
   }
+  console.log(ytdPost)
   const ciiYtdResp = await getYtdData(ytdPost)
   console.log(ciiYtdResp)
 
-  const ytdData = {}
   const totalCIIPost = []
+  const totalData = {}
   for (let i = 0; i < ciiYtdResp.length; i++) {
-    if (ciiYtdResp[i].ytd_dist_depart_arr === 0) { continue }
     const imo = ciiYtdResp[i].imoNumber
     const co2Total =
       ciiYtdResp[i].ytd_cons.grand_total_dogo * 3.206 +
       ciiYtdResp[i].ytd_cons.grand_total_hfo * 3.114 +
       ciiYtdResp[i].ytd_cons.grand_total_lfo * 3.151
-    const ciiData = ciiArr.find((item) => item.imoNumber === String(imo))
-    console.log(ciiData)
-    const tmpDict = {
-      co2: co2Total + ciiData.co2,
-      distance: ciiYtdResp[i].ytd_dist_depart_arr + ciiData.distance,
-      imoNumber: imo
+    if (co2Total !== 0) {
+      const ciiData = ciiArr.find((item) => item.imoNumber === String(imo))
+      console.log(ciiData)
+      const tmpDict = {
+        co2: co2Total + ciiData.co2,
+        distance: ciiYtdResp[i].ytd_dist_depart_arr + ciiData.distance,
+        imoNumber: imo
+      }
+      totalCIIPost.push(tmpDict)
+      console.log(totalCIIPost)
     }
-    ytdData[imo] = tmpDict
-    totalCIIPost.push(tmpDict)
-  }
-  console.log(totalCIIPost)
-  const ciiTotalResp = await calcCII(totalCIIPost)
-  console.log(ciiTotalResp)
 
-  const totalData = {}
-  for (let i = 0; i < ciiTotalResp.length; i++) {
-    totalData[ciiTotalResp[i].imoNumber] = {
-      co2: ciiTotalResp[i].co2,
-      cii: Math.round(ciiTotalResp[i].cii * 100) / 100,
-      cii_rank: ciiTotalResp[i].cii_rank,
-      distance: ciiTotalResp[i].distance
+    console.log(totalCIIPost.length)
+    console.log(totalCIIPost.length % 80)
+
+    if (totalCIIPost.length % 80 === 0 || (i === ciiYtdResp.length - 1 && totalCIIPost.length > 1)) { // the vessel to be requested is limieted up to 100.
+      console.log(totalCIIPost)
+      const ciiTotalResp = await calcCII(totalCIIPost)
+      console.log(ciiTotalResp)
+
+      for (let i = 0; i < ciiTotalResp.length; i++) {
+        totalData[ciiTotalResp[i].imoNumber] = {
+          co2: ciiTotalResp[i].co2,
+          cii: Math.round(ciiTotalResp[i].cii * 100) / 100,
+          cii_rank: ciiTotalResp[i].cii_rank,
+          distance: ciiTotalResp[i].distance
+        }
+      }
+      totalCIIPost.length = 0
     }
   }
+
   for (let i = 0; i < items.value.length; i++) {
     if (items.value[i].imo in totalData) {
       items.value[i].ciiYtd = totalData[items.value[i].imo].cii_rank + '(' + String(totalData[items.value[i].imo].cii) + ')'

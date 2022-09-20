@@ -577,8 +577,8 @@ const deleteColumn = (val) => {
 </script>
 <style scoped>
 .vtableplane{
-  height: 80vh;
-  font-size: 12px;
+  height: 50vh;
+  font-size: 10px;
   /* overflow: auto; */
 }
 
@@ -589,13 +589,13 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 input {
-  border: 2px solid blue;
+  /* border: 2px solid blue; */
   width: 80px;
   margin-bottom: 2px;
 }
 
 select {
-  border: 2px solid blue;
+  /* border: 2px solid blue; */
   width: 100px;
 }
 

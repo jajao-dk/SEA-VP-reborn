@@ -120,7 +120,7 @@ watch(ciiData, (newValue) => {
           newValue.selectedPlan.co2Raw
         ]
         newData.push(tmpData)
-        /*
+
         if ('inPortFoc' in newValue) {
           const tmpPortData = [
             newValue.selectedPlan.distRaw,
@@ -129,7 +129,6 @@ watch(ciiData, (newValue) => {
           ]
           newData.push(tmpPortData)
         }
-        */
       } else {
         console.log('Is this possible???')
       }
@@ -149,7 +148,7 @@ watch(ciiData, (newValue) => {
           newValue.selectedPlan.co2Raw + newYtd[2][1]
         ]
         newYtd.push(tmpData)
-        /*
+
         if ('inPortFoc' in newValue) {
           const tmpPortData = [
             newValue.selectedPlan.distRaw + newYtd[2][0],
@@ -158,7 +157,6 @@ watch(ciiData, (newValue) => {
           ]
           newYtd.push(tmpPortData)
         }
-        */
       } else {
         console.log('Is this possible???')
       }
@@ -184,13 +182,13 @@ const chartOptions = ref({
   legend: { position: 'right', maxLines: 10, pageIndex: 1, alignment: 'start' },
   // chartArea: { width: '50%' },
   series: {
-    0: { color: 'black', pointSize: 3, pointShape: 'circle', lineWidth: 2 },
-    1: { color: 'blue', pointsVisible: false, lineWidth: 2 },
-    2: { color: 'green', pointsVisible: false, lineWidth: 2 },
-    3: { color: 'orange', pointsVisible: false, lineWidth: 2 },
-    4: { color: 'red', pointsVisible: false, lineWidth: 2 },
-    5: { color: 'black', pointSize: 10, pointShape: 'circle', lineWidth: 0 },
-    6: { color: '#0f0', pointsVisible: false, lineWidth: 4, lineDashStyle: [10, 2] }
+    0: { color: 'black', pointSize: 2, pointShape: 'circle', lineWidth: 2 },
+    1: { color: 'blue', pointsVisible: false, lineWidth: 1 },
+    2: { color: 'green', pointsVisible: false, lineWidth: 1 },
+    3: { color: 'orange', pointsVisible: false, lineWidth: 1 },
+    4: { color: 'red', pointsVisible: false, lineWidth: 1 },
+    5: { color: 'black', pointSize: 8, pointShape: 'circle', lineWidth: 0 },
+    6: { color: '#0c0', pointsVisible: false, lineWidth: 3, lineDashStyle: [5, 1] }
   },
 
   hAxis: {
@@ -212,13 +210,13 @@ const chartOptionsYtd = ref({
   legend: { position: 'right', maxLines: 10, pageIndex: 1, alignment: 'start' },
   // chartArea: { width: '50%' },
   series: {
-    0: { color: 'black', pointSize: 3, pointShape: 'circle', lineWidth: 2 },
-    1: { color: 'blue', pointsVisible: false, lineWidth: 2 },
-    2: { color: 'green', pointsVisible: false, lineWidth: 2 },
-    3: { color: 'orange', pointsVisible: false, lineWidth: 2 },
-    4: { color: 'red', pointsVisible: false, lineWidth: 2 },
-    5: { color: 'black', pointSize: 10, pointShape: 'circle', lineWidth: 0 },
-    6: { color: '#0f0', pointsVisible: false, lineWidth: 4, lineDashStyle: [10, 2] }
+    0: { color: 'black', pointSize: 2, pointShape: 'circle', lineWidth: 2 },
+    1: { color: 'blue', pointsVisible: false, lineWidth: 1 },
+    2: { color: 'green', pointsVisible: false, lineWidth: 1 },
+    3: { color: 'orange', pointsVisible: false, lineWidth: 1 },
+    4: { color: 'red', pointsVisible: false, lineWidth: 1 },
+    5: { color: 'black', pointSize: 8, pointShape: 'circle', lineWidth: 0 },
+    6: { color: '#0c0', pointsVisible: false, lineWidth: 3, lineDashStyle: [5, 1] }
   },
 
   hAxis: {

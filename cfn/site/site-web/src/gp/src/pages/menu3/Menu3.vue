@@ -3,10 +3,23 @@
     id="app"
     class="allpane"
   >
+
+
+  <div class="mappane">
+      <Map
+        v-if="authorized"
+        :customer-id="customerId"
+        :sim-datas="simDatas"
+        :config="config.value"
+        :path-params="pathParams"
+        :map-focus-route="mapFocusRoute"
+        :token="token"
+      />
+    </div>
     <div class="inputpane">
       <div class="inputplane">
         <div class="head">
-          <b>SIMULATION INPUT</b>
+          <!-- <b>SIMULATION INPUT</b> -->
         </div>
 
         <b>Vessel info</b>
@@ -31,7 +44,7 @@
           </div>
         </div>
 
-        <b>Speed Unit setting</b>
+        <b>Simulation parameter</b>
         <div class="spd-info">
           <!-- form novalidate @submit.prevent="onSubmit"-->
           <div class="spd-info-box">
@@ -79,15 +92,16 @@
               <tr>
                 <th>Port</th>
                 <th>Laden/Ballast</th>
-                <th>SPD to next port</th>
+                <th>{{ selectedKey }} to next port</th>
                 <th>In port days</th>
-                <th>Add/Delete</th>
+                <th>Up/Down</th>
+                <th>ADD/DEL</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for=" (plan, index) in plans"
-                :key="plan.dep"
+                :key="plan.port"
               >
                 <td>
                   <select v-model="plan.port">
@@ -136,15 +150,29 @@
                 <td>
                   <button
                     type="submit"
+                    @click="upRaw(index)"
+                  >
+                    Up
+                  </button>&nbsp;
+                  <button
+                    type="submit"
+                    @click="downRaw(index)"
+                  >
+                    Down
+                  </button>
+                </td>
+                <td>
+                  <button
+                    type="submit"
                     @click="addRaw(index)"
                   >
-                    Add
+                    ADD
                   </button>&nbsp;
                   <button
                     type="submit"
                     @click="delRaw(index)"
                   >
-                    Delete
+                    DEL
                   </button>
                 </td>
               </tr>
@@ -189,17 +217,7 @@
         Comparison
       </button-->
 
-    <div class="mappane">
-      <Map
-        v-if="authorized"
-        :customer-id="customerId"
-        :sim-datas="simDatas"
-        :config="config.value"
-        :path-params="pathParams"
-        :map-focus-route="mapFocusRoute"
-        :token="token"
-      />
-    </div>
+
 
     <div class="tablepane">
       <div class="head">
@@ -212,6 +230,16 @@
         :loading="loading"
         @table-route-selected="tableRouteSelected"
         @new-voyage-data="newVoyageData"
+      />
+    </div>
+
+    <div
+      v-show="showPerf"
+      class="perfpane"
+    >
+      <PerfChart
+        :selected-vessel="selectedVessel"
+        :customer-id="customerId"
       />
     </div>
 
@@ -228,16 +256,22 @@
       />
     </div>
   </div>
+
+
+
 </template>
 
-<script setup>
-import { ref, reactive, onMounted } from 'vue'
+
+<script lang="ts" setup>
+import { ref, reactive, onMounted, watch } from 'vue'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+// import VueElementLoading from 'vue-element-loading'
 import { loadMapConfig } from '../../scripts/mapConfig.js'
 import Map from './components/Map.vue'
 import Table from './components/Table.vue'
 import VTable from './components/VTable.vue'
+import PerfChart from './components/PerfChart.vue'
 import { useAuth } from '../../plugins/auth'
 // import SimpleTypeAhead from 'vue3-simple-typeahead'
 import {
@@ -247,6 +281,8 @@ import {
   event as gtagEvent,
   customMap as gtagCustomMap
 } from 'vue-gtag'
+
+
 
 // Common parameters
 const { getUser, getToken } = useAuth()
@@ -259,6 +295,7 @@ const token = ref('')
 const date = ref()
 const msg = ref('')
 const loading = ref(false)
+const showPerf = ref(false)
 
 const onMessage = (event) => {
   if (event.origin === location.origin && event.data) {
@@ -281,12 +318,12 @@ const inPortFoc = ref(0)
 
 // Simulation input - speed info
 const speeds = reactive([
-  { id: 0, item: 'SELECT', key: '', unit: '' },
+  { id: 0, item: 'SELECT', key: '---', unit: '' },
   { id: 1, item: 'speed [kts]', key: 'speed', unit: 'kts' },
   { id: 2, item: 'RPM [rpm]', key: 'rpm', unit: 'rpm' },
   { id: 3, item: '%MCR [%]', key: 'mcr', unit: '%' }
 ])
-const selectedKey = ref('')
+const selectedKey = ref('---')
 const ladSpeed = ref(0)
 const balSpeed = ref(0)
 
@@ -297,8 +334,8 @@ const plans = ref([
 ])
 const options = reactive([
   { text: '---', value: '---', id: '---' },
-  { text: 'Loading', value: 'L', id: 'L' },
-  { text: 'Discharging', value: 'B', id: 'B' }
+  { text: 'Laden', value: 'L', id: 'L' },
+  { text: 'Ballast', value: 'B', id: 'B' }
 ])
 const addRaw = (index) => {
   console.log('add button')
@@ -312,8 +349,22 @@ const delRaw = (index) => {
   console.log('del button')
   console.log('index')
   plans.value.splice(index, 1)
-  plans.value[plans.value.length - 1].port_days = '---'
+  plans.value[plans.value.length - 1].port_days = 0
   plans.value[plans.value.length - 1].lb = 'B'
+}
+
+const upRaw = (index) => {
+  if (index > 0) {
+    plans.value.splice(index - 1, 2, plans.value[index], plans.value[index - 1])
+  }
+  console.log(plans.value)
+}
+
+const downRaw = (index) => {
+  if (index < plans.value.length - 1) {
+    plans.value.splice(index, 2, plans.value[index + 1], plans.value[index])
+  }
+  console.log(plans.value)
 }
 
 // Simulation result (Table)
@@ -322,6 +373,16 @@ const simDatas = ref({ data: [] })
 
 // Voyage evaluation sheet (VTable)
 const voyageData = ref({})
+
+// Watch
+watch(selectedVessel, (newValue) => {
+  console.log('WATCH')
+  if (newValue !== '') {
+    showPerf.value = true
+  } else {
+    showPerf.value = false
+  }
+})
 
 // Emit
 const tableRouteSelected = selectedRoutes => {
@@ -474,7 +535,7 @@ const simStartEventHandler = async (item) => {
   let nextETD = ETD
   for (let i = 0; i < plans.value.length - 1; i++) {
     // validation
-    if (selectedKey.value === '' || plans.value[i].speed === 0) {
+    if (selectedKey.value === '---' || plans.value[i].speed === 0) {
       console.log('Speed Unit and/or SPD to next port is missing.')
       msg.value = 'Input Speed unit or SPD to next port.'
       return false
@@ -598,7 +659,10 @@ const simStartEventHandler = async (item) => {
 
   console.log(simDatas.value)
   return false
+
 }
+
+
 
 </script>
 
@@ -607,16 +671,16 @@ const simStartEventHandler = async (item) => {
 /* page layout */
 .allpane {
   display: grid;
-  /* height: 30vh; */
-  grid-template-rows: 28% 32% 40%;
-  grid-template-columns: 20% 35% 45%;
+  height: 30vh;
+  grid-template-rows: 35% 25% 20% 15%;
+  grid-template-columns: 15% 60% 25%;
 }
 
 .inputpane {
-  grid-row: 1;
+  grid-row: 2;
   grid-column: 1;
   border-radius: 5px;
-  background-color: #f2f2f2;
+  /* background-color: #f2f2f2; */
   padding: 20px;
   line-height: 15px;
   font-size: 14px;
@@ -631,9 +695,9 @@ const simStartEventHandler = async (item) => {
 
 .voyplanpane{
   grid-row: 2;
-  grid-column: 1/3;
+  grid-column: 2/3;
   border-radius: 5px;
-  background-color: #f2f2f2;
+  /* background-color: #f2f2f2; */
   padding: 20px;
   line-height: 15px;
   font-size: 14px;
@@ -642,35 +706,48 @@ const simStartEventHandler = async (item) => {
 
 .mappane {
   grid-row: 1;
-  grid-column: 2;
+  grid-column: 1/4;
 }
 
 .tablepane {
   grid-row: 3;
-  grid-column: 1/3;
-  background-color: #f0fff0;
+  grid-column: 1/4;
+  /* background-color: #f0fff0; */
   padding: 20px;
   overflow: scroll;
 }
 
-.vtablepane {
-  grid-row: 1/4;
+.perfpane {
+  /* display: flex;  <comentario original> */
+  grid-row: 2;
   grid-column: 3;
+  /* background-color: #f2f2f2; */
+  padding: 5px;
+  /* justify-content: center; <comentario original>*/
+  /* align-items: center; <comentario original>*/
+  overflow: hidden;
+  /* overflow-x: scroll; <comentario original>*/
+}
+
+.vtablepane {
+  grid-row: 4;
+  grid-column: 1;
   background-color: #fffaf0;
   padding: 20px;
   overflow: scroll;
-  /* overflow-x: scroll; */
+  /* overflow-x: scroll; <comentario original>*/
 }
 
 /* component style */
 
 .dtp {
   width: 200px;
+  font-size: 12pt;
 }
 
 .head{
-  font-size: 20px;
-  font-family: Arial;
+  font-size: 18px;
+  /* font-family: Arial; */
   margin-bottom: 10px;
 }
 
@@ -692,14 +769,14 @@ const simStartEventHandler = async (item) => {
 }
 
 .spd-info input{
-  border: 2px solid blue;
+  /* border: 2px solid blue; */
   width: 100px;
   /* margin-top: 5px; */
   margin-bottom: 10px;
 }
 
 input {
-  border: 2px solid blue;
+  /* border: 2px solid blue; */
   width: 100px;
   margin-bottom: 10px;
 }
@@ -711,7 +788,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 select {
-  border: 2px solid blue;
+  /* border: 2px solid blue; */
   width: 150px;
 }
 
@@ -731,32 +808,33 @@ button {
 
 .voy-plan-box{
   margin-left: 10px;
+  font-size: 14px;
 }
 
 .voy-plan table{
-  font-size: 12px;
+  font-size: 10px;
   margin-top: 5px;
   margin-bottom: 5px;
 }
 
 .voy-plan tr, td {
   border: solid 1px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 .voy-plan select{
-  border: 2px solid blue;
+  /* border: 2px solid blue; */
   width: 100px;
 }
 
 .voy-plan input {
-  border: 2px solid blue;
-  width: 100px;
+  /* border: 2px solid blue; */
+  width: 85px;
 }
 
 .voy-plan button {
-  background-color: #4CAF50;
+  /* background-color: #4CAF50; */
   color: white;
   /* padding: 2px 5px; */
   /* margin: 1px 0; */
@@ -785,7 +863,9 @@ body {
   cursor: pointer;
 }
 */
-
+.mapboxgl-ctrl {
+  display: none;
+}
 </style>
 <style>
 .simple-typeahead > input {
@@ -802,7 +882,7 @@ body {
   background-color: #eee;
 }
 .simple-typeahead .simple-typeahead-list {
-  background-color: #ddd;
+  background-color: rgb(146, 16, 16);
   min-width: 170px;
   width: 170px;
   border: none;
@@ -828,4 +908,6 @@ body {
   background-color: #e1e1e1;
   z-index: 9;
 }
+
+
 </style>

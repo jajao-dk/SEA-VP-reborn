@@ -22,7 +22,7 @@ watch(isLoading, value => store.setLoading(value))
             <font-awesome-icon
               class="text-gray-500 animate-spin"
               :icon="['fas', 'spinner']"
-              size="4x"
+              size="2xl"
             />
           </div>
         </div>

@@ -38,13 +38,19 @@
             <b>&nbsp; &nbsp; CII rank:</b> {{ ytdCII.cii_rank }}<br>
             <div class="spd-info">
               <div class="spd-info-box">
-                <b>FOC at arrival port: </b> &nbsp;
+                <b>FOC at arrival port: </b><br> &nbsp;
                 <input
                   v-model="inPortFoc"
                   style="text-align:right"
                   type="number"
                 >
-                [MT] &nbsp;
+                [MT/day] &nbsp;
+                <input
+                  v-model="inPortDays"
+                  style="text-align:right"
+                  type="number"
+                >
+                [days] &nbsp;
                 <button
                   class="perfbtn"
                   type="submit"
@@ -143,6 +149,7 @@ const ciiData = ref({})
 const ytdAvailable = ref(false)
 const ytdCII = ref({})
 const inPortFoc = ref(0)
+const inPortDays = ref(0)
 
 const onMessage = (event) => {
   if (event.origin === location.origin && event.data) {
@@ -244,6 +251,7 @@ const getVoyComData = async () => {
   ciiData.value = {}
   infos.value.length = 0
   inPortFoc.value = 0
+  inPortDays.value = 0
   loading.value = true
 
   // Get YTD data
@@ -316,10 +324,13 @@ const getVoyComData = async () => {
 }
 
 const calcPortFoc = async () => {
-  if (inPortFoc.value !== 0) {
+  if (inPortFoc.value !== 0 && inPortDays.value !== 0) {
     console.log('calcPortFoc')
-    legData.value.inPortFoc = inPortFoc.value
-    ciiData.value.inPortFoc = inPortFoc.value
+    legData.value.inPortFoc = inPortFoc.value * inPortDays.value
+    ciiData.value.inPortFoc = inPortFoc.value * inPortDays.value
+  } else {
+    legData.value.inPortFoc = 0
+    ciiData.value.inPortFoc = 0
   }
 }
 
@@ -360,7 +371,7 @@ const tablePlanSelected = selectedPlan => {
 
 input {
   border: 2px solid blue;
-  width: 100px;
+  width: 70px;
   margin-bottom: 10px;
 }
 

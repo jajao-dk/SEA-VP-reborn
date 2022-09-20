@@ -62,7 +62,7 @@ const wxLevels = ref(['fair', 'moderate', 'heavy', 'severe'])
 // To draw the Performance graph
 const graphdata = ref([])
 const direction = ref('horizontal')
-const margin = ref({ left: 0, top: 5, right: 20, bottom: 0 })
+const margin = ref({ left: 20, top: 5, right: 20, bottom: 0 })
 const axis = reactive({
   primary: {
     domain: [0, 20],
@@ -360,7 +360,7 @@ const getPerfCurve = async () => {
         >
           {{ vsl.ship_name }}
         </option>
-      </select><br><br>
+      </select>&nbsp; &nbsp;{{ benchName }}<br><br>
       Time period: Last 12 months<br><br>
       Loading condition:
       <input
@@ -440,48 +440,55 @@ const getPerfCurve = async () => {
 
     <div class="graphpane">
       <div class="graph">
-        <Chart
-          :size="{ width: 400, height: 300 }"
-          :data="graphdata"
-          :margin="margin"
-          :axis="axis"
-          :direction="direction"
-        >
-          <template #layers>
-            <Grid stroke-dasharray="2,2" />
-            <Line
-              :data-keys="['speed', 'analysis']"
-              type="natural"
-              :hide-dot="true"
-              :line-style="{ stroke: 'red', strokeWidth: 2 }"
-            />
-            <Line
-              :data-keys="['speed', 'benchdata']"
-              type="natural"
-              :hide-dot="true"
-              :line-style="{ stroke: 'blue', strokeWidth: 2 }"
-            />
-            <Line
-              :data-keys="['speed', 'foc']"
-              type="natural"
-              :line-style="{ stroke: 'red', strokeWidth: 0 }"
-              :dot-style="{ stroke: 'red', strokeWidth: 2 }"
-            />
-          </template>
-        </Chart>
+        <div class="ylabel">
+          Fuel consumption [mt]
+        </div>
+        <div class="gtitle">
+          <Chart
+            :size="{ width: 400, height: 300 }"
+            :data="graphdata"
+            :margin="margin"
+            :axis="axis"
+            :direction="direction"
+          >
+            <template #layers>
+              <Grid stroke-dasharray="2,2" />
+              <Line
+                :data-keys="['speed', 'analysis']"
+                type="natural"
+                :hide-dot="true"
+                :line-style="{ stroke: 'red', strokeWidth: 2 }"
+              />
+              <Line
+                :data-keys="['speed', 'benchdata']"
+                type="natural"
+                :hide-dot="true"
+                :line-style="{ stroke: 'blue', strokeWidth: 2 }"
+              />
+              <Line
+                :data-keys="['speed', 'foc']"
+                type="natural"
+                :line-style="{ stroke: 'red', strokeWidth: 0 }"
+                :dot-style="{ stroke: 'red', strokeWidth: 2 }"
+              />
+            </template>
+          </Chart>
+          <div class="xlabel">
+            Speed [kts]
+          </div>
+        </div>
       </div>
-      {{ benchName }}
-    </div>
 
-    <div class="table">
-      <!-- Vue3EasyDataTable v-model:items-selected="itemsSelected" :headers="headers" :items="items" /-->
-      <Vue3EasyDataTable
-        :headers="headers"
-        :items="items"
-        header-background-color="#ddd"
-        :loading="loadingState"
-        table-class-name="customize-table"
-      />
+      <div class="table">
+        <!-- Vue3EasyDataTable v-model:items-selected="itemsSelected" :headers="headers" :items="items" /-->
+        <Vue3EasyDataTable
+          :headers="headers"
+          :items="items"
+          header-background-color="#ddd"
+          :loading="loadingState"
+          table-class-name="customize-table"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -542,5 +549,21 @@ button {
   --easy-table-header-height: 14px;
   --easy-table-header-background-color: #ccc;
   --easy-table-body-row-height: 24px;
+}
+.ylabel {
+  position: relative;
+  top: 115pt;
+  right: 50pt;
+  font-size: 14px;
+  font-weight:bold;
+  width:fit-content;
+  transform:rotate(270deg);
+}
+.xlabel {
+  position: relative;
+  font-weight:bold;
+  font-size: 14px;
+  left: 180px;
+  width:fit-content;
 }
 </style>

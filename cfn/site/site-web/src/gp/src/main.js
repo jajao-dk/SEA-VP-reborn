@@ -10,6 +10,10 @@ import './scripts/mapbox'
 import './assets/font'
 import { gtagConfig } from './scripts/gtag'
 import VueGtag from 'vue-gtag'
+import Vue3EasyDataTable from 'vue3-easy-data-table'
+import 'vue3-easy-data-table/dist/style.css'
+import DrawerLayout from 'vue-drawer-layout'
+
 
 const app = createApp(App)
 app.use(createPinia())
@@ -18,3 +22,5 @@ app.use(router)
 app.use(VueGtag, gtagConfig)
 app.component('FontAwesomeIcon', FontAwesomeIcon)
 app.mount('#app')
+app.component('EasyDataTable', Vue3EasyDataTable)
+Vue.use(DrawerLayout);
